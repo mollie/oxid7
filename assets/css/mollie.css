@@ -1,0 +1,171 @@
+.issuers-radio .payment-icon {
+    width: 35px;
+    max-height: 30px;
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.mollie-payment-icon {
+    width: 25px;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.issuers-radio .control-label {
+    padding-top: 0!important;
+}
+
+.issuers-radio .issuer-title {
+    vertical-align: middle;
+}
+
+.issuers-radio .issuer-radiobutton {
+    margin: 2px 5px 0 0;
+}
+
+.mollie-valid-until {
+    width: 80px!important;
+}
+
+#mollieApplePayButtonDetails.apple-pay-button-with-text {
+    width: 250px;
+}
+
+#mollieApplePayButtonBasketTop, #mollieApplePayButtonBasketBottom {
+    float: right;
+    margin-right: 1em;
+    height: 34px;
+}
+
+#mollieApplePayButtonBasketTop.apple-pay-button-with-text, #mollieApplePayButtonBasketBottom.apple-pay-button-with-text {
+    height: 34px;
+}
+
+.apple-pay-button-with-text {
+    display: none;
+    cursor: pointer;
+}
+
+.apple-pay-button-with-text.active {
+    display: block;
+}
+
+@media (max-width:768px) {
+    #mollieApplePayButtonDetails.apple-pay-button-with-text {
+        width: 100%;
+    }
+
+    #mollieApplePayButtonBasketTop.apple-pay-button-with-text, #mollieApplePayButtonBasketBottom.apple-pay-button-with-text {
+        width: 100%;
+        margin-right: 0px;
+        margin-top: 5px;
+    }
+}
+
+@supports (-webkit-appearance: -apple-pay-button) {
+    .apple-pay-button-with-text {
+        display: inline-block;
+        -webkit-appearance: -apple-pay-button;
+        -apple-pay-button-type: buy;
+    }
+    .apple-pay-button-with-text > * {
+        display: none;
+    }
+    .apple-pay-button-black-with-text {
+        -apple-pay-button-style: black;
+    }
+    .apple-pay-button-white-with-text {
+        -apple-pay-button-style: white;
+    }
+    .apple-pay-button-white-with-line-with-text {
+        -apple-pay-button-style: white-outline;
+    }
+}
+
+@supports not (-webkit-appearance: -apple-pay-button) {
+    .apple-pay-button-with-text {
+        --apple-pay-scale: 1; /* (height / 32) */
+        display: inline-flex;
+        justify-content: center;
+        font-size: 12px;
+        border-radius: 5px;
+        padding: 0px;
+        box-sizing: border-box;
+        min-width: 200px;
+        min-height: 32px;
+        max-height: 64px;
+    }
+    .apple-pay-button-black-with-text {
+        background-color: black;
+        color: white;
+    }
+    .apple-pay-button-white-with-text {
+        background-color: white;
+        color: black;
+    }
+    .apple-pay-button-white-with-line-with-text {
+        background-color: white;
+        color: black;
+        border: .5px solid black;
+    }
+    .apple-pay-button-with-text.apple-pay-button-black-with-text > .logo {
+        background-image: -webkit-named-image(apple-pay-logo-white);
+        background-color: black;
+    }
+    .apple-pay-button-with-text.apple-pay-button-white-with-text > .logo {
+        background-image: -webkit-named-image(apple-pay-logo-black);
+        background-color: white;
+    }
+    .apple-pay-button-with-text.apple-pay-button-white-with-line-with-text > .logo {
+        background-image: -webkit-named-image(apple-pay-logo-black);
+        background-color: white;
+    }
+    .apple-pay-button-with-text > .text {
+        font-family: -apple-system;
+        font-size: calc(1em * var(--apple-pay-scale));
+        font-weight: 300;
+        align-self: center;
+        margin-right: calc(2px * var(--apple-pay-scale));
+    }
+    .apple-pay-button-with-text > .logo {
+        width: calc(35px * var(--scale));
+        height: 100%;
+        background-size: 100% 60%;
+        background-repeat: no-repeat;
+        background-position: 0 50%;
+        margin-left: calc(2px * var(--apple-pay-scale));
+        border: none;
+    }
+}
+
+.mollieAltLogo .mollieAltLogoLabel {
+    width: 250px;
+    float: left;
+}
+
+.mollieAltLogo .mollieAltLogoValue {
+    margin-left: 10px;
+    width: 250px;
+    float: left;
+}
+
+.mollieAltLogo IMG {
+    float: left;
+}
+
+.mollieAltLogoError FIELDSET {
+    border-radius: 15px!important;
+    margin-bottom: 5px!important;
+    padding: 10px!important;
+}
+.mollieAltLogoError FIELDSET.refundError {
+    background-color: #FF8282;
+    color: black;
+    border: 3px solid #F00000;
+}
+.mollieAltLogoError FIELDSET.message STRONG {
+    display: block;
+    margin-bottom: 10px;
+}
+
