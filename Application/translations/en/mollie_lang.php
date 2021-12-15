@@ -30,4 +30,10 @@ $aLang = [
     'MOLLIE_ERROR_ORDER_FAILED'                 => 'Payment failed, please try again',
     'MOLLIE_BILLING_APPLE_PAY_NOT_AVAILABLE'    => 'Apple Pay is not available for this billing address',
     'MOLLIE_SECOND_CHANCE_MAIL_SUBJECT'         => 'Completion of your order at',
+
+    'MOLLIE_CREDIT_CARD_HOLDER'                             => 'Card holder',
+    'MOLLIE_CREDIT_CARD_NUMBER'                             => 'Card number',
+    'MOLLIE_CREDIT_CARD_VALID_UNTIL'                        => 'Valid until',
+    'MOLLIE_CREDIT_CARD_SECURITY_CODE'                      => 'CVV2 or CVC2 security code',
+    'MOLLIE_CREDIT_CARD_SECURITY_CODE_DESCRIPTION'          => 'This check digit is printed in reverse italic on the back side of your credit card right above the signature panel.'
 ];

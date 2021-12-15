@@ -11,31 +11,31 @@
     </div>
 
     <div class="form-group">
-        <label class="req control-label col-lg-3">[{oxmultilang ident="BANK_ACCOUNT_HOLDER"}]</label>
+        <label class="req control-label col-lg-3">[{oxmultilang ident="MOLLIE_CREDIT_CARD_HOLDER"}]</label>
         <div class="col-lg-9">
             <div id="mollieCardHolder" class="form-control"></div>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="req control-label col-lg-3">[{oxmultilang ident="NUMBER"}]</label>
+        <label class="req control-label col-lg-3">[{oxmultilang ident="MOLLIE_CREDIT_CARD_NUMBER"}]</label>
         <div class="col-lg-9">
             <div id="mollieCardNumber" class="form-control"></div>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="req control-label col-lg-3">[{oxmultilang ident="VALID_UNTIL"}]</label>
+        <label class="req control-label col-lg-3">[{oxmultilang ident="MOLLIE_CREDIT_CARD_VALID_UNTIL"}]</label>
         <div class="col-lg-9">
             <div id="mollieExpiryDate" class="form-control mollie-valid-until"></div>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="req control-label col-lg-3">[{oxmultilang ident="CARD_SECURITY_CODE"}]</label>
+        <label class="req control-label col-lg-3">[{oxmultilang ident="MOLLIE_CREDIT_CARD_SECURITY_CODE"}]</label>
         <div class="col-lg-9">
             <div id="mollieVerificationCode" class="form-control"></div>
-            <span class="help-block">[{oxmultilang ident="CARD_SECURITY_CODE_DESCRIPTION"}]</span>
+            <span class="help-block">[{oxmultilang ident="MOLLIE_CREDIT_CARD_SECURITY_CODE_DESCRIPTION"}]</span>
         </div>
     </div>
     [{oxstyle include=$oViewConf->getModuleUrl('molliepayment','css/mollie.css')}]
