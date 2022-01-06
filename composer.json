@@ -18,6 +18,6 @@
     "psr-4": {
       "Mollie\\Payment\\": "./",
       "Mollie\\Api\\": "./lib/mollie-api-php/src/"
-    },
+    }
   }
 }
