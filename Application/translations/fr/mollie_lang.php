@@ -29,5 +29,11 @@ $aLang = [
     'MOLLIE_ERROR_ORDER_CANCELED'               => 'Le paiement a été annulé, veuillez essayer à nouveau',
     'MOLLIE_ERROR_ORDER_FAILED'                 => 'Le paiement a échoué, veuillez essayer à nouveau',
     'MOLLIE_BILLING_APPLE_PAY_NOT_AVAILABLE'    => 'Apple Pay n\'est pas disponible pour cette adresse de facturation',
-    'MOLLIE_SECOND_CHANCE_MAIL_SUBJECT'         => 'Finalisation de votre commande à',
+    'MOLLIE_SECOND_CHANCE_MAIL_SUBJECT'                     => 'Finalisation de votre commande à',
+
+    'MOLLIE_CREDIT_CARD_HOLDER'                             => 'Titulaire',
+    'MOLLIE_CREDIT_CARD_NUMBER'                             => 'Numéro de carte',
+    'MOLLIE_CREDIT_CARD_VALID_UNTIL'                        => 'Valide jusqu\'au',
+    'MOLLIE_CREDIT_CARD_SECURITY_CODE'                      => 'Code de sécurité',
+    'MOLLIE_CREDIT_CARD_SECURITY_CODE_DESCRIPTION'          => 'Le code se trouve au dos de votre carte. Il s\'agit des 3 chiffres inscrits dans l\'espace de signature.'
 ];

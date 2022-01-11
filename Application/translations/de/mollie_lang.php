@@ -30,4 +30,10 @@ $aLang = [
     'MOLLIE_ERROR_ORDER_FAILED'                 => 'Die Bezahlung ist fehlgeschlagen, bitte versuchen Sie es erneut',
     'MOLLIE_BILLING_APPLE_PAY_NOT_AVAILABLE'    => 'Apple Pay ist für diese Rechnungsadresse nicht verfügbar',
     'MOLLIE_SECOND_CHANCE_MAIL_SUBJECT'         => 'Abschluss Ihrer Bestellung bei',
+
+    'MOLLIE_CREDIT_CARD_HOLDER'                             => 'Karteninhaber',
+    'MOLLIE_CREDIT_CARD_NUMBER'                             => 'Kartennummer',
+    'MOLLIE_CREDIT_CARD_VALID_UNTIL'                        => 'Gültig bis',
+    'MOLLIE_CREDIT_CARD_SECURITY_CODE'                      => 'Prüfziffer',
+    'MOLLIE_CREDIT_CARD_SECURITY_CODE_DESCRIPTION'          => 'Diese befindet sich auf der Rückseite Ihrer Kreditkarte. Die Prüfziffer sind die letzten drei Ziffern im Unterschriftsfeld.'
 ];
