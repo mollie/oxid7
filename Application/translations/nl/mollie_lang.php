@@ -30,4 +30,10 @@ $aLang = [
     'MOLLIE_ERROR_ORDER_FAILED'                 => 'Betaling mislukt, probeer het opnieuw',
     'MOLLIE_BILLING_APPLE_PAY_NOT_AVAILABLE'    => 'Apple Pay is niet beschikbaar voor dit factuuradres',
     'MOLLIE_SECOND_CHANCE_MAIL_SUBJECT'         => 'Completion of your order at',
+
+    'MOLLIE_CREDIT_CARD_HOLDER'                             => 'Kaarthouder',
+    'MOLLIE_CREDIT_CARD_NUMBER'                             => 'Kaartnummer',
+    'MOLLIE_CREDIT_CARD_VALID_UNTIL'                        => 'Geldig tot',
+    'MOLLIE_CREDIT_CARD_SECURITY_CODE'                      => 'CVV2- of CVC2-beveiligingscode',
+    'MOLLIE_CREDIT_CARD_SECURITY_CODE_DESCRIPTION'          => 'Dit controlecijfer is omgekeerd cursief gedrukt op de achterkant van uw creditcard, direct boven het handtekeningpaneel.'
 ];
