@@ -1,0 +1,16 @@
+{% set aIssuers = paymentModel.getIssuers(oView.getDynValue(), sInputName) %}
+{% if aIssuers|length  %}
+    {{ style({ include: oViewConf.getModuleUrl('molliepayment','css/mollie.css') }) }}
+    <div class="form-group issuers-radio">
+        <label class="req control-label col-lg-3">{{ sLabel }}</label>
+        <div class="col-lg-9">
+            {% for key, issuer in aIssuers %}
+                <input class="issuer-radiobutton" type="radio" id="{{ key }}" name="dynvalue[{{ sInputName }}]]" value="{{ key }} {% if sSavedValue == key }]checked{% endif %}>
+                <label for="{{ key }}">
+                    <img class="payment-icon" src="{{ issuer.pic }}">
+                    <span class="issuer-title">{{ issuer.title }}</span>
+                </label><br>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}

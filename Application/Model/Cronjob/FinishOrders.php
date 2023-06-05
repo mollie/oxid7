@@ -33,7 +33,7 @@ class FinishOrders extends \Mollie\Payment\Application\Model\Cronjob\Base
     {
         $aOrders = [];
 
-        $sProcessingFolder = Registry::getConfig()->getShopConfVar('sMollieStatusProcessing');
+        $sProcessingFolder = Payment::getInstance()->getShopConfVar('sMollieStatusProcessing');
         $sTriggerDate = date('Y-m-d H:i:s', time() - (60 * 60 * 24));
         $sMinPaidDate = date('Y-m-d H:i:s', time() - (60 * 2)); // This will prevent finishing legit orders before the customer does
         $sQuery = " SELECT 

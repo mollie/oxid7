@@ -1,0 +1,279 @@
+{% include "headitem.html.twig" with {title: "GENERAL_ADMIN_TITLE"|translate} %}
+
+<script type="text/javascript">
+    <!--
+    function toggleRefundType(oElem)
+    {
+        var quantityDisplay = oElem.value === 'quantity' ? '' : 'none';
+        var amountDisplay = oElem.value === 'amount' ? '' : 'none';
+
+        setDisplayStyleForClassName('refundQuantity', quantityDisplay);
+        setDisplayStyleForClassName('refundAmount', amountDisplay);
+    }
+
+    function setDisplayStyleForClassName(className, displayStyle)
+    {
+        var aElements = document.getElementsByClassName(className);
+        for (i = 0; i < aElements.length; i++) {
+            aElements[i].style.display = displayStyle;
+        }
+    }
+
+    function copyRefundDescription(oElem)
+    {
+        var aFormElements = document.getElementsByClassName("refund_description");
+        if (typeof aFormElements !== undefined && aFormElements.length > 0) {
+            for (var i = 0; i < aFormElements.length; i++) {
+                aFormElements[i].value = oElem.value;
+            }
+        }
+    }
+
+    //-->
+</script>
+<style>
+    .refundTable TD {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    TD.borderTop {
+        border-top: 1px solid black!important;
+    }
+    FIELDSET {
+        border-radius: 15px;
+        margin-bottom: 20px;
+        padding: 10px;
+    }
+    FIELDSET.fullRefund SPAN{
+        margin-left: 2px;
+    }
+    FIELDSET .refundSubmit {
+        margin-top: 15px;
+    }
+    .typeSelect {
+        margin-bottom: 10px;
+    }
+    FIELDSET.refundError {
+        background-color: #FF8282;
+        color: black;
+        border: 3px solid #F00000;
+    }
+    FIELDSET.refundNotice {
+        background-color: #ffeeb5;
+        border: 3px solid #FFE385;
+    }
+    FIELDSET.refundSuccess {
+        background-color: #7aff9e;
+        border: 3px solid #00b02f;
+    }
+    FIELDSET.message STRONG {
+        display: block;
+        margin-bottom: 10px;
+    }
+</style>
+
+{% if readonly %}
+    {% set readonly = "readonly disabled" %}
+{% else %}
+    {% set readonly = "" %}
+{% endif %}
+
+<form name="transfer" id="transfer" action="{{ oViewConf.getSelfLink()|raw }}" method="post">
+    {{ oViewConf.getHiddenSid()|raw }}
+    <input type="hidden" name="oxid" value="{{ oxid }}">
+    <input type="hidden" name="cl" value="mollie_order_refund">
+</form>
+{% if oView.isMollieOrder() is same as(true) %}
+    {% if oView.wasRefundSuccessful() == true %}
+        <fieldset class="refundSuccess message">
+            {{ translate({ ident: "MOLLIE_REFUND_SUCCESSFUL" }) }}
+        </fieldset>
+    {% endif %}
+    {% if oView.getErrorMessage() != false %}
+        <fieldset class="refundError message">
+            <strong>Error</strong>
+            {{ oView.getErrorMessage() }}
+        </fieldset>
+    {% endif %}
+
+    {% set blIsOrderRefundable = oView.isOrderRefundable() %}
+
+    {% if blIsOrderRefundable == false %}
+        <fieldset class="refundNotice message">
+            <strong>{{ translate({ ident: "MOLLIE_NOTICE" }) }}</strong>
+            {{ translate({ ident: "MOLLIE_ORDER_NOT_REFUNDABLE" }) }}
+        </fieldset>
+    {% endif %}
+
+    {% if oView.hasOrderVoucher() == true %}
+        <fieldset class="refundNotice message">
+            <strong>{{ translate({ ident: "MOLLIE_NOTICE" }) }}</strong>
+            {{ translate({ ident: "MOLLIE_VOUCHERS_EXISTING" }) }}
+        </fieldset>
+    {% endif %}
+
+    {% set order = oView.getOrder() %}
+    {% if order.mollieIsEligibleForPaymentFinish() %}
+        <fieldset>
+            <legend>{{ translate({ ident: "MOLLIE_SUBSEQUENT_ORDER_COMPLETION" }) }}</legend>
+            {{ translate({ ident: "MOLLIE_ORDER_PAYMENT_URL" }) }}: <a href="{{ order.mollieGetPaymentFinishUrl() }}" target="_blank" style="text-decoration: underline;">{{ order.mollieGetPaymentFinishUrl() }}</a><br><br>
+            <form action="{{ oViewConf.getSelfLink()|raw }}" method="post">
+                {{ oViewConf.getHiddenSid()|raw }}
+                <input type="hidden" name="cl" value="mollie_order_refund">
+                <input type="hidden" name="oxid" value="{{ oxid }}">
+                <input type="hidden" name="fnc" value="sendSecondChanceEmail">
+                <input type="submit" value="{{ translate({ ident: "MOLLIE_SEND_SECOND_CHANCE_MAIL" }) }}">
+                {% if order.oxorder__molliesecondchancemailsent.value != "0000-00-00 00:00:00" %}
+                    <span style="color: crimson;">{{ translate({ ident: "MOLLIE_SECOND_CHANCE_MAIL_ALREADY_SENT" }) }} ( {{ order.oxorder__molliesecondchancemailsent.value }} )</span>
+                {% endif %}
+            </form>
+        </fieldset>
+    {% endif %}
+
+    {% if blIsOrderRefundable == true %}
+        <fieldset class="fullRefund">
+            <legend>{{ translate({ ident: "MOLLIE_FULL_REFUND" }) }}</legend>
+            <form name="search" id="search" action="{{ oViewConf.getSelfLink()|raw }}" method="post">
+                {{ oViewConf.getHiddenSid()|raw }}
+                <input type="hidden" name="cl" value="mollie_order_refund">
+                <input type="hidden" name="oxid" value="{{ oxid }}">
+                <input type="hidden" name="fnc" value="fullRefund">
+                {% set blIsFullRefundAvailable = oView.isFullRefundAvailable() %}
+                {% if blIsFullRefundAvailable == true %}
+                    <span>{{ translate({ ident: "MOLLIE_FULL_REFUND_TEXT" }) }}: {{ oView.getFormatedPrice(edit.oxorder__oxtotalordersum.value) }} <small>{{ edit.oxorder__oxcurrency.value }}</small></span><br><br>
+                {% else %}
+                    <input type="hidden" name="refundRemaining" value="1">
+                    <span>{{ translate({ ident: "MOLLIE_REFUND_REMAINING" }) }}: {{ oView.getFormatedPrice(oView.getRemainingRefundableAmount()) }} <small>{{ edit.oxorder__oxcurrency.value }}</small></span><br><br>
+                {% endif %}
+                <span><label for="refund_description">{{ translate({ ident: "MOLLIE_REFUND_DESCRIPTION" }) }}:</label></span>
+                <input type="text" name="refund_description" value="" placeholder="{{ translate({ ident: "MOLLIE_REFUND_DESCRIPTION_PLACEHOLDER" }) }}" maxlength="140" size="120"><br>
+                <input type="submit" value="{{ translate({ ident: "MOLLIE_REFUND_SUBMIT" }) }}" class="refundSubmit">
+            </form>
+        </fieldset>
+    {% endif %}
+{% endif %}
+
+<fieldset>
+    <legend>{{ translate({ ident: "MOLLIE_PARTIAL_REFUND" }) }}</legend>
+    {% if oView.isMollieOrder() is same as(false) %}
+        {{ translate({ ident: "MOLLIE_NO_MOLLIE_PAYMENT" }) }}
+    {% else %}
+        {% if blIsOrderRefundable == true %}
+            <label for="refund_description">{{ translate({ ident: "MOLLIE_REFUND_DESCRIPTION" }) }}:</label>
+            <input type="text" name="refund_description" value="" placeholder="{{ translate({ ident: "MOLLIE_REFUND_DESCRIPTION_PLACEHOLDER" }) }}" maxlength="140" size="120" onkeyup="copyRefundDescription(this)"><br><br>
+        {% endif %}
+        <table cellspacing="0" cellpadding="0" border="0" width="98%" class="refundTable">
+            <tr>
+                <td class="listheader first" height="15" width="10%">{{ translate({ ident: "GENERAL_ITEMNR" }) }}</td>
+                <td class="listheader" width="10%">{{ translate({ ident: "GENERAL_TITLE" }) }}</td>
+                <td class="listheader" width="10%">{{ translate({ ident: "MOLLIE_HEADER_SINGLE_PRICE" }) }}</td>
+                <td class="listheader" width="10%">{{ translate({ ident: "GENERAL_ATALL" }) }}</td>
+                <td class="listheader" width="10%">{{ translate({ ident: "ORDER_ARTICLE_MWST" }) }}</td>
+                <td class="listheader" width="10%">{{ translate({ ident: "MOLLIE_HEADER_ORDERED" }) }}</td>
+                <td class="listheader" width="20%">{{ translate({ ident: "MOLLIE_HEADER_REFUNDED" }) }}</td>
+                {% if blIsOrderRefundable == true %}
+                    {% if oView.getRefundType() == 'quantity' %}
+                        <td class="listheader" width="5%">{{ translate({ ident: "MOLLIE_REFUND_QUANTITY" }) }}</td>
+                    {% else %}
+                        <td class="listheader" width="5%">{{ translate({ ident: "MOLLIE_REFUND_AMOUNT" }) }}</td>
+                    {% endif %}
+                {% endif %}
+            </tr>
+            {% set blWhite = "" %}
+            {% set class = "" %}
+            {% set blBorderDrawn = false %}
+            {% set _cnt = 0 %}
+            {% for listitem in oView.getRefundItems() %}
+                {% set _cnt = _cnt+1 %}
+                <tr id="art.{{ _cnt }}">
+                    {% if listitem.isOrderarticle == false and blBorderDrawn == false %}
+                        {% set class = " borderTop" %}
+                        {% set blBorderDrawn = true %}
+                    {% endif %}
+                    {% set listclass = listitemblWhite %}
+                    <td valign="top" class="{{ listclass }}{{ class }}" height="15">{{ listitem.artnum }}</a></td>
+                    <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.title|striptags }}</a></td>
+                    <td valign="top" class="{{ listclass }}{{ class }}">{{ oView.getFormatedPrice(listitem.singlePrice) }} <small>{{ edit.oxorder__oxcurrency.value }}</small></td>
+                    <td valign="top" class="{{ listclass }}{{ class }}">{{ oView.getFormatedPrice(listitem.totalPrice) }} <small>{{ edit.oxorder__oxcurrency.value }}</small></td>
+                    <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.vat }}</td>
+                    <td valign="top" class="{{ listclass }}{{ class }}">
+                        {% if oView.getRefundType() == 'quantity' %}
+                            <span class="refundQuantity">{{ listitem.quantity }}</span>
+                        {% else %}
+                            <span class="refundAmount">{{ oView.getFormatedPrice(listitem.totalPrice) }} <small>{{ edit.oxorder__oxcurrency.value }}</small></span>
+                        {% endif %}
+                    </td>
+                    <td valign="top" class="{{ listclass }}{{ class }}">
+                        {% if oView.getRefundType() == 'quantity' %}
+                            <span class="refundQuantity">{{ listitem.quantityRefunded }}</span>
+                        {% else %}
+                            <span>{{ oView.getFormatedPrice(listitem.amountRefunded) }} <small>{{ edit.oxorder__oxcurrency.value }}</small></span>
+                        {% endif %}
+                    </td>
+                    {% if blIsOrderRefundable == true %}
+                        {% if oView.getRefundType() == 'quantity' %}
+                            <td valign="top" class="{{ listclass }}{{ class }}" nowrap>
+                                {% if listitem.isOrderarticle == true %}
+                                    <span class="refundQuantity">
+                                        <form action="{{ oViewConf.getSelfLink()|raw }}" method="post">
+                                            {{ oViewConf.getHiddenSid()|raw }}
+                                            <input type="hidden" name="cl" value="mollie_order_refund">
+                                            <input type="hidden" name="oxid" value="{{ oxid }}">
+                                            <input type="hidden" name="fnc" value="partialRefund">
+                                            <input type="hidden" name="refund_description" value="" class="refund_description">
+                                            <input type="text" name="aOrderArticles[{{ listitem.id }}][refund_quantity]" value="{{ listitem.refundableQuantity }}" class="listedit" {% if listitem.refundableQuantity <= 0 %}disabled{% endif %}>
+                                            <input type="submit" value="{{ translate({ ident: "MOLLIE_REFUND_SUBMIT" }) }}" {% if listitem.refundableQuantity <= 0 %}disabled{% endif %}>
+                                        </form>
+                                    </span>
+                                {% endif %}
+                            </td>
+                        {% else %}
+                            <td valign="top" class="{{ listclass }}{{ class }}" nowrap>
+                                <span {% if listitem.isOrderarticle == true and oView.isQuantityAvailable() == true %}class="refundAmount"{% endif %}>
+                                    <form action="{{ oViewConf.getSelfLink()|raw }}" method="post">
+                                        {{ oViewConf.getHiddenSid()|raw }}
+                                        <input type="hidden" name="cl" value="mollie_order_refund">
+                                        <input type="hidden" name="oxid" value="{{ oxid }}">
+                                        <input type="hidden" name="fnc" value="partialRefund">
+                                        <input type="hidden" name="refund_description" value="" class="refund_description">
+                                        <input type="text" name="aOrderArticles[{{ listitem.id }}][refund_amount]" value="{{ listitem.refundableAmount }}" class="listedit" {% if listitem.refundableAmount <= 0 or listitem.isPartialAllowed == false %}disabled{% endif %}>
+                                        <small>{{ edit.oxorder__oxcurrency.value }}</small>
+                                        <input type="submit" value="{{ translate({ ident: "MOLLIE_REFUND_SUBMIT" }) }}" {% if listitem.refundableAmount <= 0 or listitem.isPartialAllowed == false %}disabled{% endif %}>
+                                    </form>
+                                </span>
+                            </td>
+                        {% endif %}
+                    {% endif %}
+                    {% if listitem.isOrderarticle == false %}
+                        {% set class = "" %}
+                    {% endif %}
+                </tr>
+                {% if blWhite == "2" %}
+                    {% set blWhite = "" %}
+                {% else %}
+                    {% set blWhite = "2" %}
+                {% endif %}
+            {% endfor %}
+        </table><br>
+        {% if blIsOrderRefundable == true %}
+            <form id="free_refund" action="{{ oViewConf.getSelfLink()|raw }}" method="post">
+                {{ oViewConf.getHiddenSid()|raw }}
+                <input type="hidden" name="cl" value="mollie_order_refund">
+                <input type="hidden" name="oxid" value="{{ oxid }}">
+                <input type="hidden" name="fnc" value="freeRefund">
+                <input type="hidden" name="refund_description" value="" class="refund_description">
+                <label for="refund_description">{{ translate({ ident: "MOLLIE_REFUND_FREE_AMOUNT" }) }}:</label>
+                <span>
+                    <input type="text" name="free_amount" placeholder="0.00" value="" class="listedit">
+                    <small>{{ edit.oxorder__oxcurrency.value }}</small>
+                    <input type="submit" value="{{ translate({ ident: "MOLLIE_REFUND_SUBMIT" }) }}">
+                </span><br><br>
+                <span>{{ translate({ ident: "MOLLIE_REFUND_FREE_1" }) }} {{ oView.getFormatedPrice(edit.oxorder__oxtotalordersum.value) }} <small>{{ edit.oxorder__oxcurrency.value }}</small> {{ translate({ ident: "MOLLIE_REFUND_FREE_2" }) }} {{ oView.getAmountRefunded() }} <small>{{ edit.oxorder__oxcurrency.value }}</small> {{ translate({ ident: "MOLLIE_REFUND_FREE_3" }) }}: {{ oView.getAmountRemaining() }} <small>{{ edit.oxorder__oxcurrency.value }}</small></span>
+            </form>
+        {% endif %}
+    {% endif %}
+</fieldset>
+
+{% include "bottomnaviitem.html.twig" %}
+</table>
+{% include "bottomitem.html.twig" %}

@@ -26,14 +26,14 @@ class ApplePay extends Base
      *
      * @var string|bool
      */
-    protected $sCustomConfigTemplate = 'mollie_config_applepay.tpl';
+    protected $sCustomConfigTemplate = 'mollie_config_applepay';
 
     /**
      * Determines custom frontend template if existing, otherwise false
      *
      * @var string|bool
      */
-    protected $sCustomFrontendTemplate = 'mollieapplepay.tpl';
+    protected $sCustomFrontendTemplate = 'mollieapplepay';
 
     /**
      * Determines if the payment method is hidden at first when payment list is displayed

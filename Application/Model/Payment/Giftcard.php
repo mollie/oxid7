@@ -25,14 +25,14 @@ class Giftcard extends Base
      *
      * @var string|bool
      */
-    protected $sCustomConfigTemplate = 'mollie_config_giftcard.tpl';
+    protected $sCustomConfigTemplate = 'mollie_config_giftcard';
 
     /**
      * Determines custom frontend template if existing, otherwise false
      *
      * @var string|bool
      */
-    protected $sCustomFrontendTemplate = 'molliegiftcard.tpl';
+    protected $sCustomFrontendTemplate = 'molliegiftcard';
 
     /**
      * Return parameters specific to the given payment type, if existing

@@ -2,6 +2,7 @@
 
 namespace Mollie\Payment\Application\Model\TransactionHandler;
 
+use Mollie\Payment\Application\Helper\Payment;
 use Mollie\Payment\Application\Model\Payment\Base as PaymentBase;
 use OxidEsales\Eshop\Application\Model\Order;
 use OxidEsales\Eshop\Core\Registry;
@@ -23,7 +24,7 @@ abstract class Base
      */
     protected function logResult($aResult)
     {
-        if ((bool)Registry::getConfig()->getShopConfVar('blMollieLogTransactionInfo') === true) {
+        if ((bool)Payment::getInstance()->getShopConfVar('blMollieLogTransactionInfo') === true) {
             $sMessage = date("Y-m-d h:i:s")." Transaction handled: ".print_r($aResult, true)." \n";
 
             $sLogFilePath = getShopBasePath().'/log/'.$this->sLogFileName;

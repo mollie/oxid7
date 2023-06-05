@@ -2,6 +2,7 @@
 
 namespace Mollie\Payment\extend\Application\Controller;
 
+use Mollie\Payment\Application\Helper\Payment;
 use OxidEsales\Eshop\Application\Model\Basket;
 use OxidEsales\Eshop\Application\Model\Country;
 use OxidEsales\Eshop\Core\Registry;
@@ -49,7 +50,7 @@ class PaymentController extends PaymentController_parent
      */
     protected function mollieRemoveUnavailablePaymentMethods()
     {
-        $blRemoveDeactivated = (bool)Registry::getConfig()->getShopConfVar('blMollieRemoveDeactivatedMethods');
+        $blRemoveDeactivated = (bool)Payment::getInstance()->getShopConfVar('blMollieRemoveDeactivatedMethods');
         $oBasket = Registry::getSession()->getBasket();
         $sBillingCountryCode = $this->mollieGetBillingCountry($oBasket);
         foreach ($this->_oPaymentList as $oPayment) {

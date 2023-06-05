@@ -1,0 +1,10 @@
+{% set mollieApplePayEnable %}
+    var applePayDiv = document.getElementById('container_[{$sPaymentID}]');
+    if (isApplePayAvailable()) {
+        applePayDiv.style.display = '';
+    } else {
+        applePayDiv.remove();
+    }
+{% endset %}
+{{ script({ include: oViewConf.getModuleUrl('molliepayment','js/mollie.js'), dynamic: __oxid_include_dynamic }) }}
+{{ script({ add: mollieApplePayEnable.__toString(), priority: 10, dynamic: __oxid_include_dynamic }) }}

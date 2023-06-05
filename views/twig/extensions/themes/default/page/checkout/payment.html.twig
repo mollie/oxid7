@@ -1,0 +1,24 @@
+{% extends "page/checkout/payment.html.twig" %}
+
+{% block select_payment %}
+    {% if attribute(paymentmethod, 'isMolliePaymentMethod') is defined and paymentmethod.isMolliePaymentMethod() is same as(true) %}
+        {% set paymentModel = paymentmethod.getMolliePaymentModel() %}
+        <div class="well well-sm" id="container_{{ sPaymentID }}" {% if paymentModel.isMollieMethodHiddenInitially() %}style="display:none"{% endif %}>
+            {% if attribute(oViewConf, 'mollieShowIcons') is defined and oViewConf.mollieShowIcons is same as(true) %}
+                {% include "@molliepayment/frontend/mollie_payment_showicons.html.twig" %}
+            {% else %}
+                {% include "page/checkout/inc/payment_other.html.twig" %}
+            {% endif %}
+        </div>
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
+
+{% block checkout_payment_errors %}
+    {{ parent() }}
+
+    {% if oView.getPaymentError() == -50 %}
+        <div class="alert alert-danger">{{ oView.getPaymentErrorText() }}</div>
+    {% endif %}
+{% endblock %}

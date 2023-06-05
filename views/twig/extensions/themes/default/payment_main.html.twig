@@ -1,0 +1,124 @@
+{% extends "payment_main.html.twig" %}
+
+{% block admin_payment_main_form %}
+    {% if edit is not null and edit.isMolliePaymentMethod() == 1 %}
+        {% set paymentModel = edit.getMolliePaymentModel() %}
+        <tr>
+            <td class="edittext" colspan="2">
+                <b>{{ translate({ ident: "MOLLIE_IS_MOLLIE" }) }}</b>
+                {% if paymentModel.isOnlyOrderApiSupported() is same as(true) %}
+                    <input type="hidden" name="mollie[api]" value="order">
+                {% endif %}
+            </td>
+        </tr>
+        {% if attribute(oView, 'mollieIsTokenConfigured') is defined and oView.mollieIsTokenConfigured is same as(false) %}
+            <tr>
+                <td class="edittext" colspan="2">
+                    <b style="color: red;">{{ translate({ ident: "MOLLIE_TOKEN_NOT_CONFIGURED" }) }}</b>
+                </td>
+            </tr>
+        {% elseif paymentModel.isMolliePaymentActive() is same as(false) %}
+            <tr>
+                <td class="edittext" colspan="2">
+                    <b style="color: red;">{{ translate({ ident: "MOLLIE_IS_METHOD_ACTIVATED" }) }}</b>
+                </td>
+            </tr>
+        {% endif %}
+        {% if paymentModel.isOnlyOrderApiSupported() is same as(false) %}
+            <tr>
+                <td class="edittext" width="70">
+                    {{ translate({ ident: "MOLLIE_CONFIG_METHOD" }) }}
+                </td>
+                <td class="edittext">
+                    <script type="text/javascript">
+                        <!--
+                        function mollieHandleApiChange(oSelect)
+                        {
+                            var aElements = document.getElementsByClassName("mollieApiHint");
+                            if (typeof aElements !== undefined && aElements.length > 0) {
+                                for (var i = 0; i < aElements.length; i++) {
+                                    if (aElements[i].id != "mollie_apihint_" + oSelect.value) {
+                                        aElements[i].style.display = "none";
+                                    } else {
+                                        aElements[i].style.display = "";
+                                    }
+                                }
+                            }
+
+                            if (oSelect.value === 'payment') {
+                                document.getElementById('mollie_payment_description').style.display = '';
+                            } else {
+                                document.getElementById('mollie_payment_description').style.display = 'none';
+                            }
+                        }
+                        -->
+                    </script>
+                    <select name="mollie[api]" onchange="mollieHandleApiChange(this)" {{ readonly }}>
+                        <option value="payment" {% if paymentModel.getApiMethod() == 'payment' %}selected{% endif %}>Payment API</option>
+                        <option value="order" {% if paymentModel.getApiMethod() == 'order' %}selected{% endif %}>Order API</option>
+                    </select>
+                    <span id="mollie_apihint_payment" class="mollieApiHint" {% if paymentModel.getApiMethod() != 'payment' %}style="display:none;"{% endif %}>
+                        {{ translate({ ident: "MOLLIE_PAYMENT_API_LINK_1" }) }} <a href="https://docs.mollie.com/payments/overview" target=”_blank” style="text-decoration: underline;">{{ translate({ ident: "MOLLIE_PAYMENT_API_LINK_2" }) }}</a>
+                    </span>
+                    <span id="mollie_apihint_order" class="mollieApiHint" {% if paymentModel.getApiMethod() != 'order' %}style="display:none;"{% endif %}>
+                        {{ translate({ ident: "MOLLIE_ORDER_API_LINK_1" }) }} <a href="https://docs.mollie.com/orders/overview" target=”_blank” style="text-decoration: underline;">{{ translate({ ident: "MOLLIE_ORDER_API_LINK_2" }) }}</a>
+                    </span>
+                </td>
+            </tr>
+            <tr id="mollie_payment_description" {% if paymentModel.getApiMethod() != 'payment' %}style="display:none;"{% endif %}>
+                <td class="edittext" width="70">
+                    {{ translate({ ident: "MOLLIE_PAYMENT_DESCRIPTION" }) }}
+                </td>
+                <td class="edittext">
+                    <input type="text" class="editinput" size="25" name="mollie[payment_description]" value="{{ paymentModel.getConfigParam('payment_description') }}" {{ readonly }}>
+                    {% include "inputhelp.html.twig" with {'sHelpId': help_id("MOLLIE_PAYMENT_DESCRIPTION_HELP"), 'sHelpText': help_text("MOLLIE_PAYMENT_DESCRIPTION_HELP")} %}
+                </td>
+            </tr>
+        {% endif %}
+        {% if paymentModel.isOrderExpirySupported() is same as(true) %}
+            <tr>
+                <td class="edittext" width="70">
+                    {{ translate({ ident: "MOLLIE_ORDER_EXPIRY" }) }}
+                </td>
+                <td class="edittext">
+                    <select name="mollie[expiryDays]" {{ readonly }}>
+                        {% for days, title in oView.mollieGetExpiryDayOptions() %}
+                            <option value="{{ days }}" {% if paymentModel.getExpiryDays() == days %}selected{% endif %}>{{ title }}</option>
+                        {% endfor %}
+                    </select>
+                    {% include "inputhelp.html.twig" with {'sHelpId': help_id("MOLLIE_ORDER_EXPIRY_HELP"), 'sHelpText': help_text("MOLLIE_ORDER_EXPIRY_HELP")} %}
+                </td>
+            </tr>
+        {% endif %}
+        {% if paymentModel.getCustomConfigTemplate() is not empty %}
+            {% include paymentModel.getCustomConfigTemplate() %}
+        {% endif %}
+        <tr>
+            <td class="edittext" colspan="2">
+                &nbsp;<div style="display: none;" id="mollie_payment_min_max">
+                    {% set oFrom = paymentModel.getMollieFromAmount() %}
+                    {% set oTo = paymentModel.getMollieToAmount() %}
+                    {% if oFrom %}<br>
+                            {{ translate({ ident: "MOLLIE_PAYMENT_LIMITATION" }) }}:<br>
+                            {{ translate({ ident: "MOLLIE_PAYMENT_LIMITATION_FROM" }) }} {{ oFrom.value }}  {{ oFrom.currency }} {{ translate({ ident: "MOLLIE_PAYMENT_LIMITATION_TO" }) }}
+                        {% if oTo is not same as(false) %}
+                            {{ oTo.value }} {{ oTo.currency }}
+                        {% else %}
+                            {{ translate({ ident: "MOLLIE_PAYMENT_LIMITATION_UNLIMITED" }) }}
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <script>
+                    function appendMinMaxInfo() {
+                        var minMaxInfo = document.getElementById("mollie_payment_min_max");
+                        var clone = minMaxInfo.cloneNode(true);
+                        clone.style.display = "";
+                        document.getElementById("helpText_HELP_PAYMENT_MAIN_AMOUNT").parentNode.appendChild(clone);
+                    }
+                    setTimeout(appendMinMaxInfo, 100);
+                </script>
+            </td>
+        </tr>
+    {% endif %}
+    {{ parent() }}
+{% endblock %}

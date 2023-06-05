@@ -2,6 +2,7 @@
 
 namespace Mollie\Payment\Application\Model\Cronjob;
 
+use Mollie\Payment\Application\Helper\Payment;
 use Mollie\Payment\Application\Model\Cronjob;
 use OxidEsales\Eshop\Core\Registry;
 
@@ -142,7 +143,7 @@ class Base
      */
     public function isCronjobActivated()
     {
-        if ((bool)Registry::getConfig()->getShopConfVar($this->getActivityConfVarName()) === true) {
+        if ((bool)Payment::getInstance()->getShopConfVar($this->getActivityConfVarName()) === true) {
             return true;
         }
         return false;

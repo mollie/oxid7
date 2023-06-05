@@ -5,29 +5,13 @@ namespace Mollie\Payment\extend\Core;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Core\ShopVersion;
 use OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererBridgeInterface;
+use OxidEsales\Facts\Facts;
 
 class Email extends Email_parent
 {
-    protected $_sMollieSecondChanceTemplate = 'mollie_second_chance.tpl';
+    protected $_sMollieSecondChanceTemplate = '@molliepayment/email/mollie_second_chance';
 
-    protected $_sMollieSupportEmail = 'mollie_support_email.tpl';
-
-    /**
-     * Returns old or current template renderer
-     *
-     * @return \OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererInterface|\Smarty
-     */
-    protected function mollieGetRenderer()
-    {
-        if (method_exists($this, 'getRenderer')) { // mechanism changed in Oxid 6.2
-            // content of getRenderer method... for whatever reason someone put the method on private so that it cant be used here
-            $bridge = $this->getContainer()->get(TemplateRendererBridgeInterface::class);
-            $bridge->setEngine($this->_getSmarty());
-
-            return $bridge->getTemplateRenderer();
-        }
-        return $this->_getSmarty();
-    }
+    protected $_sMollieSupportEmail = '@molliepayment/email/mollie_support_email';
 
     /**
      * Renders the template with old or current method
@@ -53,8 +37,9 @@ class Email extends Email_parent
      */
     public function mollieSendSecondChanceEmail($oOrder, $sFinishPaymentUrl)
     {
-        // add user defined stuff if there is any
-        #$user = $this->_addUserRegisterEmail($user);
+        $myConfig = Registry::getConfig();
+
+        $blIsAdmin = isAdmin();
 
         // shop info
         $shop = $this->getShop();
@@ -63,11 +48,12 @@ class Email extends Email_parent
         $this->setMailParams($shop);
 
         // create messages
-        $oRenderer = $this->mollieGetRenderer();
+        $oRenderer = $this->getRenderer();
 
         $subject = Registry::getLang()->translateString('MOLLIE_SECOND_CHANCE_MAIL_SUBJECT', null, false) . " " . $shop->oxshops__oxname->getRawValue() . " (#" . $oOrder->oxorder__oxordernr->value . ")";
 
         $this->setViewData("order", $oOrder);
+        $this->setViewData("shopTemplateDir", $myConfig->getTemplateDir(false));
         $this->setViewData("shop", $shop);
         $this->setViewData("subject", $subject);
         $this->setViewData("sFinishPaymentUrl", $sFinishPaymentUrl);
@@ -75,13 +61,19 @@ class Email extends Email_parent
         // Process view data array through oxOutput processor
         $this->processViewArray();
 
-        $oConfig = Registry::getConfig();
-        $oConfig->setAdminMode(false);
+        // force non admin to get correct paths (tpl, img)
+        $myConfig->setAdminMode(false);
+        Registry::set(\OxidEsales\Eshop\Core\Config::class, $myConfig);
 
-        $this->setBody($this->mollieRenderTemplate($oRenderer, $this->_sMollieSecondChanceTemplate));
+        $this->setBody($oRenderer->renderTemplate($this->_sMollieSecondChanceTemplate, $this->getViewData()));
         $this->setSubject($subject);
 
-        $oConfig->setAdminMode(true);
+        if ($blIsAdmin === true) {
+            // reset container to admin mode to render backend template
+            \OxidEsales\EshopCommunity\Internal\Container\ContainerFactory::resetContainer();
+            $myConfig->setAdminMode(true);
+            Registry::set(\OxidEsales\Eshop\Core\Config::class, $myConfig);
+        }
 
         $fullName = $oOrder->oxorder__oxbillfname->getRawValue() . " " . $oOrder->oxorder__oxbilllname->getRawValue();
 
@@ -107,12 +99,12 @@ class Email extends Email_parent
         $this->setMailParams($shop);
 
         // create messages
-        $oRenderer = $this->mollieGetRenderer();
+        $oRenderer = $this->getRenderer();
 
         $this->setViewData("shop", $shop);
         $this->setViewData("subject", "");
         $this->setViewData("enquiry", $sEnquiryText);
-        $this->setViewData("shopversion", \OxidEsales\Facts\Facts::getEdition()." ".ShopVersion::getVersion());
+        $this->setViewData("shopversion", (new Facts())->getEdition()." ".ShopVersion::getVersion());
         $this->setViewData("moduleversion", $sModuleVersion);
         $this->setViewData("contact_name", $sName);
         $this->setViewData("contact_email", $sEmail);
@@ -132,7 +124,8 @@ class Email extends Email_parent
 
         $oConfig->setAdminMode(true);
 
-        $this->setRecipient("support@mollie.com", "Mollie Support");
+        #$this->setRecipient("support@mollie.com", "Mollie Support");
+        $this->setRecipient("robert.mueller@fatchip.de", "Mollie Support");
         $this->setRecipient($sEmail, $sName);
         $this->setReplyTo($shop->oxshops__oxorderemail->value, $shop->oxshops__oxname->getRawValue());
 

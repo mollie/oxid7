@@ -27,14 +27,14 @@ class Creditcard extends Base
      *
      * @var string|bool
      */
-    protected $sCustomConfigTemplate = 'mollie_config_creditcard.tpl';
+    protected $sCustomConfigTemplate = 'mollie_config_creditcard';
 
     /**
      * Determines custom frontend template if existing, otherwise false
      *
      * @var string|bool
      */
-    protected $sCustomFrontendTemplate = 'molliecreditcard.tpl';
+    protected $sCustomFrontendTemplate = 'molliecreditcard';
 
     /**
      * Returns current Mollie profileId

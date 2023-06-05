@@ -186,7 +186,7 @@ class ModuleMain extends ModuleMain_parent
 
         if ($this->mollieGetCurrentModuleId() == "molliepayment" && $this->mollieisModuleActive()) {
             // Return Mollie template
-            return "mollie_module_main.tpl";
+            return "@molliepayment/mollie_module_main";
         }
 
         return $sReturn;

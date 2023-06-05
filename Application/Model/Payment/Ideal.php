@@ -26,14 +26,14 @@ class Ideal extends Base
      *
      * @var string|bool
      */
-    protected $sCustomConfigTemplate = 'mollie_config_ideal.tpl';
+    protected $sCustomConfigTemplate = 'mollie_config_ideal';
 
     /**
      * Determines custom frontend template if existing, otherwise false
      *
      * @var string|bool
      */
-    protected $sCustomFrontendTemplate = 'mollieideal.tpl';
+    protected $sCustomFrontendTemplate = 'mollieideal';
 
     /**
      * Return parameters specific to the given payment type, if existing

@@ -2,6 +2,7 @@
 
 namespace Mollie\Payment\Application\Model\TransactionHandler;
 
+use Mollie\Payment\Application\Helper\Payment;
 use OxidEsales\Eshop\Application\Model\Order as CoreOrder;
 use Mollie\Api\Resources\Order as ApiOrder;
 use OxidEsales\Eshop\Core\Registry;
@@ -44,7 +45,7 @@ class Order extends Base
                     if ($oTransaction->isPaid()) {
                         $oOrder->mollieMarkAsPaid();
                     }
-                    $oOrder->mollieSetFolder(Registry::getConfig()->getShopConfVar('sMollieStatusProcessing'));
+                    $oOrder->mollieSetFolder(Payment::getInstance()->getShopConfVar('sMollieStatusProcessing'));
                 }
             }
             $blSuccess = true;

@@ -38,7 +38,7 @@ class SecondChance extends \Mollie\Payment\Application\Model\Cronjob\Base
             $iLastRunTime = strtotime($this->getLastRunDateTime());
         }
 
-        $iDayDiff = (int)Registry::getConfig()->getShopConfVar('iMollieCronSecondChanceTimeDiff');
+        $iDayDiff = (int)Payment::getInstance()->getShopConfVar('iMollieCronSecondChanceTimeDiff');
         $iTriggerTimeDiff = 60 * 60 * 24 * $iDayDiff;
 
         $sTriggerMinDate = date('Y-m-d H:i:s', $iLastRunTime - $iTriggerTimeDiff - 10);

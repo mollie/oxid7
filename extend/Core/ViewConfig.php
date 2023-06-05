@@ -15,7 +15,7 @@ class ViewConfig extends ViewConfig_parent
      */
     public function mollieShowIcons()
     {
-        return (bool)Registry::getConfig()->getShopConfVar('blMollieShowIcons');
+        return (bool)Payment::getInstance()->getShopConfVar('blMollieShowIcons');
     }
 
     /**
@@ -76,7 +76,7 @@ class ViewConfig extends ViewConfig_parent
      */
     public function mollieShowApplePayButtonOnBasket()
     {
-        return (bool)Registry::getConfig()->getShopConfVar('blMollieApplePayButtonOnBasket');
+        return (bool)Payment::getInstance()->getShopConfVar('blMollieApplePayButtonOnBasket');
     }
 
     /**
@@ -86,7 +86,7 @@ class ViewConfig extends ViewConfig_parent
      */
     public function mollieShowApplePayButtonOnDetails()
     {
-        return (bool)Registry::getConfig()->getShopConfVar('blMollieApplePayButtonOnDetails');
+        return (bool)Payment::getInstance()->getShopConfVar('blMollieApplePayButtonOnDetails');
     }
 
     /**

@@ -1,0 +1,6 @@
+{% set sListType = oPaymentModel.getConfigParam('issuer_list_type') %}
+{% if sListType == "dropdown" %}
+    {% include "@molliepayment/frontend/mollie_issuers_dropdown.html.twig" %}
+{% elseif sListType == "radio" %}
+    {% include "@molliepayment/frontend/mollie_issuers_radio.html.twig" %}
+{% endif %}

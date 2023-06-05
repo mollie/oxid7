@@ -478,7 +478,7 @@ abstract class Base
         $this->addParameter('metadata', $this->getMetadataParameters($oOrder));
 
         $this->addParameter('billingAddress', $this->getBillingAddressParameters($oOrder));
-        if ($oOrder->oxorder__oxdellname->value != '') {
+        if (!empty($oOrder->oxorder__oxdellname->value)) {
             $this->addParameter('shippingAddress', $this->getShippingAddressParameters($oOrder));
         }
 

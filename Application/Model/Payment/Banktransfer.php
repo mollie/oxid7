@@ -25,7 +25,7 @@ class Banktransfer extends Base
      *
      * @var string|bool
      */
-    protected $sCustomConfigTemplate = 'mollie_config_banktransfer.tpl';
+    protected $sCustomConfigTemplate = 'mollie_config_banktransfer';
 
     /**
      * Generate due date

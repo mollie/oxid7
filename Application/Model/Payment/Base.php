@@ -155,7 +155,10 @@ abstract class Base
      */
     public function getCustomConfigTemplate()
     {
-        return $this->sCustomConfigTemplate;
+        if (!empty($this->sCustomConfigTemplate)) {
+            return "@molliepayment/customConfigTemplate/".$this->sCustomConfigTemplate.".html.twig";
+        }
+        return false;
     }
 
     /**
@@ -165,7 +168,10 @@ abstract class Base
      */
     public function getCustomFrontendTemplate()
     {
-        return $this->sCustomFrontendTemplate;
+        if (!empty($this->sCustomFrontendTemplate)) {
+            return "@molliepayment/customFrontendTemplate/".$this->sCustomFrontendTemplate.".html.twig";
+        }
+        return false;
     }
 
     /**
@@ -339,6 +345,34 @@ abstract class Base
     }
 
     /**
+     * Returnes minimum order sum for Mollie payment type to be usable
+     *
+     * @return object|false
+     */
+    public function getMollieFromAmount()
+    {
+        $aInfo = Payment::getInstance()->getMolliePaymentInfo();
+        if (isset($aInfo[$this->sMolliePaymentCode]['minAmount'])) {
+            return $aInfo[$this->sMolliePaymentCode]['minAmount'];
+        }
+        return false;
+    }
+
+    /**
+     * Returnes maximum order sum for Mollie payment type to be usable
+     *
+     * @return object|false
+     */
+    public function getMollieToAmount()
+    {
+        $aInfo = Payment::getInstance()->getMolliePaymentInfo();
+        if (!empty(isset($aInfo[$this->sMolliePaymentCode]['maxAmount']))) {
+            return $aInfo[$this->sMolliePaymentCode]['maxAmount'];
+        }
+        return false;
+    }
+
+    /**
      * Checks if the payment method is available for the current billing country
      *
      * @param  string $sBillingCountryCode
@@ -360,7 +394,7 @@ abstract class Base
      */
     public function getAlternativeLogoUrl()
     {
-        $sAltLogo = Registry::getConfig()->getShopConfVar("sMollie".$this->getOxidPaymentId()."AltLogo");
+        $sAltLogo = Payment::getInstance()->getShopConfVar("sMollie".$this->getOxidPaymentId()."AltLogo");
         if (!empty($sAltLogo)) {
             return Registry::getConfig()->getActiveView()->getViewConfig()->getModuleUrl('molliepayment', 'img/'.$sAltLogo);
         }

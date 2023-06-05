@@ -13,7 +13,7 @@ class MollieFinishPayment extends FrontendController
     /**
      * @var string
      */
-    protected $_sThisTemplate = 'molliewebhook.tpl';
+    protected $_sThisTemplate = '@molliepayment/molliewebhook';
 
     /**
      * Returns order or false if no id given or order not eligible

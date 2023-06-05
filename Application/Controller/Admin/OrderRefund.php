@@ -15,7 +15,7 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
      *
      * @var string
      */
-    protected $_sTemplate = "mollie_order_refund.tpl";
+    protected $_sTemplate = "@molliepayment/mollie_order_refund";
 
     /**
      * Order object

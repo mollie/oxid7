@@ -2,6 +2,7 @@
 
 namespace Mollie\Payment\extend\Application\Model;
 
+use Mollie\Payment\Application\Helper\Payment;
 use Mollie\Payment\Application\Helper\Payment as PaymentHelper;
 use Mollie\Payment\Application\Model\RequestLog;
 use OxidEsales\Eshop\Core\DatabaseProvider;
@@ -62,7 +63,7 @@ class Order extends Order_parent
      */
     public function mollieSetOrderNumber()
     {
-        if (!$this->oxorder__oxordernr->value) {
+        if (empty($this->oxorder__oxordernr->value)) {
             $this->setNumber();
         }
     }
@@ -366,7 +367,7 @@ class Order extends Order_parent
         }
 
         if ($this->blMollieFinalizeReturnMode === false && $this->blMollieFinishOrderReturnMode === false) { // Mollie module has it's own folder management, so order should not be set to status NEW by oxid core
-            $this->oxorder__oxfolder = new Field(Registry::getConfig()->getShopConfVar('sMollieStatusPending'), Field::T_RAW);
+            $this->oxorder__oxfolder = new Field(Payment::getInstance()->getShopConfVar('sMollieStatusPending'), Field::T_RAW);
         }
     }
 
@@ -544,7 +545,7 @@ class Order extends Order_parent
     {
         parent::cancelOrder();
         if ($this->mollieIsMolliePaymentUsed() === true) {
-            $sCancelledFolder = Registry::getConfig()->getShopConfVar('sMollieStatusCancelled');
+            $sCancelledFolder = Payment::getInstance()->getShopConfVar('sMollieStatusCancelled');
             if (!empty($sCancelledFolder)) {
                 $this->mollieSetFolder($sCancelledFolder);
             }
@@ -574,7 +575,7 @@ class Order extends Order_parent
      */
     public function mollieIsOrderInUnfinishedState()
     {
-        if ($this->oxorder__oxtransstatus->value == "NOT_FINISHED" && $this->oxorder__oxfolder->value == Registry::getConfig()->getShopConfVar('sMollieStatusProcessing')) {
+        if ($this->oxorder__oxtransstatus->value == "NOT_FINISHED" && $this->oxorder__oxfolder->value == Payment::getInstance()->getShopConfVar('sMollieStatusProcessing')) {
             return true;
         }
         return false;
@@ -633,8 +634,19 @@ class Order extends Order_parent
      */
     public function mollieSendSecondChanceEmail()
     {
+        $oConfig = Registry::getConfig();
+        $blIsAdmin = $oConfig->isAdmin();
+
+        $oConfig->setAdminMode(false);
+        Registry::set(\OxidEsales\Eshop\Core\Config::class, $oConfig);
+
         $oEmail = oxNew(\OxidEsales\Eshop\Core\Email::class);
         $oEmail->mollieSendSecondChanceEmail($this, $this->mollieGetPaymentFinishUrl());
+
+        if ($blIsAdmin === true) {
+            $oConfig->setAdminMode(true);
+            Registry::set(\OxidEsales\Eshop\Core\Config::class, $oConfig);
+        }
 
         $this->mollieMarkAsSecondChanceMailSent();
     }

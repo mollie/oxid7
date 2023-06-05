@@ -5,6 +5,9 @@ namespace Mollie\Payment\Application\Helper;
 use Mollie\Payment\Application\Model\Payment\Base;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Core\Module\Module;
+use Psr\Container\ContainerInterface;
+use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleConfigurationDaoBridgeInterface;
 
 class Payment
 {
@@ -116,13 +119,41 @@ class Payment
     }
 
     /**
+     * Returns DependencyInjection container
+     *
+     * @return ContainerInterface
+     */
+    protected function getContainer()
+    {
+        return ContainerFactory::getInstance()->getContainer();
+    }
+
+    /**
+     * Returns config value
+     *
+     * @param  string $sVarName
+     * @return mixed|false
+     */
+    public function getShopConfVar($sVarName)
+    {
+        $moduleConfiguration = $this
+            ->getContainer()
+            ->get(ModuleConfigurationDaoBridgeInterface::class)
+            ->get("molliepayment");
+        if (!$moduleConfiguration->hasModuleSetting($sVarName)) {
+            return false;
+        }
+        return $moduleConfiguration->getModuleSetting($sVarName)->getValue();
+    }
+
+    /**
      * Returns configured mode of mollie
      *
      * @return string
      */
     public function getMollieMode()
     {
-        return Registry::getConfig()->getShopConfVar('sMollieMode');
+        return $this->getShopConfVar('sMollieMode');
     }
 
     /**
@@ -137,9 +168,9 @@ class Payment
             $sMode = $this->getMollieMode();
         }
         if ($sMode == 'live') {
-            return Registry::getConfig()->getShopConfVar('sMollieLiveToken');
+            return $this->getShopConfVar('sMollieLiveToken');
         }
-        return Registry::getConfig()->getShopConfVar('sMollieTestToken');
+        return $this->getShopConfVar('sMollieTestToken');
     }
 
     /**
@@ -164,6 +195,8 @@ class Payment
                     $aPaymentInfo[$oItem->id] = [
                         'title' => $oItem->description,
                         'pic' => $oItem->image->size2x,
+                        'minAmount' => $oItem->minimumAmount,
+                        'maxAmount' => $oItem->maximumAmount,
                     ];
                 }
             } catch (\Exception $exc) {

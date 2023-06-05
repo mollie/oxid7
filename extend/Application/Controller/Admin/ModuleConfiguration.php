@@ -6,6 +6,7 @@ use Mollie\Payment\Application\Helper\Database;
 use Mollie\Payment\Application\Helper\Payment;
 use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleConfigurationDaoBridgeInterface;
 
 class ModuleConfiguration extends ModuleConfiguration_parent
 {
@@ -78,10 +79,10 @@ class ModuleConfiguration extends ModuleConfiguration_parent
      */
     public function mollieHasApiKeys()
     {
-        if (!empty(Registry::getConfig()->getShopConfVar('sMollieLiveToken'))) {
+        if (!empty(Payment::getInstance()->getShopConfVar('sMollieLiveToken'))) {
             return true;
         }
-        if (!empty(Registry::getConfig()->getShopConfVar('sMollieTestToken'))) {
+        if (!empty(Payment::getInstance()->getShopConfVar('sMollieTestToken'))) {
             return true;
         }
         return false;
@@ -160,7 +161,7 @@ class ModuleConfiguration extends ModuleConfiguration_parent
                 if (!empty($aFileInfo['name']) && $aFileInfo['error'] == 0) {
                     try {
                         $this->mollieCleanUploadFileName($sConfVar);
-                        $sReturn = \OxidEsales\Eshop\Core\Registry::getUtilsFile()->processFile($sConfVar, '../vendor/mollie/mollie-oxid/assets/img');
+                        $sReturn = \OxidEsales\Eshop\Core\Registry::getUtilsFile()->processFile($sConfVar, '../vendor/mollie/mollie-oxid7/assets/img');
                     } catch(\Exception $exc) {
                         $this->sMollieCustomUploadError = $exc->getMessage();
                         $sReturn = false;

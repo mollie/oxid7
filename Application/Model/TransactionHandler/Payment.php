@@ -33,7 +33,7 @@ class Payment extends Base
 
                 if (abs($oTransaction->amount->value - $oOrder->oxorder__oxtotalordersum->value) < 0.01) {
                     $oOrder->mollieMarkAsPaid();
-                    $oOrder->mollieSetFolder(Registry::getConfig()->getShopConfVar('sMollieStatusProcessing'));
+                    $oOrder->mollieSetFolder(\Mollie\Payment\Application\Helper\Payment::getInstance()->getShopConfVar('sMollieStatusProcessing'));
                 }
             }
             $blSuccess = true;

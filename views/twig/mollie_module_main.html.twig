@@ -1,0 +1,169 @@
+{% include "headitem.html.twig" with {title: "GENERAL_ADMIN_TITLE"|translate, box: "box"} %}
+
+{% if updatenav %}
+    {{ script({ add: "top.oxid.admin.reloadNavigation('" ~ shopid ~ "');", priority: 10, dynamic: __oxid_include_dynamic }) }}
+{% endif %}
+
+<form name="transfer" id="transfer" action="{{ oViewConf.getSelfLink()|raw }}" method="post">
+    {{ oViewConf.getHiddenSid()|raw }}
+    <input type="hidden" name="oxid" value="{{ oxid }}">
+    <input type="hidden" name="cl" value="module_main">
+    <input type="hidden" name="editlanguage" value="{{ editlanguage }}">
+</form>
+
+{{ script({ include: "js/libs/jquery.min.js", dynamic: __oxid_include_dynamic }) }}
+{{ script({ include: "js/libs/jquery-ui.min.js", dynamic: __oxid_include_dynamic }) }}
+
+{% if oModule %}
+    <table cellspacing="10" width="98%">
+        <tr>
+            <td width="245" valign="top">
+                {% if oModule.getInfo('thumbnail') %}
+                <img src="{{ oViewConf.getModuleUrl(oModule.getId(), oModule.getInfo('thumbnail')) }}" hspace="20" vspace="10"></td>
+            {% else %}
+                <img src="{{ oViewConf.getResourceUrl() }}bg/module.png" hspace="20" vspace="10">
+            {% endif %}
+            </td>
+            <td width="" valign="top">
+                <h1 style="color:#000;font-size:25px;">{{ oModule.getTitle() }}</h1>
+                <p>{{ oModule.getDescription()|raw }}</p>
+                <hr>
+
+                <dl class="moduleDesc clear">
+                    <dt>{{ translate({ ident: "MODULE_VERSION" }) }}</dt>
+                    <dd>{{ oModule.getInfo('version')|default(' - ') }} {% if oView.mollieShowOldVersionWarning() %} <span style="color:red;margin-left: 1rem;"><strong>{{ translate({ ident: "MOLLIE_MODULE_VERSION_OUTDATED"}) }} {{ oView.mollieGetNewestReleaseVersion() }}</strong></span>{% endif %}</dd>
+
+                    <dt>{{ translate({ ident: "MODULE_AUTHOR" }) }}</dt>
+                    <dd>{{ oModule.getInfo('author')|raw|default(' - ') }}</dd>
+
+                    <dt>{{ translate({ ident: "GENERAL_EMAIL" }) }}</dt>
+                    <dd>
+                        {% if oModule.getInfo('email') %}
+                            <a href="mailto:{{ oModule.getInfo('email') }}">{{ oModule.getInfo('email') }}</a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </dd>
+
+                    <dt>{{ translate({ ident: "GENERAL_URL" }) }}</dt>
+                    <dd>
+                        {% if oModule.getInfo('url') %}
+                            <a href="{{ oModule.getInfo('url') }}" target="_blank">{{ oModule.getInfo('url') }}</a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </dd>
+                </dl>
+
+                <br>
+                <h3>{{ translate({ ident: "MOLLIE_SUPPORT_HEADER" }) }}</h3>
+
+                {% if oView.mollieMailHasBeenSent() == true %}
+                    <span style="color:green;">{{ translate({ ident: "MOLLIE_SUPPORT_EMAIL_SENT" }) }}</span>
+                {% else %}
+                    <script>
+                        function mollieIsSubmitFormComplete() {
+                            if (document.getElementById('mollie_support_name').value.trim() == "") {
+                                return false;
+                            }
+                            if (document.getElementById('mollie_support_email').value.trim() == "") {
+                                return false;
+                            }
+                            if (document.getElementById('mollie_support_subject').value.trim() == "") {
+                                return false;
+                            }
+                            if (document.getElementById('mollie_support_enquiry').value.trim() == "") {
+                                return false;
+                            }
+                            return true;
+                        }
+
+                        function mollieCheckSubmitForm() {
+                            var formIsComplete = mollieIsSubmitFormComplete();
+                            document.getElementById("mollie_required_warning").style.display = "none";
+                            if (formIsComplete === false) {
+                                //alert('NOPE');
+                                document.getElementById("mollie_required_warning").style.display = "";
+                                ///@TODO: Show warning box
+                            }
+                            return formIsComplete;
+                        }
+                    </script>
+                    <form name="myedit" id="myedit" action="{{ oViewConf.getSelfLink()}}" method="post" onsubmit="return mollieCheckSubmitForm();">
+                        {{ oViewConf.getHiddenSid()|raw }}
+                        <input type="hidden" name="cl" value="module_main">
+                        <input type="hidden" name="updatelist" value="1">
+                        <input type="hidden" name="oxid" value="{{ oModule.getId() }}">
+                        <input type="hidden" name="fnc" value="mollieSendSupportEnquiry">
+                        <table cellspacing="0" cellpadding="0" border="0">
+                            <tr id="mollie_required_warning" style="display: none;">
+                                <td colspan="2"><div style="color: #D8000C;background-color: #FFD2D2;padding: 10px;margin-bottom: 10px;">{{ translate({ ident: "MOLLIE_SUPPORT_REQUIRED_FIELDS" }) }}</div></td>
+                            </tr>
+                            <tr>
+                                <td class="edittext" width="80"><span style="color:red;">*</span>&nbsp;{{ translate({ ident: "MOLLIE_SUPPORT_FORM_NAME" }) }}</td>
+                                <td class="edittext" width="250"><input id="mollie_support_name" type="text" placeholder="{{ translate({ ident: "MOLLIE_SUPPORT_FORM_NAME" }) }}" class="editinput" size="100" maxlength="255" name="support[name]" value=""></td>
+                            </tr>
+                            <tr>
+                                <td class="edittext" width="80"><span style="color:red;">*</span>&nbsp;{{ translate({ ident: "MOLLIE_SUPPORT_FORM_EMAIL" }) }}</td>
+                                <td class="edittext" width="250"><input id="mollie_support_email" type="text" class="editinput" size="100" maxlength="255" name="support[email]" value=""></td>
+                            </tr>
+                            <tr>
+                                <td class="edittext" width="80"><span style="color:red;">*</span>&nbsp;{{ translate({ ident: "MOLLIE_SUPPORT_FORM_SUBJECT" }) }}</td>
+                                <td class="edittext" width="250"><input id="mollie_support_subject" type="text" placeholder="{{ translate({ ident: "MOLLIE_SUPPORT_FORM_SUBJECT" }) }}" class="editinput" size="100" maxlength="255" name="support[subject]" value=""></td>
+                            </tr>
+                            <tr>
+                                <td class="edittext" width="80"><span style="color:red;">*</span>&nbsp;{{ translate({ ident: "MOLLIE_SUPPORT_FORM_ENQUIRY" }) }}</td>
+                                <td class="edittext" width="250"><textarea id="mollie_support_enquiry" placeholder="{{ translate({ ident: "MOLLIE_SUPPORT_FORM_ENQUIRY_PLACEHOLDER" }) }}" name="support[enquiry]" rows="9" cols="101" style="border: 1px solid #CCCCCC;border-radius: 4px;padding: 3px;"></textarea></td>
+                            </tr>
+                        </table>
+                        <input type="submit" id="submit_support" class="saveButton" value="{{ translate({ ident: "MOLLIE_SUPPORT_FORM_SUBMIT" }) }}">
+                    </form>
+                {% endif %}
+            </td>
+
+            <td width="25" style="border-right: 1px solid #ddd;">
+
+            </td>
+            <td width="260" valign="top">
+                {% if not oModule.hasMetadata() and not oModule.isRegistered() %}
+                    <div class="info">
+                        {{ translate({ ident: "MODULE_ENABLEACTIVATIONTEXT" }) }}
+                    </div>
+                {% endif %}
+                {% if not _sError %}
+                    {% if oModule.hasMetadata() or oModule.isRegistered() %}
+                        <form name="myedit" id="myedit" action="{{ oViewConf.getSelfLink()|raw }}" method="post">
+                            <div>
+                                {{ oViewConf.getHiddenSid()|raw }}
+                                <input type="hidden" name="cl" value="module_main">
+                                <input type="hidden" name="updatelist" value="1">
+                                <input type="hidden" name="oxid" value="{{ oModule.getId() }}">
+                                {% if not oView.isDemoShop() %}
+                                    {% if oModule.hasMetadata() %}
+                                        {% if oModule.isActive() %}
+                                            <input type="hidden" name="fnc" value="deactivateModule">
+                                            <div align="center">
+                                                <input type="submit" id="module_deactivate" class="saveButton" value="{{ translate({ ident: "MODULE_DEACTIVATE" }) }}">
+                                            </div>
+                                        {% else %}
+                                            <input type="hidden" name="fnc" value="activateModule">
+
+                                            <div align="center">
+                                                <input type="submit" id="module_activate" class="saveButton" value="{{ translate({ ident: "MODULE_ACTIVATE" }) }}">
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+                                {% else %}
+                                    {{ translate({ ident: "MODULE_ACTIVATION_NOT_POSSIBLE_IN_DEMOMODE" }) }}
+                                {% endif %}
+                            </div>
+                        </form>
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+{% endif %}
+
+{% include "bottomnaviitem.html.twig" %}
+{% include "bottomitem.html.twig" %}

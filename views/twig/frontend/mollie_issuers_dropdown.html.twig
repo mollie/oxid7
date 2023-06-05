@@ -1,0 +1,13 @@
+{% set aIssuers = paymentModel.getIssuers(oView.getDynValue(), sInputName) %}
+{% if aIssuers|length  %}
+    <div class="form-group">
+        <label class="req control-label col-lg-3">{{ sLabel }}</label>
+        <div class="col-lg-9">
+            <select name="dynvalue[{{ sInputName }}]" class="form-control selectpicker" required="required">
+                {% for key, issuer in aIssuers %}
+                    <option value="{{ key }}" {% if sSavedValue == key %}selected{% endif %}>{{ issuer.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+{% endif %}

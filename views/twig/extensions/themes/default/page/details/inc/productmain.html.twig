@@ -1,0 +1,14 @@
+{% extends "page/details/inc/productmain.html.twig" %}
+
+{% block details_productmain_tobasket %}
+    {{ parent() }}
+    {% if oViewConf.mollieShowApplePayButtonOnDetails() %}
+        {{ script({ include: oViewConf.getModuleUrl('molliepayment','js/mollie.js'), dynamic: __oxid_include_dynamic }) }}
+        {{ style({ include: oViewConf.getModuleUrl('molliepayment','css/mollie.css') }) }}
+
+        {% set price = oDetailsProduct.getPrice() %}
+        {% set price = oDetailsProduct.getBasketPrice(1, null, oxcmp_basket) %}
+
+        {% include_dynamic "@molliepayment/frontend/mollieapplepaybutton.html.twig" with {type: "mollie", position: "Details", payment_price: price.getBruttoPrice(), details_product_id: oDetailsProduct.getId(), shipping_id: oxcmp_basket.getShippingId()} %}
+    {% endif %}
+{% endblock %}

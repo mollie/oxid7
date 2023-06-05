@@ -53,7 +53,7 @@ class OrderExpiry extends \Mollie\Payment\Application\Model\Cronjob\Base
         $aOrders = [];
         $iExpiryDays = $oPaymentModel->getExpiryDays();
         if ($oPaymentModel->isOrderExpirySupported() === true && $iExpiryDays !== 'deactivated' && is_numeric($iExpiryDays)) {
-            $aFolders = [Registry::getConfig()->getShopConfVar('sMollieStatusPending')];
+            $aFolders = [Payment::getInstance()->getShopConfVar('sMollieStatusPending')];
             if ($oPaymentModel->getOxidPaymentId() == "molliebanktransfer") {
                 $sBanktransferPending = $oPaymentModel->getConfigParam('pending_status');
                 if (!empty($sBanktransferPending)) {
