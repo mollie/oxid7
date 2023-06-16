@@ -18,7 +18,7 @@ use OxidEsales\TestingLibrary\UnitTestCase;
 
 class MollieApplePayTest extends UnitTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         UtilsObject::resetClassInstances();
         \Mollie\Payment\Application\Helper\User::destroyInstance();
@@ -102,7 +102,9 @@ class MollieApplePayTest extends UnitTestCase
 
     public function testGetDeliveryMethods()
     {
-        $expected = ['DeliveryList'];
+        $expected = [
+            ['identifier' => 'DeliveryList'],
+        ];
 
         $oRequest = $this->getMockBuilder(\OxidEsales\Eshop\Core\Request::class)->disableOriginalConstructor()->getMock();
         $oRequest->method('getRequestEscapedParameter')->willReturn(true);

@@ -4,41 +4,42 @@
 {% if sDataStyle == "checkout_integration" %}
     <input type="hidden" name="dynvalue[mollieCCToken]" id="mollieCCToken">
     <div id="mollieCreditcardErrorbox" class="form-group" style="display:none;">
-        <div class="col-lg-3"></div>
-        <div class="col-lg-9">
+        <div class="col-lg-12"></div>
+        <div class="mb-3">
             <div class="form-control" style="background-color:#ff5959" id="mollieCreditcardError">Fehler</div>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="req control-label col-lg-3">{{ translate({ ident: "MOLLIE_CREDIT_CARD_HOLDER" }) }}</label>
-        <div class="col-lg-9">
+        <label class="req control-label col-lg-12">{{ translate({ ident: "MOLLIE_CREDIT_CARD_HOLDER" }) }}</label>
+        <div class="mb-3">
             <div id="mollieCardHolder" class="form-control"></div>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="req control-label col-lg-3">{{ translate({ ident: "MOLLIE_CREDIT_CARD_NUMBER" }) }}</label>
-        <div class="col-lg-9">
+        <label class="req control-label col-lg-12">{{ translate({ ident: "MOLLIE_CREDIT_CARD_NUMBER" }) }}</label>
+        <div class="mb-3">
             <div id="mollieCardNumber" class="form-control"></div>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="req control-label col-lg-3">{{ translate({ ident: "MOLLIE_CREDIT_CARD_VALID_UNTIL" }) }}</label>
-        <div class="col-lg-9">
+        <label class="req control-label col-lg-12">{{ translate({ ident: "MOLLIE_CREDIT_CARD_VALID_UNTIL" }) }}</label>
+        <div class="mb-3">
             <div id="mollieExpiryDate" class="form-control mollie-valid-until"></div>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="req control-label col-lg-3">{{ translate({ ident: "MOLLIE_CREDIT_CARD_SECURITY_CODE" }) }}</label>
-        <div class="col-lg-9">
+        <label class="req control-label col-lg-12">{{ translate({ ident: "MOLLIE_CREDIT_CARD_SECURITY_CODE" }) }}</label>
+        <div class="mb-3">
             <div id="mollieVerificationCode" class="form-control"></div>
             <span class="help-block">{{ translate({ ident: "MOLLIE_CREDIT_CARD_SECURITY_CODE_DESCRIPTION" }) }}</span>
         </div>
     </div>
     {{ style({ include: oViewConf.getModuleUrl('molliepayment','css/mollie.css') }) }}
+    {{ script({ include: oViewConf.getModuleUrl('molliepayment','js/hostedCC.js'), dynamic: __oxid_include_dynamic }) }}
     {{ script({ include: "https://js.mollie.com/v1/mollie.js", dynamic: __oxid_include_dynamic }) }}
     {% set mollieComponentsLoad %}
         var mollie = Mollie('{{ oPaymentModel.getProfileId() }}', { locale: '{{ oPaymentModel.getLocale() }}'{% if oPaymentModel.getMollieMode() == 'test' %}, testMode: true {% endif %} });
@@ -55,24 +56,11 @@
         var verificationCode = mollie.createComponent('verificationCode');
         verificationCode.mount('#mollieVerificationCode');
 
+        mollieApexAddEventToNextButton();
+
         var paymentForm = document.getElementById('payment');
         paymentForm.addEventListener('submit', async e => {
-        if (paymentForm.elements['payment_molliecreditcard'].checked === true) {
-            e.preventDefault();
-
-            const { token, error } = await mollie.createToken();
-
-            if(error !== undefined) {
-                document.getElementById('mollieCreditcardError').innerHTML = error.message;
-                document.getElementById('mollieCreditcardErrorbox').style.display = '';
-            } else {
-                document.getElementById('mollieCreditcardError').innerHTML = '';
-                document.getElementById('mollieCreditcardErrorbox').style.display = 'none';
-                document.getElementById("mollieCCToken").value = token;
-
-                paymentForm.submit();
-            }
-        }
+            mollieHandlePaymentForm(e);
         });
     {% endset %}
     {{ script({ add: mollieComponentsLoad.__toString(), priority: 10, dynamic: __oxid_include_dynamic }) }}

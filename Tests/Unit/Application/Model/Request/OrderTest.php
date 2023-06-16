@@ -44,6 +44,7 @@ class OrderTest extends \OxidEsales\TestingLibrary\UnitTestCase
         $oPaymentModel->method('getApiMethod')->willReturn('order');
         $oPaymentModel->method('getPaymentSpecificParameters')->willReturn(['foo' => 'bar']);
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $oUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
         $oUser->method('__get')->willReturn(new Field(''));
@@ -56,7 +57,7 @@ class OrderTest extends \OxidEsales\TestingLibrary\UnitTestCase
 
         $oOrderarticle = $this->getMockBuilder(OrderArticle::class)->disableOriginalConstructor()->getMock();
         $oOrderarticle->method('getArticle')->willReturn($oOrderarticle);
-        $oOrderarticle->method('__get')->willReturn(new Field('test'));
+        $oOrderarticle->method('__get')->willReturn(new Field(5));
 
         $oOrderarticles = $this->getMockBuilder(\OxidEsales\Eshop\Core\Model\ListModel::class)->disableOriginalConstructor()->getMock();
         $oOrderarticles->method('getArray')->willReturn([$oOrderarticle]);
@@ -105,6 +106,7 @@ class OrderTest extends \OxidEsales\TestingLibrary\UnitTestCase
         $oPaymentModel->method('getApiMethod')->willReturn('order');
         $oPaymentModel->method('getPaymentSpecificParameters')->willReturn(['foo' => 'bar']);
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $oUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
         $oUser->method('__get')->willReturn(new Field(''));
@@ -211,6 +213,7 @@ class OrderTest extends \OxidEsales\TestingLibrary\UnitTestCase
         $oPaymentModel->method('getApiMethod')->willReturn('order');
         $oPaymentModel->method('getPaymentSpecificParameters')->willReturn(['foo' => 'bar']);
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $oUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
         $oUser->method('__get')->willReturn(new Field(''));

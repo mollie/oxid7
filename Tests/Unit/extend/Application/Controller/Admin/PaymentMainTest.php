@@ -4,14 +4,16 @@
 namespace Mollie\Payment\Tests\Unit\extend\Application\Controller\Admin;
 
 
+use Mollie\Payment\Application\Helper\Payment;
+use Mollie\Payment\Tests\Unit\ConfigUnitTestCase;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\TestingLibrary\UnitTestCase;
 
-class PaymentMainTest extends UnitTestCase
+class PaymentMainTest extends ConfigUnitTestCase
 {
     protected $_oConfig;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $oShop = $this->getMockBuilder(\OxidEsales\Eshop\Application\Model\Shop::class)->disableOriginalConstructor()->getMock();
         $oShop->method('getId')->willReturn('shopId');
@@ -74,15 +76,14 @@ class PaymentMainTest extends UnitTestCase
 
     public function testMollieIsTokenConfiguredFalse()
     {
-        $this->_oConfig->method('getConfigParam')->willReturn(null);
-        $this->_oConfig->method('getShopConfVar')->willReturn(null);
-
-        Registry::set(\OxidEsales\Eshop\Core\Config::class, $this->_oConfig);
+        $this->initModuleSettingMock(null);
 
         $oPaymentMainController = new \Mollie\Payment\extend\Application\Controller\Admin\PaymentMain();
         $result = $oPaymentMainController->mollieIsTokenConfigured();
 
         $this->assertFalse($result);
+
+        Payment::destroyInstance();
     }
 
     public function testMollieGetExpiryDayOptions()

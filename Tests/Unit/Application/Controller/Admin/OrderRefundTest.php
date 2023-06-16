@@ -51,7 +51,7 @@ class OrderRefundTest extends UnitTestCase
 
     public function testRender()
     {
-        $expected = "mollie_order_refund.tpl";
+        $expected = "@molliepayment/mollie_order_refund";
 
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
 
@@ -83,7 +83,8 @@ class OrderRefundTest extends UnitTestCase
         
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
-        
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
+
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('__get')->willReturn(null);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
@@ -104,6 +105,7 @@ class OrderRefundTest extends UnitTestCase
 
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('__get')->willReturn(null);
@@ -129,6 +131,7 @@ class OrderRefundTest extends UnitTestCase
 
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('__get')->willReturn(null);
@@ -147,20 +150,20 @@ class OrderRefundTest extends UnitTestCase
     {
         $oOrderArticle = $this->getMockBuilder(OrderArticle::class)->disableOriginalConstructor()->getMock();
         $oOrderArticle->method('getId')->willReturn('prod2');
-        $oOrderArticle->method('mollieGetRefundableQuantity')->willReturn('0');
-        $oOrderArticle->method('mollieGetRefundableAmount')->willReturn('0');
+        $oOrderArticle->method('mollieGetRefundableQuantity')->willReturn(0);
+        $oOrderArticle->method('mollieGetRefundableAmount')->willReturn(0);
         $oOrderArticle->method('__get')->willReturnMap([
-            ['oxorderarticles__molliequantityrefunded', new Field('')],
-            ['oxorderarticles__mollieamountrefunded', new Field('10')],
-            ['oxorderarticles__oxbrutprice', new Field('11')],
-            ['oxorderarticles__oxamount', new Field('2')],
+            ['oxorderarticles__molliequantityrefunded', new Field(0)],
+            ['oxorderarticles__mollieamountrefunded', new Field(10)],
+            ['oxorderarticles__oxbrutprice', new Field(11)],
+            ['oxorderarticles__oxamount', new Field(2)],
             ['oxorderarticles__oxartnum', new Field('test')],
             ['oxorderarticles__oxtitle', new Field('test')],
-            ['oxorderarticles__oxbprice', new Field('5')],
-            ['oxorderarticles__oxvat', new Field('19')],
-            ['oxorderarticles__oxvat', new Field('19')],
+            ['oxorderarticles__oxbprice', new Field(5)],
+            ['oxorderarticles__oxvat', new Field(19)],
+            ['oxorderarticles__oxvat', new Field(19)],
             ['oxorderarticles__mollieamountrefunded', new Field(0)],
-            ['oxorderarticles__mollieamountrefunded', new Field(0)],
+            ['oxorderarticles__molliequantityrefunded', new Field(0)],
             ['oxorder__molliediscountrefunded', new Field(0)],
         ]);
 
@@ -171,19 +174,18 @@ class OrderRefundTest extends UnitTestCase
     {
         $oOrderArticle = $this->getMockBuilder(OrderArticle::class)->disableOriginalConstructor()->getMock();
         $oOrderArticle->method('getId')->willReturn('prod2');
-        $oOrderArticle->method('mollieGetRefundableQuantity')->willReturn('2');
-        $oOrderArticle->method('mollieGetRefundableAmount')->willReturn('10');
+        $oOrderArticle->method('mollieGetRefundableQuantity')->willReturn(2);
+        $oOrderArticle->method('mollieGetRefundableAmount')->willReturn(10);
         $oOrderArticle->method('__get')->willReturnMap([
-
-            ['oxorderarticles__oxbrutprice', new Field('11')],
-            ['oxorderarticles__oxamount', new Field('2')],
+            ['oxorderarticles__oxbrutprice', new Field(11)],
+            ['oxorderarticles__oxamount', new Field(2)],
             ['oxorderarticles__oxartnum', new Field('test')],
             ['oxorderarticles__oxtitle', new Field('test')],
-            ['oxorderarticles__oxbprice', new Field('5')],
-            ['oxorderarticles__oxvat', new Field('19')],
-            ['oxorderarticles__oxvat', new Field('19')],
+            ['oxorderarticles__oxbprice', new Field(5)],
+            ['oxorderarticles__oxvat', new Field(19)],
+            ['oxorderarticles__oxvat', new Field(19)],
             ['oxorderarticles__mollieamountrefunded', new Field(0)],
-            ['oxorderarticles__mollieamountrefunded', new Field(0)],
+            ['oxorderarticles__molliequantityrefunded', new Field(0)],
             ['oxorder__molliediscountrefunded', new Field(0)],
         ]);
 
@@ -194,18 +196,18 @@ class OrderRefundTest extends UnitTestCase
     {
         $oOrderArticle = $this->getMockBuilder(OrderArticle::class)->disableOriginalConstructor()->getMock();
         $oOrderArticle->method('getId')->willReturn('prod2');
-        $oOrderArticle->method('mollieGetRefundableQuantity')->willReturn('0');
-        $oOrderArticle->method('mollieGetRefundableAmount')->willReturn('0');
+        $oOrderArticle->method('mollieGetRefundableQuantity')->willReturn(0);
+        $oOrderArticle->method('mollieGetRefundableAmount')->willReturn(0);
         $oOrderArticle->method('__get')->willReturnMap([
-            ['oxorderarticles__molliequantityrefunded', new Field('')],
-            ['oxorderarticles__mollieamountrefunded', new Field('10')],
-            ['oxorderarticles__oxbrutprice', new Field('20')],
-            ['oxorderarticles__oxamount', new Field('2')],
+            ['oxorderarticles__molliequantityrefunded', new Field(0)],
+            ['oxorderarticles__mollieamountrefunded', new Field(10)],
+            ['oxorderarticles__oxbrutprice', new Field(20)],
+            ['oxorderarticles__oxamount', new Field(2)],
             ['oxorderarticles__oxartnum', new Field('test')],
             ['oxorderarticles__oxtitle', new Field('test')],
-            ['oxorderarticles__oxbprice', new Field('5')],
-            ['oxorderarticles__oxvat', new Field('19')],
-            ['oxorderarticles__oxvat', new Field('19')],
+            ['oxorderarticles__oxbprice', new Field(5)],
+            ['oxorderarticles__oxvat', new Field(19)],
+            ['oxorderarticles__oxvat', new Field(19)],
             ['oxorder__molliediscountrefunded', new Field(0)],
         ]);
 
@@ -216,18 +218,18 @@ class OrderRefundTest extends UnitTestCase
     {
         $oOrderArticle = $this->getMockBuilder(OrderArticle::class)->disableOriginalConstructor()->getMock();
         $oOrderArticle->method('getId')->willReturn('prod1');
-        $oOrderArticle->method('mollieGetRefundableQuantity')->willReturn('0');
-        $oOrderArticle->method('mollieGetRefundableAmount')->willReturn('0');
+        $oOrderArticle->method('mollieGetRefundableQuantity')->willReturn(0);
+        $oOrderArticle->method('mollieGetRefundableAmount')->willReturn(0);
         $oOrderArticle->method('__get')->willReturnMap([
-            ['oxorderarticles__molliequantityrefunded', new Field('')],
-            ['oxorderarticles__mollieamountrefunded', new Field('10')],
-            ['oxorderarticles__oxbrutprice', new Field('10')],
-            ['oxorderarticles__oxamount', new Field('2')],
+            ['oxorderarticles__molliequantityrefunded', new Field(0)],
+            ['oxorderarticles__mollieamountrefunded', new Field(10)],
+            ['oxorderarticles__oxbrutprice', new Field(10)],
+            ['oxorderarticles__oxamount', new Field(2)],
             ['oxorderarticles__oxartnum', new Field('test')],
             ['oxorderarticles__oxtitle', new Field('test')],
-            ['oxorderarticles__oxbprice', new Field('5')],
-            ['oxorderarticles__oxvat', new Field('19')],
-            ['oxorderarticles__oxvat', new Field('19')],
+            ['oxorderarticles__oxbprice', new Field(5)],
+            ['oxorderarticles__oxvat', new Field(19)],
+            ['oxorderarticles__oxvat', new Field(19)],
             ['oxorder__molliediscountrefunded', new Field(5)],
         ]);
 
@@ -238,7 +240,7 @@ class OrderRefundTest extends UnitTestCase
     {
         $oOrderArticle = $this->getMockBuilder(OrderArticle::class)->disableOriginalConstructor()->getMock();
         $oOrderArticle->method('__get')->willReturnMap([
-            ['oxorderarticles__mollieamountrefunded', new Field('10')],
+            ['oxorderarticles__mollieamountrefunded', new Field(10)],
             ['oxorderarticles__oxbprice', new Field('3')],
         ]);
 
@@ -247,7 +249,10 @@ class OrderRefundTest extends UnitTestCase
 
     public function testFreeRefund()
     {
+        $oResponse = new \stdClass();
+
         $oApiOrder = $this->getMockBuilder(\Mollie\Api\Resources\Order::class)->disableOriginalConstructor()->getMock();
+        $oApiOrder->method('refund')->willReturn($oResponse);
 
         $oApiEndpoint = $this->getMockBuilder(PaymentEndpoint::class)->disableOriginalConstructor()->getMock();
         $oApiEndpoint->method('get')->willReturn($oApiOrder);
@@ -281,6 +286,7 @@ class OrderRefundTest extends UnitTestCase
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
         $oPaymentModel->method('getApiRequestModel')->willReturn($oRequestModel);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $aOrderArticles = [$this->getOrderArticleMock(), $this->getOrderArticleDiscountMock(), $this->getOrderArticleMockFreeRefund()];
 
@@ -329,6 +335,7 @@ class OrderRefundTest extends UnitTestCase
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
         $oPaymentModel->method('getApiRequestModel')->willReturn($oRequestModel);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $aOrderArticles = [$this->getOrderArticleMock(), $this->getOrderArticleDiscountMock(), $this->getOrderArticleMockFreeRefund()];
 
@@ -401,6 +408,7 @@ class OrderRefundTest extends UnitTestCase
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
         $oPaymentModel->method('getApiRequestModel')->willReturn($oRequestModel);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $aOrderArticles = [$this->getOrderArticleMock(), $this->getOrderArticleDiscountMock()];
 
@@ -475,6 +483,7 @@ class OrderRefundTest extends UnitTestCase
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
         $oPaymentModel->method('getApiRequestModel')->willReturn($oRequestModel);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $aOrderArticles = [$this->getOrderArticleMock(), $this->getOrderArticleDiscountMock()];
 
@@ -546,6 +555,7 @@ class OrderRefundTest extends UnitTestCase
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
         $oPaymentModel->method('getApiRequestModel')->willReturn($oRequestModel);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $aOrderArticles = [$this->getOrderArticleMock(), $this->getOrderArticleDiscountMock()];
 
@@ -627,6 +637,7 @@ class OrderRefundTest extends UnitTestCase
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
         $oPaymentModel->method('getApiRequestModel')->willReturn($oRequestModel);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $aOrderArticles = [$this->getOrderArticleMock(), $this->getOrderArticleDiscountMock()];
 
@@ -698,6 +709,7 @@ class OrderRefundTest extends UnitTestCase
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
         $oPaymentModel->method('getApiRequestModel')->willReturn($oRequestModel);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $aOrderArticles = [$this->getOrderArticleMockNoRefund()];
 
@@ -771,6 +783,7 @@ class OrderRefundTest extends UnitTestCase
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
         $oPaymentModel->method('getApiRequestModel')->willReturn($oRequestModel);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $aOrderArticles = [$this->getOrderArticleMock(), $this->getOrderArticleDiscountMock()];
 
@@ -843,6 +856,7 @@ class OrderRefundTest extends UnitTestCase
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
         $oPaymentModel->method('getApiRequestModel')->willReturn($oRequestModel);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $aOrderArticles = [$this->getOrderArticleMock(), $this->getOrderArticleDiscountMock()];
 
@@ -890,6 +904,7 @@ class OrderRefundTest extends UnitTestCase
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
         $oPaymentModel->method('getApiRequestModel')->willReturn($oRequestModel);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('__get')->willReturn(5);
@@ -979,6 +994,7 @@ class OrderRefundTest extends UnitTestCase
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
         $oPaymentModel->method('getApiRequestModel')->willReturn($oRequestModel);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $aOrderArticles = [$this->getOrderArticleMock(), $this->getOrderArticleDiscountMock()];
 
@@ -1011,6 +1027,7 @@ class OrderRefundTest extends UnitTestCase
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
         $oPaymentModel->method('getApiRequestModel')->willReturn($oRequestModel);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('__get')->willReturn(5);
@@ -1233,6 +1250,7 @@ class OrderRefundTest extends UnitTestCase
 
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
@@ -1283,6 +1301,7 @@ class OrderRefundTest extends UnitTestCase
 
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);

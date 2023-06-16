@@ -6,6 +6,7 @@ namespace Mollie\Payment\Tests\Unit\Application\Model\Payment;
 
 use Mollie\Api\Endpoints\MethodEndpoint;
 use Mollie\Payment\Application\Helper\Payment;
+use Mollie\Payment\Tests\Unit\ConfigUnitTestCase;
 use Mollie\Payment\Application\Model\PaymentConfig;
 use OxidEsales\Eshop\Application\Model\Order;
 use OxidEsales\Eshop\Core\Config;
@@ -15,8 +16,23 @@ use OxidEsales\Eshop\Core\Request;
 use OxidEsales\Eshop\Core\UtilsObject;
 use OxidEsales\TestingLibrary\UnitTestCase;
 
-class BanktransferTest extends UnitTestCase
+class BanktransferTest extends ConfigUnitTestCase
 {
+    protected function setUp(): void
+    {
+        $oConfig = $this->getMockBuilder(\OxidEsales\Eshop\Core\Config::class)->disableOriginalConstructor()->getMock();
+        $oConfig->method('getShopConfVar')->willReturn("token");
+
+        Registry::set(\OxidEsales\Eshop\Core\Config::class, $oConfig);
+
+        $oModule = $this->getMockBuilder(\OxidEsales\EshopCommunity\Core\Module\Module::class)->disableOriginalConstructor()->getMock();
+        $oModule->method('getInfo')->willReturn('1.2.3');
+
+        UtilsObject::setClassInstance(\OxidEsales\EshopCommunity\Core\Module\Module::class, $oModule);
+
+        parent::setUp();
+    }
+
     public function testGetPaymentSpecificParameters()
     {
         $expected = 'TestMail';
@@ -216,8 +232,9 @@ class BanktransferTest extends UnitTestCase
         $oView = $this->getMockBuilder(\OxidEsales\Eshop\Application\Controller\FrontendController::class)->disableOriginalConstructor()->getMock();
         $oView->method('getViewConfig')->willReturn($oViewConf);
 
+        $this->initModuleSettingMock("Logo");
+
         $oConfig = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
-        $oConfig->method('getShopConfVar')->willReturn('Logo');
         $oConfig->method('getActiveView')->willReturn($oView);
 
         Registry::set(Config::class, $oConfig);
@@ -229,6 +246,8 @@ class BanktransferTest extends UnitTestCase
 
         $result = $oPayment->getMolliePaymentMethodPic();
         $this->assertStringEndsWith($expected, $result);
+
+        Payment::destroyInstance();
     }
 
     public function testGetAlternativeLogoUrlFalse()

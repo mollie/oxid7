@@ -23,7 +23,7 @@ class ModuleMain extends ModuleMain_parent
         if ($this->_sMollieNewestVersion === null) {
             $this->_sMollieNewestVersion = false;
 
-            $sComposerJson = file_get_contents("https://raw.githubusercontent.com/mollie/mollie-oxid/master/composer.json");
+            $sComposerJson = file_get_contents("https://raw.githubusercontent.com/mollie/oxid7/main/composer.json");
             if (!empty($sComposerJson)) {
                 $aComposerJson = json_decode($sComposerJson, true);
                 if (!empty($aComposerJson['version'])) {

@@ -5,22 +5,23 @@ namespace Mollie\Payment\Tests\Unit\Application\Model\Cronjob;
 use Mollie\Payment\Application\Helper\Payment;
 use Mollie\Payment\Application\Model\Cronjob\OrderExpiry;
 use Mollie\Payment\Application\Model\Payment\Banktransfer;
+use Mollie\Payment\Tests\Unit\ConfigUnitTestCase;
 use OxidEsales\Eshop\Application\Model\Order;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\UtilsObject;
 use OxidEsales\TestingLibrary\UnitTestCase;
 
-class OrderExpiryTest extends UnitTestCase
+class OrderExpiryTest extends ConfigUnitTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         \OxidEsales\Eshop\Core\DatabaseProvider::getDB()->execute("DELETE FROM molliecronjob WHERE OXID = 'mollie_order_expiry'");
 
         parent::setUp();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->execute('DELETE FROM oxorder WHERE oxid = "orderExpiryTest"');
 
@@ -73,13 +74,12 @@ class OrderExpiryTest extends UnitTestCase
 
     public function testIsCronjobActivated()
     {
-        $oConfig = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
-        $oConfig->method('getShopConfVar')->willReturn(true);
-
-        Registry::set(Config::class, $oConfig);
+        $this->initModuleSettingMock(true);
 
         $oCronjob = new OrderExpiry();
         $result = $oCronjob->isCronjobActivated();
+
+        Payment::destroyInstance();
 
         $this->assertTrue($result);
     }

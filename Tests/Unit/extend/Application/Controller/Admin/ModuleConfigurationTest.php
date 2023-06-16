@@ -4,15 +4,17 @@
 namespace Mollie\Payment\Tests\Unit\extend\Application\Controller\Admin;
 
 
+use Mollie\Payment\Application\Helper\Payment;
+use Mollie\Payment\Tests\Unit\ConfigUnitTestCase;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\Request;
 use OxidEsales\TestingLibrary\UnitTestCase;
 
-class ModuleConfigurationTest extends UnitTestCase
+class ModuleConfigurationTest extends ConfigUnitTestCase
 {
     protected $_oConfig;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $oShop = $this->getMockBuilder(\OxidEsales\Eshop\Application\Model\Shop::class)->disableOriginalConstructor()->getMock();
         $oShop->method('getId')->willReturn('shopId');
@@ -65,15 +67,14 @@ class ModuleConfigurationTest extends UnitTestCase
 
     public function testMollieHasApiKeysFalse()
     {
-        $this->_oConfig->method('getConfigParam')->willReturn(null);
-        $this->_oConfig->method('getShopConfVar')->willReturn(null);
-
-        Registry::set(\OxidEsales\Eshop\Core\Config::class, $this->_oConfig);
+        $this->initModuleSettingMock(null);
 
         $oModuleConfigController = new \Mollie\Payment\extend\Application\Controller\Admin\ModuleConfiguration();
         $result = $oModuleConfigController->mollieHasApiKeys();
 
         $this->assertFalse($result);
+
+        Payment::destroyInstance();
     }
 
     public function testMollieHasApiKeysLive()
@@ -118,21 +119,17 @@ class ModuleConfigurationTest extends UnitTestCase
         $oModuleConfigController = new \Mollie\Payment\extend\Application\Controller\Admin\ModuleConfiguration();
         $result = $oModuleConfigController->molliePaymentMethods();
 
-        $this->assertCount(17, $result);
+        $this->assertCount(20, $result);
     }
 
     public function testMollieIsApiKeyUsable()
     {
-        $this->_oConfig->method('getConfigParam')->willReturn(null);
-        $this->_oConfig->method('getShopConfVar')->willReturnMap([
-            ['sMollieLiveToken', null, '', null],
-            ['sMollieTestToken', null, '', null],
-        ]);
-
-        Registry::set(\OxidEsales\Eshop\Core\Config::class, $this->_oConfig);
+        $this->initNoModuleSettingMock();
 
         $oModuleConfigController = new \Mollie\Payment\extend\Application\Controller\Admin\ModuleConfiguration();
         $result = $oModuleConfigController->mollieIsApiKeyUsable("sMollieTestToken");
+
+        Payment::destroyInstance();
 
         $this->assertFalse($result);
     }
@@ -144,6 +141,10 @@ class ModuleConfigurationTest extends UnitTestCase
         $this->_oConfig->method('getConfigParam')->willReturn(null);
         $this->_oConfig->method('getShopConfVar')->willReturn($expected);
 
+        $oRequest = $this->getMockBuilder(\OxidEsales\Eshop\Core\Request::class)->disableOriginalConstructor()->getMock();
+        $oRequest->method('getRequestEscapedParameter')->willReturn("molliepayment");
+
+        Registry::set(\OxidEsales\Eshop\Core\Request::class, $oRequest);
         Registry::set(\OxidEsales\Eshop\Core\Config::class, $this->_oConfig);
 
         $oModuleConfigController = new \Mollie\Payment\extend\Application\Controller\Admin\ModuleConfiguration();

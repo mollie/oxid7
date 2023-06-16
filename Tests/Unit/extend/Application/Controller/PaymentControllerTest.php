@@ -9,12 +9,15 @@ use OxidEsales\Eshop\Application\Model\Basket;
 use OxidEsales\Eshop\Application\Model\Payment;
 use OxidEsales\Eshop\Application\Model\PaymentList;
 use OxidEsales\Eshop\Core\DatabaseProvider;
+use OxidEsales\Eshop\Core\Field;
 use OxidEsales\Eshop\Core\Price;
 use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\Eshop\Core\UtilsObject;
 use OxidEsales\Eshop\Core\Session;
 use OxidEsales\EshopCommunity\Setup\Database;
 use OxidEsales\TestingLibrary\UnitTestCase;
 use OxidEsales\Eshop\Application\Model\DeliverySetList;
+use OxidEsales\Eshop\Application\Model\Country;
 
 class PaymentControllerTest extends UnitTestCase
 {
@@ -59,14 +62,23 @@ class PaymentControllerTest extends UnitTestCase
 
     public function testGetPaymentList()
     {
-        $oPrice = $this->getMockBuilder(Price::class)->disableOriginalConstructor()->getMock();
+        $aPaymentList = $this->getPaymentListMock();
+
+        $oCountry = $this->getMockBuilder(Country::class)->disableOriginalConstructor()->getMock();
+        $oCountry->method('__get')->willReturn(new Field('de'));
+
+        UtilsObject::setClassInstance(Country::class, $oCountry);
+        
+        $oPrice = $this->getMockBuilder(Price::class)->disableOriginalConstructor()->setMethods(['getBruttoPrice', 'getSum'])->getMock();
         $oPrice->method('getBruttoPrice')->willReturn(100);
+        $oPrice->method('getSum')->willReturn(100);
 
         $oCurrency = new \stdClass();
         $oCurrency->name = "Test";
 
         $oBasket = $this->getMockBuilder(Basket::class)->disableOriginalConstructor()->getMock();
         $oBasket->method('getPrice')->willReturn($oPrice);
+        $oBasket->method('getProductsPrice')->willReturn($oPrice);
         $oBasket->method('getBasketCurrency')->willReturn($oCurrency);
 
         $oSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->getMock();
@@ -80,8 +92,6 @@ class PaymentControllerTest extends UnitTestCase
         Registry::set(\OxidEsales\Eshop\Core\Config::class, $oConfig);
 
         DatabaseProvider::getDb()->execute("UPDATE oxpayments SET oxactive = 1 WHERE oxid LIKE '%mollie%'");
-
-        $aPaymentList = $this->getPaymentListMock();
 
         $oDeliverySetList = $this->getMockBuilder(DeliverySetList::class)->disableOriginalConstructor()->getMock();
         $oDeliverySetList->method('getDeliverySetData')->willReturn(array([], [], $aPaymentList));

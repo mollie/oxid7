@@ -73,7 +73,6 @@ class OrderControllerTest extends UnitTestCase
 
         $oOrderController = new \Mollie\Payment\extend\Application\Controller\OrderController();
         $oOrderController->setUser($oUser);
-        $oOrderController->setSession($oSession);
 
         $result = $oOrderController->handleMollieReturn();
         $this->assertEquals("thankyou", $result);
@@ -94,9 +93,8 @@ class OrderControllerTest extends UnitTestCase
         Registry::set(\OxidEsales\Eshop\Core\Utils::class, $oUtils);
 
         $oOrderController = new \Mollie\Payment\extend\Application\Controller\OrderController();
-        $oOrderController->setSession($oSession);
-
         $result = $oOrderController->handleMollieReturn();
+
         $this->assertFalse($result);
     }
 
@@ -121,9 +119,8 @@ class OrderControllerTest extends UnitTestCase
         UtilsObject::setClassInstance(Order::class, $order);
 
         $oOrderController = new \Mollie\Payment\extend\Application\Controller\OrderController();
-        $oOrderController->setSession($oSession);
-
         $result = $oOrderController->handleMollieReturn();
+
         $this->assertFalse($result);
     }
 
@@ -157,9 +154,8 @@ class OrderControllerTest extends UnitTestCase
         UtilsObject::setClassInstance(Order::class, $order);
 
         $oOrderController = new \Mollie\Payment\extend\Application\Controller\OrderController();
-        $oOrderController->setSession($oSession);
-
         $result = $oOrderController->handleMollieReturn();
+
         $this->assertFalse($result);
     }
 
@@ -193,9 +189,8 @@ class OrderControllerTest extends UnitTestCase
         UtilsObject::setClassInstance(Order::class, $order);
 
         $oOrderController = new \Mollie\Payment\extend\Application\Controller\OrderController();
-        $oOrderController->setSession($oSession);
-
         $result = $oOrderController->handleMollieReturn();
+
         $this->assertFalse($result);
     }
 
@@ -207,10 +202,9 @@ class OrderControllerTest extends UnitTestCase
         Registry::set(\OxidEsales\Eshop\Core\Session::class, $oSession);
 
         $oOrderController = new \Mollie\Payment\extend\Application\Controller\OrderController();
-        $oOrderController->setSession($oSession);
         $oOrderController->setIsOrderStep(false);
 
         $result = $oOrderController->render();
-        $this->assertEquals("page/checkout/order.tpl", $result);
+        $this->assertEquals("page/checkout/order", $result);
     }
 }

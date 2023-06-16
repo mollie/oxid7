@@ -88,6 +88,14 @@ abstract class Base
     protected $aBillingCountryRestrictedTo = false;
 
     /**
+     * Determines if the payment method is only available for B2B orders
+     * B2B mode is assumed when the company field in the billing address is filled
+     *
+     * @var bool
+     */
+    protected $blIsOnlyB2BSupported = false;
+
+    /**
      * Return Oxid payment id
      *
      * @return string
@@ -135,6 +143,16 @@ abstract class Base
     public function isOrderExpirySupported()
     {
         return $this->blIsOrderExpirySupported;
+    }
+
+    /**
+     * Returns if the payment method only supports B2B orders
+     *
+     * @return bool
+     */
+    public function isOnlyB2BSupported()
+    {
+        return $this->blIsOnlyB2BSupported;
     }
 
     /**
@@ -218,13 +236,33 @@ abstract class Base
     }
 
     /**
+     * Returns matching api endpoint the given order was created in
+     *
+     * @param  Order $oOrder
+     * @return \Mollie\Api\Endpoints\EndpointAbstract
+     */
+    public function getApiEndpointByOrder($oOrder)
+    {
+        $sMode = $oOrder->oxorder__molliemode->value;
+        if (empty($sMode)) {
+            $sMode = false;
+        }
+        $sApi = $oOrder->oxorder__mollieapi->value;
+        if (empty($sApi)) {
+            $sApi = false;
+        }
+        return $this->getApiEndpoint($sMode, $sApi);
+    }
+
+    /**
      * Return request model based in the configured api method
      *
+     * @param  Order $oOrder
      * @return \Mollie\Payment\Application\Model\Request\Base
      */
-    public function getApiRequestModel()
+    public function getApiRequestModel($oOrder = false)
     {
-        if ($this->getApiMethod() == 'order') {
+        if ($this->getApiMethod($oOrder) == 'order') {
             return oxNew(\Mollie\Payment\Application\Model\Request\Order::class);
         }
         return oxNew(\Mollie\Payment\Application\Model\Request\Payment::class);
@@ -233,11 +271,12 @@ abstract class Base
     /**
      * Return request model based in the configured api method
      *
+     * @param  Order $oOrder
      * @return \Mollie\Payment\Application\Model\TransactionHandler\Base
      */
-    public function getTransactionHandler()
+    public function getTransactionHandler($oOrder = false)
     {
-        if ($this->getApiMethod() == 'order') {
+        if ($this->getApiMethod($oOrder) == 'order') {
             return oxNew(\Mollie\Payment\Application\Model\TransactionHandler\Order::class);
         }
         return oxNew(\Mollie\Payment\Application\Model\TransactionHandler\Payment::class);
@@ -246,10 +285,15 @@ abstract class Base
     /**
      * Return configured api method or default value if not yet configured
      *
+     * @param  Order $oOrder
      * @return string
      */
-    public function getApiMethod()
+    public function getApiMethod($oOrder = false)
     {
+        if ($oOrder !== false && !empty($oOrder->oxorder__mollieapi->value)) {
+            return $oOrder->oxorder__mollieapi->value;
+        }
+
         $sApiMethod = $this->getConfigParam('api');
         if (empty($sApiMethod)) {
             $sApiMethod = $this->sDefaultApi;
@@ -333,11 +377,12 @@ abstract class Base
     /**
      * Determines if payment method is activated for this Mollie account
      *
+     * @param string|false $sBillingCountryCode
      * @return bool
      */
-    public function isMolliePaymentActive()
+    public function isMolliePaymentActive($sBillingCountryCode = false)
     {
-        $aInfo = Payment::getInstance()->getMolliePaymentInfo();
+        $aInfo = Payment::getInstance()->getMolliePaymentInfo(false, false, $sBillingCountryCode);
         if (isset($aInfo[$this->sMolliePaymentCode])) {
             return true;
         }
@@ -370,6 +415,26 @@ abstract class Base
             return $aInfo[$this->sMolliePaymentCode]['maxAmount'];
         }
         return false;
+    }
+
+    /**
+     * Checks if given basket brutto price is withing the payment sum limitations of the current Mollie payment type
+     *
+     * @param double $dBasketBruttoPrice
+     * @return bool
+     */
+    public function mollieIsBasketSumInLimits($dBasketBruttoPrice)
+    {
+        $oFrom = $this->getMollieFromAmount();
+        if ($oFrom && $dBasketBruttoPrice < $oFrom->value) {
+            return false;
+        }
+
+        $oTo = $this->getMollieToAmount();
+        if ($oTo && $dBasketBruttoPrice > $oTo->value) {
+            return false;
+        }
+        return true;
     }
 
     /**

@@ -1,18 +1,17 @@
 <?php
 
-
 namespace Mollie\Payment\Tests\Unit\Application\Helper;
-
 
 use Mollie\Api\Endpoints\MethodEndpoint;
 use Mollie\Payment\Application\Helper\Payment;
+use Mollie\Payment\Tests\Unit\ConfigUnitTestCase;
 use OxidEsales\Eshop\Application\Model\Shop;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\UtilsObject;
 use OxidEsales\EshopCommunity\Core\Module\Module;
 use OxidEsales\TestingLibrary\UnitTestCase;
 
-class PaymentTest extends UnitTestCase
+class PaymentTest extends ConfigUnitTestCase
 {
     public function testGetMolliePaymentModel()
     {
@@ -27,10 +26,7 @@ class PaymentTest extends UnitTestCase
 
     public function testGetMolliePaymentInfo()
     {
-        $oConfig = $this->getMockBuilder(\OxidEsales\Eshop\Core\Config::class)->disableOriginalConstructor()->getMock();
-        $oConfig->method('getShopConfVar')->willReturn("token");
-
-        Registry::set(\OxidEsales\Eshop\Core\Config::class, $oConfig);
+        $this->initModuleSettingMock("token");
 
         $oImage = new \stdClass();
         $oImage->size2x = "img.png";
@@ -61,17 +57,18 @@ class PaymentTest extends UnitTestCase
         $result = $oPayment->getMolliePaymentInfo(10, 'test');
 
         $this->assertCount(1, $result);
+
+        Payment::destroyInstance();
     }
 
     public function testGetMolliePaymentInfoException()
     {
-        $oConfig = $this->getMockBuilder(\OxidEsales\Eshop\Core\Config::class)->disableOriginalConstructor()->getMock();
-        $oConfig->method('getShopConfVar')->willReturn(null);
-
-        Registry::set(\OxidEsales\Eshop\Core\Config::class, $oConfig);
+        $this->initNoModuleSettingMock();
 
         $oPayment = Payment::getInstance();
         $result = $oPayment->getMolliePaymentInfo(10, 'test');
+
+        Payment::destroyInstance();
 
         $this->assertCount(0, $result);
     }
@@ -123,12 +120,22 @@ class PaymentTest extends UnitTestCase
         $oPayment = oxNew($this->getProxyClassName(Payment::class));
         $result = $oPayment->getShopVersion();
 
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expected."_".$expected, $result);
     }
 
     public function testGetProfileId()
     {
         $expected = "ProfileId";
+
+        $oConfig = $this->getMockBuilder(\OxidEsales\Eshop\Core\Config::class)->disableOriginalConstructor()->getMock();
+        $oConfig->method('getShopConfVar')->willReturn("token");
+
+        Registry::set(\OxidEsales\Eshop\Core\Config::class, $oConfig);
+
+        $oModule = $this->getMockBuilder(\OxidEsales\EshopCommunity\Core\Module\Module::class)->disableOriginalConstructor()->getMock();
+        $oModule->method('getInfo')->willReturn('1.2.3');
+
+        UtilsObject::setClassInstance(\OxidEsales\EshopCommunity\Core\Module\Module::class, $oModule);
 
         $oProfile = $this->getMockBuilder(\Mollie\Api\Resources\CurrentProfile::class)->disableOriginalConstructor()->getMock();
         $oProfile->id = $expected;

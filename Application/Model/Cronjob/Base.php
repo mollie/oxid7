@@ -3,6 +3,7 @@
 namespace Mollie\Payment\Application\Model\Cronjob;
 
 use Mollie\Payment\Application\Helper\Payment;
+use Mollie\Payment\Application\Helper\Logger;
 use Mollie\Payment\Application\Model\Cronjob;
 use OxidEsales\Eshop\Core\Registry;
 
@@ -184,7 +185,7 @@ class Base
     {
         Cronjob::getInstance()->markCronjobAsFinished($this->getCronjobId());
         if ($blResult === false) {
-            error_log(date('Y-m-d H:i:s - ').'Cron "'.$this->getCronjobId().'" failed'.($sError !== false ? " (Error: ".$sError.")" : "")."\n", 3, getShopBasePath().'/log/'.$this->sLogFileName);
+            Logger::logMessage('Cron "'.$this->getCronjobId().'" failed'.($sError !== false ? " (Error: ".$sError.")" : ""), getShopBasePath().'/log/'.$this->sLogFileName);
         }
     }
 

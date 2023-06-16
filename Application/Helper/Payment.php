@@ -24,6 +24,11 @@ class Payment
     protected $aPaymentInfo = null;
 
     /**
+     * @var ContainerInterface
+     */
+    protected $oContainer;
+
+    /**
      * List of all available Mollie payment methods
      *
      * @var array
@@ -39,6 +44,7 @@ class Payment
         'mollieideal'           => array('title' => 'iDeal',            'model' => \Mollie\Payment\Application\Model\Payment\Ideal::class),
         'molliekbc'             => array('title' => 'KBC',              'model' => \Mollie\Payment\Application\Model\Payment\Kbc::class),
         'mollieklarnapaylater'  => array('title' => 'Klarna Pay Later', 'model' => \Mollie\Payment\Application\Model\Payment\KlarnaPayLater::class),
+        'mollieklarnapaynow'    => array('title' => 'Klarna Pay Now',   'model' => \Mollie\Payment\Application\Model\Payment\KlarnaPayNow::class),
         'mollieklarnasliceit'   => array('title' => 'Klarna Slice It',  'model' => \Mollie\Payment\Application\Model\Payment\KlarnaSliceIt::class),
         'molliepaypal'          => array('title' => 'Paypal',           'model' => \Mollie\Payment\Application\Model\Payment\PayPal::class),
         'molliepaysafecard'     => array('title' => 'Paysafecard',      'model' => \Mollie\Payment\Application\Model\Payment\Paysafecard::class),
@@ -47,6 +53,7 @@ class Payment
         'mollieprzelewy24'      => array('title' => 'Przelewy24',       'model' => \Mollie\Payment\Application\Model\Payment\Przelewy24::class),
         'molliemybank'          => array('title' => 'MyBank',           'model' => \Mollie\Payment\Application\Model\Payment\MyBank::class),
         'molliein3'             => array('title' => 'in3',              'model' => \Mollie\Payment\Application\Model\Payment\In3::class),
+        'molliebillie'          => array('title' => 'Billie',           'model' => \Mollie\Payment\Application\Model\Payment\Billie::class),
     );
 
     /**
@@ -125,7 +132,21 @@ class Payment
      */
     protected function getContainer()
     {
-        return ContainerFactory::getInstance()->getContainer();
+        if ($this->oContainer === null) {
+            $this->oContainer = ContainerFactory::getInstance()->getContainer();
+        }
+        return $this->oContainer;
+    }
+
+    /**
+     * Used for UnitTests
+     *
+     * @param $oContainer
+     * @return void
+     */
+    public function setContainer($oContainer)
+    {
+        $this->oContainer = $oContainer;
     }
 
     /**
@@ -178,15 +199,19 @@ class Payment
      *
      * @param double|bool $dAmount
      * @param string|bool $sCurrency
+     * @param string|bool $sBillingCountryCode
      * @return array
      */
-    public function getMolliePaymentInfo($dAmount = false, $sCurrency = false)
+    public function getMolliePaymentInfo($dAmount = false, $sCurrency = false, $sBillingCountryCode = false)
     {
         if ($this->aPaymentInfo === null || ($dAmount !== false && $sCurrency !== false)) {
             $aParams = ['resource' => 'orders', 'includeWallets' => 'applepay'];
             if ($dAmount !== false && $sCurrency !== false) {
                 $aParams['amount[value]'] = number_format($dAmount, 2, '.', '');
                 $aParams['amount[currency]'] = $sCurrency;
+            }
+            if ($sBillingCountryCode !== false) {
+                $aParams['billingCountry'] = $sBillingCountryCode;
             }
             $aPaymentInfo = [];
             try {
@@ -200,7 +225,7 @@ class Payment
                     ];
                 }
             } catch (\Exception $exc) {
-                error_log($exc->getMessage());
+                Logger::logMessage($exc->getMessage());
             }
             $this->aPaymentInfo = $aPaymentInfo;
         }
@@ -246,7 +271,8 @@ class Payment
      */
     protected function getShopVersion()
     {
-        return Registry::getConfig()->getActiveShop()->oxshops__oxversion->value;
+        $oShop = Registry::getConfig()->getActiveShop();
+        return $oShop->oxshops__oxedition->value."_".$oShop->oxshops__oxversion->value;
     }
 
     /**
@@ -274,7 +300,7 @@ class Payment
                 throw new \Exception('Class Mollie\Api\MollieApiClient does not exist');
             }
         } catch(\Exception $e) {
-            error_log($e->getMessage());
+            Logger::logMessage($e->getMessage());
             throw $e;
         }
     }

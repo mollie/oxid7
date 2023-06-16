@@ -4,6 +4,7 @@ namespace Mollie\Payment\Tests\Unit\extend\Application\Model;
 
 use Mollie\Payment\Application\Helper\Payment;
 use Mollie\Payment\Application\Model\Payment\Creditcard;
+use Mollie\Payment\Tests\Unit\ConfigUnitTestCase;
 use OxidEsales\Eshop\Application\Model\Basket;
 use OxidEsales\Eshop\Application\Model\Order;
 use OxidEsales\Eshop\Application\Model\OrderArticle;
@@ -18,7 +19,7 @@ use OxidEsales\Eshop\Core\Session;
 use OxidEsales\Eshop\Core\UtilsObject;
 use OxidEsales\TestingLibrary\UnitTestCase;
 
-class OrderTest extends UnitTestCase
+class OrderTest extends ConfigUnitTestCase
 {
     public function testMollieSetOrderNumber()
     {
@@ -64,6 +65,7 @@ class OrderTest extends UnitTestCase
 
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $oPaymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
         $oPaymentHelper->method('getMolliePaymentModel')->willReturn($oPaymentModel);
@@ -100,6 +102,7 @@ class OrderTest extends UnitTestCase
 
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $oPaymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
         $oPaymentHelper->method('getMolliePaymentModel')->willReturn($oPaymentModel);
@@ -132,6 +135,7 @@ class OrderTest extends UnitTestCase
 
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $oPaymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
         $oPaymentHelper->method('getMolliePaymentModel')->willReturn($oPaymentModel);
@@ -156,6 +160,7 @@ class OrderTest extends UnitTestCase
 
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $oPaymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
         $oPaymentHelper->method('getMolliePaymentModel')->willReturn($oPaymentModel);
@@ -244,18 +249,18 @@ class OrderTest extends UnitTestCase
     public function testCheckOrderExist()
     {
         $oOrder = oxNew($this->getProxyClassName(\Mollie\Payment\extend\Application\Model\Order::class));
-        $result = $oOrder->_checkOrderExist($oOrder->getId());
+        $result = $oOrder->checkOrderExist($oOrder->getId());
 
         $this->assertFalse($result);
 
         $oOrder->save();
-        $result = $oOrder->_checkOrderExist($oOrder->getId());
+        $result = $oOrder->checkOrderExist($oOrder->getId());
         $this->assertTrue($result);
 
         $oOrder->setNonPublicVar('blMollieFinalizeReturnMode', true);
         $oOrder->setNonPublicVar('blMollieReinitializePaymentMode', true);
 
-        $result = $oOrder->_checkOrderExist($oOrder->getId());
+        $result = $oOrder->checkOrderExist($oOrder->getId());
 
         $this->assertFalse($result);
     }
@@ -272,13 +277,13 @@ class OrderTest extends UnitTestCase
         Registry::set(Session::class, $oSession);
         
         $oOrder = oxNew($this->getProxyClassName(\Mollie\Payment\extend\Application\Model\Order::class));
-        $oOrder->_loadFromBasket($oBasket);
+        $oOrder->loadFromBasket($oBasket);
 
         $this->assertEquals($expected, $oOrder->oxorder__oxremark->value);
 
         $oOrder->setNonPublicVar('blMollieFinalizeReturnMode', true);
 
-        $result = $oOrder->_loadFromBasket($oBasket);
+        $result = $oOrder->loadFromBasket($oBasket);
 
         $this->assertNull($result);
     }
@@ -294,12 +299,12 @@ class OrderTest extends UnitTestCase
         $oOrder = oxNew($this->getProxyClassName(\Mollie\Payment\extend\Application\Model\Order::class));
         $oOrder->oxorder__oxpaymenttype = new Field('molliecreditcard');
         $oOrder->oxorder__oxuserid = new Field('test');
-        $result = $oOrder->_setPayment('molliecreditcard');
+        $result = $oOrder->setPayment('molliecreditcard');
 
         $this->assertInstanceOf(\OxidEsales\Eshop\Application\Model\UserPayment::class, $result);
 
         $oOrder->setNonPublicVar('blMollieFinalizeReturnMode', true);
-        $result = $oOrder->_setPayment('molliecreditcard');
+        $result = $oOrder->setPayment('molliecreditcard');
 
         $this->assertInstanceOf(\OxidEsales\Eshop\Application\Model\UserPayment::class, $result);
     }
@@ -316,7 +321,7 @@ class OrderTest extends UnitTestCase
         UtilsObject::setClassInstance(\OxidEsales\Eshop\Application\Model\PaymentGateway::class, $oPaymentGateway);
 
         $oOrder = oxNew($this->getProxyClassName(\Mollie\Payment\extend\Application\Model\Order::class));
-        $result = $oOrder->_executePayment($oBasket, $oUserpayment);
+        $result = $oOrder->executePayment($oBasket, $oUserpayment);
 
         $this->assertTrue($result);
 
@@ -324,12 +329,12 @@ class OrderTest extends UnitTestCase
         $oOrder->setNonPublicVar('blMollieReinitializePaymentMode', true);
         $oOrder->oxorder__oxordernr = new Field('test');
 
-        $result = $oOrder->_executePayment($oBasket, $oUserpayment);
+        $result = $oOrder->executePayment($oBasket, $oUserpayment);
 
         $this->assertTrue($result);
         $this->assertEmpty($oOrder->oxorder__oxordernr->value);
 
-        $result = $oOrder->_setNumber();
+        $result = $oOrder->setNumber();
 
         $this->assertTrue($result);
         $this->assertEquals('test', $oOrder->oxorder__oxordernr->value);
@@ -344,7 +349,7 @@ class OrderTest extends UnitTestCase
         Registry::getSession()->setBasket($oBasket);
 
         $oOrder = oxNew($this->getProxyClassName(\Mollie\Payment\extend\Application\Model\Order::class));
-        $oOrder->_setFolder();
+        $oOrder->setFolder();
 
         $this->assertNotEmpty($oOrder->oxorder__oxfolder->value);
         $this->assertNotEquals($expected, $oOrder->oxorder__oxfolder->value);
@@ -353,14 +358,13 @@ class OrderTest extends UnitTestCase
         $oBasket->setPayment('molliecreditcard');
         Registry::getSession()->setBasket($oBasket);
 
-        $oConfig = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
-        $oConfig->method('getShopConfVar')->willReturn($expected);
+        $this->initModuleSettingMock($expected);
 
-        Registry::set(Config::class, $oConfig);
-
-        $oOrder->_setFolder();
+        $oOrder->setFolder();
 
         $this->assertEquals($expected, $oOrder->oxorder__oxfolder->value);
+
+        Payment::destroyInstance();
     }
 
     public function testSetOrderStatus()
@@ -372,12 +376,12 @@ class OrderTest extends UnitTestCase
         $oOrder->oxorder__oxtransstatus = new Field('NOT_FINISHED');
         $oOrder->save();
         $oOrder->setNonPublicVar('mollieRecalculateOrder', true);
-        $oOrder->_setOrderStatus($expected);
+        $oOrder->setOrderStatus($expected);
 
         $this->assertNotEquals($expected, $oOrder->oxorder__oxtransstatus->value);
 
         $oOrder->setNonPublicVar('mollieRecalculateOrder', false);
-        $oOrder->_setOrderStatus($expected);
+        $oOrder->setOrderStatus($expected);
 
         $this->assertEquals($expected, $oOrder->oxorder__oxtransstatus->value);
     }
@@ -478,7 +482,7 @@ class OrderTest extends UnitTestCase
 
         $oOrder = oxNew($this->getProxyClassName(\Mollie\Payment\extend\Application\Model\Order::class));
         $oOrder->setNonPublicVar('blMollieIsApplePayButtonMode', true);
-        $oOrder->_setUser($oUser);
+        $oOrder->assignUserInformation($oUser);
 
         $this->assertEquals($expected, $oOrder->oxorder__oxdelzip->value);
     }
@@ -492,7 +496,7 @@ class OrderTest extends UnitTestCase
         $oOrder->setNonPublicVar('blMollieIsApplePayButtonMode', true);
 
         $this->expectException(\Exception::class);
-        $oOrder->_setUser($oUser);
+        $oOrder->assignUserInformation($oUser);
     }
 
     public function testValidateDeliveryAddress()
@@ -519,10 +523,7 @@ class OrderTest extends UnitTestCase
 
         $expected = 'mollieCancelFolder';
 
-        $oConfig = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
-        $oConfig->method('getShopConfVar')->willReturn($expected);
-
-        Registry::set(Config::class, $oConfig);
+        $this->initModuleSettingMock($expected);
 
         $oApiOrder = $this->getMockBuilder(\Mollie\Api\Resources\Order::class)->disableOriginalConstructor()->getMock();
         $oApiOrder->method('cancel')->willReturn(true);
@@ -533,12 +534,14 @@ class OrderTest extends UnitTestCase
 
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $oPaymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
         $oPaymentHelper->method('getMolliePaymentModel')->willReturn($oPaymentModel);
         $oPaymentHelper->method('isMolliePaymentMethod')->willReturn(true);
 
         UtilsObject::setClassInstance(Payment::class, $oPaymentHelper);
+        UtilsObject::setClassInstance(Creditcard::class, $oPaymentModel);
 
         $oOrder = new \Mollie\Payment\extend\Application\Model\Order();
         $oOrder->oxorder__oxpaymenttype = new Field('molliecreditcard');
@@ -554,6 +557,10 @@ class OrderTest extends UnitTestCase
         $oOrder = new \Mollie\Payment\extend\Application\Model\Order();
         $result = $oOrder->mollieGetPaymentFinishUrl();
 
+        if (method_exists($this, 'assertStringContainsString')) {
+            $this->assertStringContainsString("mollieFinishPayment", $result);
+            return;
+        }
         $this->assertContains("mollieFinishPayment", $result);
     }
 
@@ -566,17 +573,16 @@ class OrderTest extends UnitTestCase
 
         $folder = "mollieTestFolder";
 
-        $oConfig = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
-        $oConfig->method('getShopConfVar')->willReturn($folder);
+        $this->initModuleSettingMock($folder);
 
-        Registry::set(Config::class, $oConfig);
-
-        $oOrder->oxorder__oxtransstatus->value = "NOT_FINISHED";
-        $oOrder->oxorder__oxfolder->value = $folder;
+        $oOrder->oxorder__oxtransstatus = new Field("NOT_FINISHED");
+        $oOrder->oxorder__oxfolder = new Field($folder);
 
         $result = $oOrder->mollieIsOrderInUnfinishedState();
 
         $this->assertTrue($result);
+
+        Payment::destroyInstance();
     }
 
     public function testMollieRecreateBasket()
@@ -678,9 +684,13 @@ class OrderTest extends UnitTestCase
         $oEmail->method('sendOrderEMailToUser')->willReturn(true);
 
         UtilsObject::setClassInstance(Email::class, $oEmail);
-        
+
+        $oGroup = $this->getMockBuilder(\OxidEsales\EshopCommunity\Application\Model\ListObject::class)->disableOriginalConstructor()->getMock();
+        $oGroup->method('getId')->willReturn("oxuser");
+
         $oUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
         $oUser->method('__get')->willReturn(new Field('Test'));
+        $oUser->method('getUserGroups')->willReturn([$oGroup]);
         
         $oOrderarticle = $this->getMockBuilder(OrderArticle::class)->disableOriginalConstructor()->getMock();
 
@@ -701,16 +711,21 @@ class OrderTest extends UnitTestCase
 
         UtilsObject::setClassInstance(Email::class, $oEmail);
 
+        $oGroup = $this->getMockBuilder(\OxidEsales\EshopCommunity\Application\Model\ListObject::class)->disableOriginalConstructor()->getMock();
+        $oGroup->method('getId')->willReturn("oxuser");
+
         $oUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
         $oUser->method('__get')->willReturn(new Field('Test'));
+        $oUser->method('getUserGroups')->willReturn([$oGroup]);
 
         UtilsObject::setClassInstance(User::class, $oUser);
 
         $oOrderarticle = $this->getMockBuilder(OrderArticle::class)->disableOriginalConstructor()->getMock();
 
-        $oOrder = new \Mollie\Payment\extend\Application\Model\Order();
+        $oOrder = oxNew(Order::class);
         $oOrder->oxorder__oxstorno = new Field(1);
         $oOrder->oxorder__oxuserid = new Field('userId');
+        $oOrder->oxorder__oxordernr = new Field(null);
         $oOrder->save();
         $oOrder->setOrderArticleList([$oOrderarticle]);
         $result = $oOrder->mollieReinitializePayment();
@@ -748,6 +763,7 @@ class OrderTest extends UnitTestCase
 
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $oPaymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
         $oPaymentHelper->method('getMolliePaymentModel')->willReturn($oPaymentModel);
@@ -775,6 +791,7 @@ class OrderTest extends UnitTestCase
 
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getApiEndpoint')->willReturn($oApiEndpoint);
+        $oPaymentModel->method('getApiEndpointByOrder')->willReturn($oApiEndpoint);
 
         $oPaymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
         $oPaymentHelper->method('getMolliePaymentModel')->willReturn($oPaymentModel);

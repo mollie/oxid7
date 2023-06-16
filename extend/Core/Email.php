@@ -124,8 +124,7 @@ class Email extends Email_parent
 
         $oConfig->setAdminMode(true);
 
-        #$this->setRecipient("support@mollie.com", "Mollie Support");
-        $this->setRecipient("robert.mueller@fatchip.de", "Mollie Support");
+        $this->setRecipient("support@mollie.com", "Mollie Support");
         $this->setRecipient($sEmail, $sName);
         $this->setReplyTo($shop->oxshops__oxorderemail->value, $shop->oxshops__oxname->getRawValue());
 

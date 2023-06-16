@@ -3,15 +3,17 @@
 namespace Mollie\Payment\Tests\Unit\Application\Model\Cronjob;
 
 use Mollie\Payment\Application\Model\Cronjob\FinishOrders;
+use Mollie\Payment\Tests\Unit\ConfigUnitTestCase;
 use OxidEsales\Eshop\Application\Model\Order;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\UtilsObject;
 use OxidEsales\TestingLibrary\UnitTestCase;
+use Mollie\Payment\Application\Helper\Payment;
 
-class FinishOrdersTest extends UnitTestCase
+class FinishOrdersTest extends ConfigUnitTestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->execute('DELETE FROM oxorder WHERE oxid = "finishOrdersTest"');
 
@@ -54,15 +56,14 @@ class FinishOrdersTest extends UnitTestCase
 
         $sFolder = 'MollieProcessingStatus';
 
-        $oConfig = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
-        $oConfig->method('getShopConfVar')->willReturn($sFolder);
-
-        Registry::set(Config::class, $oConfig);
+        $this->initModuleSettingMock($sFolder);
 
         \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->execute("INSERT INTO oxorder (OXID, OXSTORNO, OXPAYMENTTYPE, OXORDERDATE, OXTRANSSTATUS, OXFOLDER, OXPAID) VALUE ('finishOrdersTest', 0, 'molliecreditcard', ?, 'NOT_FINISHED', ?, ?)", array(date('Y-m-d H:i:s'), $sFolder, date('Y-m-d H:i:s', time() - (60 * 10))));
 
         $oCronjob = new FinishOrders();
         $result = $oCronjob->startCronjob();
+
+        Payment::destroyInstance();
 
         $this->assertFalse($result);
     }

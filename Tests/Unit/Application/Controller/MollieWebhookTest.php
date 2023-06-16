@@ -37,7 +37,7 @@ class MollieWebhookTest extends UnitTestCase
         $oController = new \Mollie\Payment\Application\Controller\MollieWebhook();
         $result = $oController->render();
 
-        $expected = 'molliewebhook.tpl';
+        $expected = 'molliewebhook';
 
         $this->assertEquals($expected, $result);
     }
@@ -61,14 +61,14 @@ class MollieWebhookTest extends UnitTestCase
         $oController = new \Mollie\Payment\Application\Controller\MollieWebhook();
         $result = $oController->render();
 
-        $expected = 'molliewebhook.tpl';
+        $expected = 'molliewebhook';
 
         $this->assertEquals($expected, $result);
     }
 
     public function testRenderDirectReturn()
     {
-        $expected = "molliewebhook.tpl";
+        $expected = "molliewebhook";
 
         $oRequest = $this->getMockBuilder(\OxidEsales\Eshop\Core\Request::class)->disableOriginalConstructor()->getMock();
         $oRequest->method('getRequestParameter')->willReturn(true);
