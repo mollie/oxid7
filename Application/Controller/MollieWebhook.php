@@ -13,7 +13,7 @@ class MollieWebhook extends FrontendController
     /**
      * @var string
      */
-    protected $_sThisTemplate = 'molliewebhook';
+    protected $_sThisTemplate = '@molliepayment/molliewebhook';
 
     /**
      * The render function

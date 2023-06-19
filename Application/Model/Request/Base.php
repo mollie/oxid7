@@ -428,7 +428,7 @@ abstract class Base
             ];
         }
 
-        if ($oOrder->oxorder__oxwrapcost->value != 0) {
+        if ($oOrder->oxorder__oxwrapcost && $oOrder->oxorder__oxwrapcost->value != 0) {
             $iFixedVat = round($oOrder->oxorder__oxwrapvat->value, 0);  // should be $oOrder->oxorder__oxwrapvat->value but seems to be buggy i.e. "18.951612903226"
             $dWrapVatValue = $this->getVatValue($oOrder->getOrderWrappingPrice()->getBruttoPrice(), $iFixedVat);
 
