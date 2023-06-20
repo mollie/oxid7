@@ -1,5 +1,5 @@
 {% set mollieApplePayEnable %}
-    var applePayDiv = document.getElementById('container_[{$sPaymentID}]');
+    var applePayDiv = document.getElementById('container_{{ sPaymentID }}');
     if (isApplePayAvailable()) {
         applePayDiv.style.display = '';
     } else {

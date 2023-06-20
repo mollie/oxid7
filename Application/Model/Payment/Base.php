@@ -459,7 +459,7 @@ abstract class Base
      */
     public function getAlternativeLogoUrl()
     {
-        $sAltLogo = Payment::getInstance()->getShopConfVar("sMollie".$this->getOxidPaymentId()."AltLogo");
+        $sAltLogo = Registry::getConfig()->getShopConfVar("sMollie".$this->getOxidPaymentId()."AltLogo", null, 'module:molliepayment');
         if (!empty($sAltLogo)) {
             return Registry::getConfig()->getActiveView()->getViewConfig()->getModuleUrl('molliepayment', 'img/'.$sAltLogo);
         }

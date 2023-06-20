@@ -261,7 +261,16 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
     {
         $oMollieApiOrder = $this->getMollieApiOrder(true);
 
-        return ($oMollieApiOrder->amount->value - $oMollieApiOrder->amountRefunded->value);
+        $dAmount = 0;
+        if ($oMollieApiOrder && $oMollieApiOrder->amount && $oMollieApiOrder->amount->value) {
+            $dAmount = $oMollieApiOrder->amount->value;
+        }
+
+        $dAmountRefunded = 0;
+        if ($oMollieApiOrder && $oMollieApiOrder->amountRefunded && $oMollieApiOrder->amountRefunded->value) {
+            $dAmountRefunded = $oMollieApiOrder->amountRefunded->valu;
+        }
+        return ($dAmount - $dAmountRefunded);
     }
 
     /**

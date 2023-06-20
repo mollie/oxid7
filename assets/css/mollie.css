@@ -29,13 +29,13 @@
 }
 
 #mollieApplePayButtonDetails.apple-pay-button-with-text {
-    width: 250px;
+    width: 100%;
+    margin-bottom: 10px;
 }
 
 #mollieApplePayButtonBasketTop, #mollieApplePayButtonBasketBottom {
-    float: right;
-    margin-right: 1em;
-    height: 34px;
+    width: 100%;
+    margin-top: 0.625rem;
 }
 
 #mollieApplePayButtonBasketTop.apple-pay-button-with-text, #mollieApplePayButtonBasketBottom.apple-pay-button-with-text {

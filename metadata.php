@@ -115,10 +115,6 @@ ni costes de configuración. Solo va a pagar por las transacciones exitosas. Y s
         'MollieFinishPayment' => Mollie\Payment\Application\Controller\MollieFinishPayment::class,
         'mollie_order_refund' => Mollie\Payment\Application\Controller\Admin\OrderRefund::class,
     ],
-    'templates'     => [
-        'mollie_second_chance.tpl' => 'Application/views/email/tpl/mollie_second_chance.tpl',
-        'mollie_support_email.tpl' => 'Application/views/email/tpl/mollie_support_email.tpl',
-    ],
     'events'        => [
         'onActivate' => \Mollie\Payment\Core\Events::class.'::onActivate',
         'onDeactivate' => \Mollie\Payment\Core\Events::class.'::onDeactivate',
