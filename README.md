@@ -12,4 +12,4 @@ Download and install the Mollie OXID eShop payment module and start receiving on
 
 ## Installation and configuration
 
-Read more about the installation, configuration and more of the Mollie-Plugin on [our Wiki](https://github.com/mollie/mollie-oxid/wiki).
+Read more about the installation, configuration and more of the Mollie-Plugin on [our Wiki](https://github.com/mollie/oxid7/wiki).
