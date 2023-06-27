@@ -1,9 +1,12 @@
 {% set mollieApplePayEnable %}
-    var applePayDiv = document.getElementById('container_{{ sPaymentID }}');
-    if (isApplePayAvailable()) {
-        applePayDiv.style.display = '';
-    } else {
-        applePayDiv.remove();
+    var applePayDiv = document.getElementById('payment_{{ sPaymentID }}');
+    if (applePayDiv && applePayDiv !== undefined) {
+        applePayDiv = applePayDiv.parentNode.parentNode;
+        if (isApplePayAvailable()) {
+            applePayDiv.style.display = '';
+        } else {
+            applePayDiv.remove();
+        }
     }
 {% endset %}
 {{ script({ include: oViewConf.getModuleUrl('molliepayment','js/mollie.js'), dynamic: __oxid_include_dynamic }) }}
