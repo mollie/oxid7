@@ -52,7 +52,7 @@ class Payment
         'mollieapplepay'        => array('title' => 'Apple Pay',        'model' => \Mollie\Payment\Application\Model\Payment\ApplePay::class),
         'mollieprzelewy24'      => array('title' => 'Przelewy24',       'model' => \Mollie\Payment\Application\Model\Payment\Przelewy24::class),
         'molliemybank'          => array('title' => 'MyBank',           'model' => \Mollie\Payment\Application\Model\Payment\MyBank::class),
-        'molliein3'             => array('title' => 'in3',              'model' => \Mollie\Payment\Application\Model\Payment\In3::class),
+        'molliein3'             => array('title' => 'iDEAL in3',              'model' => \Mollie\Payment\Application\Model\Payment\In3::class),
         'molliebillie'          => array('title' => 'Billie',           'model' => \Mollie\Payment\Application\Model\Payment\Billie::class),
     );
 
