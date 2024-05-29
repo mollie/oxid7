@@ -96,6 +96,13 @@ abstract class Base
     protected $blIsOnlyB2BSupported = false;
 
     /**
+     * Determines if a shipping address has to be sent every time
+     *
+     * @var bool
+     */
+    protected $blShippingAddressIsMandatory = false;
+
+    /**
      * Return Oxid payment id
      *
      * @return string
@@ -510,5 +517,15 @@ abstract class Base
             return $aPaymentConfig[$sParameterName];
         }
         return false;
+    }
+
+    /**
+     * Returns if shipping address has to be sent to Mollie
+     *
+     * @return bool
+     */
+    public function isShippingAddressMandatory()
+    {
+        return $this->blShippingAddressIsMandatory;
     }
 }
