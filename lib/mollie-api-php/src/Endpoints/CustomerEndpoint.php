@@ -5,6 +5,7 @@ namespace Mollie\Api\Endpoints;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Customer;
 use Mollie\Api\Resources\CustomerCollection;
+use Mollie\Api\Resources\LazyCollection;
 
 class CustomerEndpoint extends CollectionEndpointAbstract
 {
@@ -13,7 +14,7 @@ class CustomerEndpoint extends CollectionEndpointAbstract
     /**
      * @var string
      */
-    const RESOURCE_ID_PREFIX = 'cst_';
+    public const RESOURCE_ID_PREFIX = 'cst_';
 
     /**
      * Get the object that is used by this API endpoint. Every API endpoint uses one type of object.
@@ -114,8 +115,23 @@ class CustomerEndpoint extends CollectionEndpointAbstract
      * @return CustomerCollection
      * @throws ApiException
      */
-    public function page($from = null, $limit = null, array $parameters = [])
+    public function page(?string $from = null, ?int $limit = null, array $parameters = [])
     {
         return $this->rest_list($from, $limit, $parameters);
+    }
+
+    /**
+     * Create an iterator for iterating over customers retrieved from Mollie.
+     *
+     * @param string $from The first customer ID you want to include in your list.
+     * @param int $limit
+     * @param array $parameters
+     * @param bool $iterateBackwards Set to true for reverse order iteration (default is false).
+     *
+     * @return LazyCollection
+     */
+    public function iterator(?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = false): LazyCollection
+    {
+        return $this->rest_iterator($from, $limit, $parameters, $iterateBackwards);
     }
 }

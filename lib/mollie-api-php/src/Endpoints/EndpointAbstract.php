@@ -10,11 +10,11 @@ use Mollie\Api\Resources\ResourceFactory;
 
 abstract class EndpointAbstract
 {
-    const REST_CREATE = MollieApiClient::HTTP_POST;
-    const REST_UPDATE = MollieApiClient::HTTP_PATCH;
-    const REST_READ = MollieApiClient::HTTP_GET;
-    const REST_LIST = MollieApiClient::HTTP_GET;
-    const REST_DELETE = MollieApiClient::HTTP_DELETE;
+    public const REST_CREATE = MollieApiClient::HTTP_POST;
+    public const REST_UPDATE = MollieApiClient::HTTP_PATCH;
+    public const REST_READ = MollieApiClient::HTTP_GET;
+    public const REST_LIST = MollieApiClient::HTTP_GET;
+    public const REST_DELETE = MollieApiClient::HTTP_DELETE;
 
     /**
      * @var MollieApiClient
@@ -80,7 +80,7 @@ abstract class EndpointAbstract
     }
 
     /**
-     * Sends a PATCH request to a single Molle API object.
+     * Sends a PATCH request to a single Mollie API object.
      *
      * @param string $id
      * @param array $body

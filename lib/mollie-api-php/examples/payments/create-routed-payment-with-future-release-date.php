@@ -31,7 +31,7 @@ try {
      */
     $protocol = isset($_SERVER['HTTPS']) && strcasecmp('off', $_SERVER['HTTPS']) !== 0 ? "https" : "http";
     $hostname = $_SERVER['HTTP_HOST'];
-    $path = dirname(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : $_SERVER['PHP_SELF']);
+    $path = dirname($_SERVER['REQUEST_URI'] ?? $_SERVER['PHP_SELF']);
 
     /*
      * Payment parameters:
@@ -43,7 +43,6 @@ try {
      *   routing       Routing part of a payment to a connected account https://docs.mollie.com/connect/splitting-payments
      *
      * For example, the funds for the following payment will only become available on the balance of the connected account on 1 January 2025:
-
      */
     $payment = $mollie->payments->create([
         "profileId" => "pfl_v9hTwCvYqw",

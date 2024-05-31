@@ -31,6 +31,12 @@ $aLang = [
     'MOLLIE_BILLING_APPLE_PAY_NOT_AVAILABLE'    => 'Apple Pay ist für diese Rechnungsadresse nicht verfügbar',
     'MOLLIE_SECOND_CHANCE_MAIL_SUBJECT'         => 'Abschluss Ihrer Bestellung bei',
 
+    'MOLLIE_PAYPAL_EXPRESS_DESCRIPTION'         => 'Zahlung bei ',
+    'MOLLIE_PAYPAL_EXPRESS'                     => 'PayPal Express',
+    'MOLLIE_PAYPAL_EXPRESS_INFO'                => 'Ihre Zahlung wird mit PayPal Express durchgef&uuml;hrt.<br>Um Ihre PayPal Express Zahlung abzubrechen und eine andere Zahlart auszuw&auml;hlen, klicken Sie auf den &quot;Aufheben&quot; Button.',
+    'MOLLIE_PAYPAL_EXPRESS_SESSIONID_MISSING'   => 'Ein Fehler ist aufgetreten. Informationen zu PayPal Express Transaktion konnten nicht gefunden werden, bitte versuchen Sie es erneut.',
+    'MOLLIE_PAYPAL_EXPRESS_NO_SESSION_INFO'     => 'Ein Fehler ist aufgetreten. Informationen zu PayPal Express Transaktion konnten nicht abgerufen werden, bitte versuchen Sie es erneut.',
+
     'MOLLIE_CREDIT_CARD_HOLDER'                             => 'Karteninhaber',
     'MOLLIE_CREDIT_CARD_NUMBER'                             => 'Kartennummer',
     'MOLLIE_CREDIT_CARD_VALID_UNTIL'                        => 'Gültig bis',

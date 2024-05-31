@@ -3,6 +3,7 @@
 namespace Mollie\Api\Endpoints;
 
 use Mollie\Api\Resources\Customer;
+use Mollie\Api\Resources\LazyCollection;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\PaymentCollection;
 
@@ -55,7 +56,7 @@ class CustomerPaymentsEndpoint extends CollectionEndpointAbstract
      * @param array $options
      * @param array $filters
      *
-     * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Payment
+     * @return \Mollie\Api\Resources\Payment
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function createForId($customerId, array $options = [], array $filters = [])
@@ -74,9 +75,25 @@ class CustomerPaymentsEndpoint extends CollectionEndpointAbstract
      * @return PaymentCollection
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function listFor(Customer $customer, $from = null, $limit = null, array $parameters = [])
+    public function listFor(Customer $customer, ?string $from = null, ?int $limit = null, array $parameters = [])
     {
         return $this->listForId($customer->id, $from, $limit, $parameters);
+    }
+
+    /**
+     * Create an iterator for iterating over payments for the given customer, retrieved from Mollie.
+     *
+     * @param Customer $customer
+     * @param string $from The first resource ID you want to include in your list.
+     * @param int $limit
+     * @param array $parameters
+     * @param bool $iterateBackwards Set to true for reverse order iteration (default is false).
+     *
+     * @return LazyCollection
+     */
+    public function iteratorFor(Customer $customer, ?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = false): LazyCollection
+    {
+        return $this->iteratorForId($customer->id, $from, $limit, $parameters, $iterateBackwards);
     }
 
     /**
@@ -85,13 +102,31 @@ class CustomerPaymentsEndpoint extends CollectionEndpointAbstract
      * @param int $limit
      * @param array $parameters
      *
-     * @return \Mollie\Api\Resources\BaseCollection|\Mollie\Api\Resources\PaymentCollection
+     * @return \Mollie\Api\Resources\PaymentCollection
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function listForId($customerId, $from = null, $limit = null, array $parameters = [])
+    public function listForId($customerId, ?string $from = null, ?int $limit = null, array $parameters = [])
     {
         $this->parentId = $customerId;
 
         return parent::rest_list($from, $limit, $parameters);
+    }
+
+    /**
+     * Create an iterator for iterating over payments for the given customer id, retrieved from Mollie.
+     *
+     * @param string $customerId
+     * @param string $from The first resource ID you want to include in your list.
+     * @param int $limit
+     * @param array $parameters
+     * @param bool $iterateBackwards Set to true for reverse order iteration (default is false).
+     *
+     * @return LazyCollection
+     */
+    public function iteratorForId(string $customerId, ?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = false): LazyCollection
+    {
+        $this->parentId = $customerId;
+
+        return $this->rest_iterator($from, $limit, $parameters, $iterateBackwards);
     }
 }
