@@ -24,7 +24,11 @@ use Mollie\Api\Endpoints\PermissionEndpoint;
 use Mollie\Api\Endpoints\ProfileEndpoint;
 use Mollie\Api\Endpoints\ProfileMethodEndpoint;
 use Mollie\Api\Endpoints\RefundEndpoint;
+use Mollie\Api\Endpoints\SessionEndpoint;
+use Mollie\Api\Endpoints\SettlementCaptureEndpoint;
+use Mollie\Api\Endpoints\SettlementChargebackEndpoint;
 use Mollie\Api\Endpoints\SettlementPaymentEndpoint;
+use Mollie\Api\Endpoints\SettlementRefundEndpoint;
 use Mollie\Api\Endpoints\SettlementsEndpoint;
 use Mollie\Api\Endpoints\ShipmentEndpoint;
 use Mollie\Api\Endpoints\SubscriptionEndpoint;
@@ -38,7 +42,7 @@ class MollieApiClient
     /**
      * Version of our client.
      */
-    const CLIENT_VERSION = "2.39.0";
+    public const CLIENT_VERSION = "2.62.0";
 
     /**
      * Endpoint of the remote API.
@@ -109,11 +113,32 @@ class MollieApiClient
     public $settlements;
 
     /**
+     * RESTful Settlement capture resource.
+     *
+     * @var \Mollie\Api\Endpoints\SettlementCaptureEndpoint
+     */
+    public $settlementCaptures;
+
+    /**
+     * RESTful Settlement chargeback resource.
+     *
+     * @var \Mollie\Api\Endpoints\SettlementChargebackEndpoint
+     */
+    public $settlementChargebacks;
+
+    /**
      * RESTful Settlement payment resource.
      *
      * @var \Mollie\Api\Endpoints\SettlementPaymentEndpoint
      */
     public $settlementPayments;
+
+    /**
+     * RESTful Settlement refund resource.
+     *
+     * @var \Mollie\Api\Endpoints\SettlementRefundEndpoint
+     */
+    public $settlementRefunds;
 
     /**
      * RESTful Subscription resource.
@@ -130,6 +155,8 @@ class MollieApiClient
     public $mandates;
 
     /**
+     * RESTful Profile resource.
+     *
      * @var ProfileEndpoint
      */
     public $profiles;
@@ -271,6 +298,13 @@ class MollieApiClient
     protected $versionStrings = [];
 
     /**
+     * RESTful Session resource.
+     *
+     * @var SessionEndpoint
+     */
+    public $sessions;
+
+    /**
      * @param \GuzzleHttp\ClientInterface|\Mollie\Api\HttpAdapter\MollieHttpAdapterInterface|null $httpClient
      * @param \Mollie\Api\HttpAdapter\MollieHttpAdapterPickerInterface|null $httpAdapterPicker
      * @throws \Mollie\Api\Exceptions\IncompatiblePlatform|\Mollie\Api\Exceptions\UnrecognizedClientException
@@ -301,10 +335,16 @@ class MollieApiClient
         $this->profileMethods = new ProfileMethodEndpoint($this);
         $this->customers = new CustomerEndpoint($this);
         $this->settlements = new SettlementsEndpoint($this);
+        $this->settlementCaptures = new SettlementCaptureEndpoint($this);
+        $this->settlementChargebacks = new SettlementChargebackEndpoint($this);
         $this->settlementPayments = new SettlementPaymentEndpoint($this);
+        $this->settlementRefunds = new SettlementRefundEndpoint($this);
         $this->subscriptions = new SubscriptionEndpoint($this);
         $this->customerPayments = new CustomerPaymentsEndpoint($this);
         $this->mandates = new MandateEndpoint($this);
+        $this->balances = new BalanceEndpoint($this);
+        $this->balanceTransactions = new BalanceTransactionEndpoint($this);
+        $this->balanceReports = new BalanceReportEndpoint($this);
         $this->invoices = new InvoiceEndpoint($this);
         $this->permissions = new PermissionEndpoint($this);
         $this->profiles = new ProfileEndpoint($this);
@@ -323,6 +363,11 @@ class MollieApiClient
         $this->paymentChargebacks = new PaymentChargebackEndpoint($this);
         $this->wallets = new WalletEndpoint($this);
         $this->paymentLinks = new PaymentLinkEndpoint($this);
+        $this->terminals = new TerminalEndpoint($this);
+        $this->organizationPartners = new OrganizationPartnerEndpoint($this);
+        $this->clients = new ClientEndpoint($this);
+        $this->clientLinks = new ClientLinkEndpoint($this);
+        $this->sessions = new SessionEndpoint($this);
     }
 
     /**

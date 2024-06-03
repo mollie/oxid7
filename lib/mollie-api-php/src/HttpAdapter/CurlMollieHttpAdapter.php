@@ -4,6 +4,7 @@ namespace Mollie\Api\HttpAdapter;
 
 use Composer\CaBundle\CaBundle;
 use Mollie\Api\Exceptions\ApiException;
+use Mollie\Api\Exceptions\CurlConnectTimeoutException;
 use Mollie\Api\MollieApiClient;
 
 final class CurlMollieHttpAdapter implements MollieHttpAdapterInterface
@@ -30,6 +31,7 @@ final class CurlMollieHttpAdapter implements MollieHttpAdapterInterface
      * @param $httpBody
      * @return \stdClass|void|null
      * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws \Mollie\Api\Exceptions\CurlConnectTimeoutException
      */
     public function send($httpMethod, $url, $headers, $httpBody)
     {
