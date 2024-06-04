@@ -88,6 +88,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('__get')->willReturn(null);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn("4711");
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
@@ -136,6 +137,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('__get')->willReturn(null);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn("4711");
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
@@ -294,6 +296,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
         $oOrder->method('getOrderArticles')->willReturn($aOrderArticles);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn("4711");
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
@@ -343,6 +346,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
         $oOrder->method('getOrderArticles')->willReturn($aOrderArticles);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn("4711");
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
@@ -491,6 +495,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('getOrderArticles')->willReturn($aOrderArticles);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn("4711");
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
@@ -563,6 +568,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('getOrderArticles')->willReturn($aOrderArticles);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn("4711");
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
@@ -645,6 +651,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('getOrderArticles')->willReturn($aOrderArticles);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn("4711");
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
@@ -717,6 +724,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('getOrderArticles')->willReturn($aOrderArticles);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn("4711");
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
@@ -791,6 +799,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('getOrderArticles')->willReturn($aOrderArticles);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn("4711");
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
@@ -864,6 +873,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('getOrderArticles')->willReturn($aOrderArticles);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn("4711");
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
@@ -1254,6 +1264,7 @@ class OrderRefundTest extends UnitTestCase
 
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn("4711");
         $oOrder->method('__get')->willReturnMap([
             ['oxorder__oxpaymenttype', new Field('molliecreditcard')],
         ]);
@@ -1305,6 +1316,7 @@ class OrderRefundTest extends UnitTestCase
 
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn("4711");
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 

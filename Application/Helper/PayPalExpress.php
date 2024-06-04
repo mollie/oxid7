@@ -11,6 +11,11 @@ class PayPalExpress
      */
     protected static $oInstance = null;
 
+    /**
+     * Array with fallback buttons
+     *
+     * @var string[]
+     */
     protected $aPayPalExpressFallBackButtons = [
         "en" => "out/img/ppe/en/rounded_pay_golden.png",
         "de" => "out/img/ppe/de/rounded_pay_golden.png",
@@ -107,7 +112,7 @@ class PayPalExpress
         if (!$sLang) {
             $aLangArray = Registry::getLang()->getLanguageArray();
             $sLang = $aLangArray[Registry::getLang()->getTplLanguage()]->abbr;
-            error_log("Lang-Abbr: ".$sLang.PHP_EOL, 3, __DIR__."/lang.log");
+
             if (!in_array($sLang, array_keys($this->aPayPalExpressFallBackButtons))) {
                 $sLang = "en";
             }

@@ -2,11 +2,18 @@
 
 {% block basket_btn_next_bottom %}
     {{ parent() }}
-    {% if oViewConf.mollieShowApplePayButtonOnBasket() %}
+    {% if oViewConf.mollieShowApplePayButtonOnBasket() or oViewConf.mollieShowPayPalExpressButtonOnBasket() %}
         {{ script({ include: oViewConf.getModuleUrl('molliepayment','js/jquery.min.js'), dynamic: __oxid_include_dynamic }) }}
         {{ script({ include: oViewConf.getModuleUrl('molliepayment','js/mollie.js'), dynamic: __oxid_include_dynamic }) }}
         {{ style({ include: oViewConf.getModuleUrl('molliepayment','css/mollie.css') }) }}
 
-        {% include_dynamic "@molliepayment/frontend/mollieapplepaybutton.html.twig" with {type: "mollie", position: "BasketBottom", payment_price: oViewConf.mollieGetApplePayBasketSum(), delivery_costs: oxcmp_basket.getDeliveryCosts(), shipping_id: oxcmp_basket.getShippingId()} %}
+        {% if oViewConf.mollieShowApplePayButtonOnBasket() %}
+            {% include_dynamic "@molliepayment/frontend/mollieapplepaybutton.html.twig" with {type: "mollie", position: "BasketBottom", payment_price: oViewConf.mollieGetApplePayBasketSum(), delivery_costs: oxcmp_basket.getDeliveryCosts(), shipping_id: oxcmp_basket.getShippingId()} %}
+        {% endif %}
+        {#ManuTest TODO Testen#}
+        {% if oViewConf.mollieShowPayPalExpressButtonOnBasket() %}
+            {% include_dynamic "@molliepayment/frontend/molliepaypalexpress.html.twig" with {type: "mollie", position: "BasketBottom", payment_price: oViewConf.mollieGetApplePayBasketSum(), delivery_costs: oxcmp_basket.getDeliveryCosts(), shipping_id: oxcmp_basket.getShippingId()} %}
+        {% endif %}
+        {#ManuTest#}
     {% endif %}
 {% endblock %}

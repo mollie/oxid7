@@ -112,6 +112,7 @@ ni costes de configuración. Solo va a pagar por las transacciones exitosas. Y s
     'controllers'   => [
         'MollieWebhook' => Mollie\Payment\Application\Controller\MollieWebhook::class,
         'MollieApplePay' => Mollie\Payment\Application\Controller\MollieApplePay::class,
+        'MolliePayPalExpress' => Mollie\Payment\Application\Controller\MolliePayPalExpress::class,
         'MollieFinishPayment' => Mollie\Payment\Application\Controller\MollieFinishPayment::class,
         'mollie_order_refund' => Mollie\Payment\Application\Controller\Admin\OrderRefund::class,
     ],
@@ -137,6 +138,12 @@ ni costes de configuración. Solo va a pagar por las transacciones exitosas. Y s
         ['group' => 'MOLLIE_CRONJOBS',          'name' => 'sMollieCronOrderShipmentActive',     'type' => 'bool',       'value' => '0',         'position' => 110],
         ['group' => 'MOLLIE_APPLEPAY',          'name' => 'blMollieApplePayButtonOnBasket',     'type' => 'bool',       'value' => '1',         'position' => 200],
         ['group' => 'MOLLIE_APPLEPAY',          'name' => 'blMollieApplePayButtonOnDetails',    'type' => 'bool',       'value' => '1',         'position' => 210],
+        ['group' => 'MOLLIE_PAYPALEXPRESS',     'name' => 'blMolliePayPalButtonOnBasket',       'type' => 'bool',       'value' => '1',         'position' => 300],
+        ['group' => 'MOLLIE_PAYPALEXPRESS',     'name' => 'blMolliePayPalButtonOnDetails',      'type' => 'bool',       'value' => '1',         'position' => 310],
+        ['group' => 'MOLLIE_PAYPALEXPRESS',     'name' => 'sMolliePPEButtonShape',              'type' => 'select',     'value' => 'rounded',   'position' => 320, 'constraints' => 'rounded|pill'],
+        ['group' => 'MOLLIE_PAYPALEXPRESS',     'name' => 'sMolliePPEButtonType',               'type' => 'select',     'value' => 'pay',       'position' => 330, 'constraints' => 'checkout|pay'],
+        ['group' => 'MOLLIE_PAYPALEXPRESS',     'name' => 'sMolliePPEButtonColor',              'type' => 'select',     'value' => 'golden',    'position' => 340, 'constraints' => 'black|blue|golden|gray|white'],
+        ['group' => 'MOLLIE_PAYPALEXPRESS',     'name' => 'sMolliePPEButtonPreviewPaceholder',  'type' => 'str',        'value' => '',          'position' => 350],
         ['group' => 'MOLLIE_PAYMENTLOGOS',      'name' => 'sMolliePaymentLogosPlaceholder',     'type' => 'str',        'value' => '',          'position' => 500],
     ]
 ];

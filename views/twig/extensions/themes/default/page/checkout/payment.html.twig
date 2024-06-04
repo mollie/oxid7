@@ -1,16 +1,25 @@
 {% extends "page/checkout/payment.html.twig" %}
 
 {% block select_payment %}
-    {% if attribute(paymentmethod, 'isMolliePaymentMethod') is defined and paymentmethod.isMolliePaymentMethod() is same as(true) %}
-        {% set paymentModel = paymentmethod.getMolliePaymentModel() %}
-        {% if (attribute(oViewConf, 'mollieShowIcons') is defined and oViewConf.mollieShowIcons is same as(true))
-            or (paymentModel and paymentModel.getCustomFrontendTemplate is not same as(false)) %}
-            {% include "@molliepayment/frontend/mollie_payment_custom.html.twig" %}
-        {% else %}
-            {% include "page/checkout/inc/payment_other.html.twig" %}
+    {#ManuTest TODO Testen#}
+    {% if method_exists($oViewConf, 'isMolliePayPalExpressCheckout') and oViewConf.isMolliePayPalExpressCheckout() is same as(true) %}
+        {% if mollieSelectPaymentFirst is same as(true) %}{#set in block change_payment#}
+            <input type="radio" name="paymentid" value="{{ oView.mollieGetPayPalExpressPaymentId() }}" checked style="display:none;">
+            {% set mollieSelectPaymentFirst = false %}
         {% endif %}
     {% else %}
-        {{ parent() }}
+    {#ManuTest TODO Testen - Ende#}
+        {% if attribute(paymentmethod, 'isMolliePaymentMethod') is defined and paymentmethod.isMolliePaymentMethod() is same as(true) %}
+            {% set paymentModel = paymentmethod.getMolliePaymentModel() %}
+            {% if (attribute(oViewConf, 'mollieShowIcons') is defined and oViewConf.mollieShowIcons is same as(true))
+                or (paymentModel and paymentModel.getCustomFrontendTemplate is not same as(false)) %}
+                {% include "@molliepayment/frontend/mollie_payment_custom.html.twig" %}
+            {% else %}
+                {% include "page/checkout/inc/payment_other.html.twig" %}
+            {% endif %}
+        {% else %}
+            {{ parent() }}
+        {% endif %}
     {% endif %}
 {% endblock %}
 
@@ -20,4 +29,33 @@
     {% if oView.getPaymentError() == -50 %}
         <div class="alert alert-danger">{{ oView.getPaymentErrorText() }}</div>
     {% endif %}
+{% endblock %}
+
+{% block change_payment %}
+    {#ManuTest (mollie_change_payment.tpl) TODO Testen#}
+    {% if method_exists(oViewConf, 'isMolliePayPalExpressCheckout') and oViewConf.isMolliePayPalExpressCheckout() is same as(true) %}
+        <div class="panel panel-default">
+            <div class="card">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ translate({ ident: "MOLLIE_PAYPAL_EXPRESS" }) }}</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="pull-left">
+                        {{ translate({ ident: "MOLLIE_PAYPAL_EXPRESS_INFO" }) }}
+                    </div>
+                    <div class="pull-right">
+                        <a class="btn btn-default" href="{{ oView.getMolliePayPaylExpressCheckoutCancelUrl() }}">{{ translate({ ident: "MOLLIE_PAYPAL_EXPRESS_UNLINK" }) }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% set mollieSelectPaymentFirst = true %}{# used in mollie_select_payment.tpl #}
+        {% capture name = "mollie_hide_paymentlist" %}
+            $(function () {
+                $('#payment > .panel.panel-default:first').hide();
+            });
+        {% endcapture %}
+        {{ script({ add: mollie_hide_paymentlist, dynamic: __oxid_include_dynamic }) }}
+    {% endif %}
+    {{ parent() }}
 {% endblock %}

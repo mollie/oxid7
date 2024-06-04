@@ -4,6 +4,7 @@ namespace Mollie\Payment\extend\Application\Model;
 
 use Mollie\Payment\Application\Helper\Payment;
 use Mollie\Payment\Application\Helper\Payment as PaymentHelper;
+use Mollie\Payment\Application\Helper\PayPalExpress;
 use Mollie\Payment\Application\Model\RequestLog;
 use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Field;
@@ -468,6 +469,25 @@ class Order extends Order_parent
             $this->blMollieReinitializePaymentMode = true;
         }
         return parent::finalizeOrder($oBasket, $oUser, $blRecalculatingOrder);
+    }
+
+    /**
+     * Send order to shop owner and user
+     *
+     * Overload: sendOrderByEmail is the very last action in finalizeOrder.
+     *           Using it to append an action there and making sure that finalizeOrder went all the way through
+     *
+     * @param \OxidEsales\Eshop\Application\Model\User        $oUser    order user
+     * @param \OxidEsales\Eshop\Application\Model\Basket      $oBasket  current order basket
+     * @param \OxidEsales\Eshop\Application\Model\UserPayment $oPayment order payment
+     *
+     * @return bool
+     */
+    protected function sendOrderByEmail($oUser = null, $oBasket = null, $oPayment = null)
+    {
+        $blParentReturn = parent::sendOrderByEmail($oUser, $oBasket, $oPayment);
+        PayPalExpress::getInstance()->mollieCancelPayPalExpress(false); // unset PPE session variables
+        return $blParentReturn;
     }
 
     /**

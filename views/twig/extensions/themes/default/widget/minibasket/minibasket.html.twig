@@ -1,0 +1,8 @@
+{% extends "widget/minibasket/minibasket.html.twig" %}
+
+{% block widget_minibasket %}
+    {#ManuTest (mollie_minibasket.tpl) TODO Testen#}
+    {% if method_exists(oViewConf, 'mollieSuppressBasketModal') is same as(false) or oViewConf.mollieSuppressBasketModal() is same as(false) %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
