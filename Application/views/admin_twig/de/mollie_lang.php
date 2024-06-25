@@ -140,4 +140,5 @@ $aLang = array(
     'MOLLIE_PAYMENT_TYPE'                               => 'Zahlart',
     'MOLLIE_TRANSACTION_ID'                             => 'Mollie Transaktions ID',
     'MOLLIE_EXTERNAL_TRANSACTION_ID'                    => 'Externe Transaktions ID',
+    'MOLLIE_PAYMENT_DISABLED_ACTIVATION'                => '<b style="color: red;"> Diese Mollie Zahlungsart kann nicht mehr aktiviert werden, da diese demnächst entfernt wird!</b>',
 );

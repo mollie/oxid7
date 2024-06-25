@@ -138,4 +138,5 @@ $aLang = array(
     'MOLLIE_PAYMENT_TYPE'                               => 'Payment type',
     'MOLLIE_TRANSACTION_ID'                             => 'Mollie Transaction ID',
     'MOLLIE_EXTERNAL_TRANSACTION_ID'                    => 'External Transaction ID',
+    'MOLLIE_PAYMENT_DISABLED_ACTIVATION'                => '<b style="color: red;"> Deze Mollie-betaalmethode kan niet langer worden geactiveerd omdat deze binnenkort wordt verwijderd!</b>',
 );
