@@ -5,7 +5,21 @@
         {% set paymentModel = edit.getMolliePaymentModel() %}
         <tr>
             <td class="edittext" colspan="2">
-                <b>{{ translate({ ident: "MOLLIE_IS_MOLLIE" }) }}</b>
+                {% if paymentModel.isMethodDeprecated() is same as(false) %}
+                    <b>{{ translate({ ident: "MOLLIE_IS_MOLLIE" }) }}</b>
+                {% else %}
+                    <script type="text/javascript">
+                        function handleDeprecatedMethod() {
+                            let checkboxes = document.getElementsByName("editval[oxpayments__oxactive]");
+                            if (checkboxes.length > 0) {
+                                checkboxes[0].checked = false;
+                                checkboxes[0].disabled = true;
+                            }
+                        }
+                        setTimeout(handleDeprecatedMethod, 100);
+                    </script>
+                    <b style="color: red;">{{ translate({ ident: "MOLLIE_PAYMENT_DISABLED_ACTIVATION" }) }}</b>
+                {% endif %}
                 {% if paymentModel.isOnlyOrderApiSupported() is same as(true) %}
                     <input type="hidden" name="mollie[api]" value="order">
                 {% endif %}
@@ -120,101 +134,5 @@
             </td>
         </tr>
     {% endif %}
-    {# integrated complete parent() block, to disable the activationCheckox for Mollie Giropay #}
-    <tr>
-        <td class="edittext" width="70">
-            {{ translate({ ident: "GENERAL_ACTIVE" }) }}
-        </td>
-        <td class="edittext">
-            <input class="edittext" type="checkbox" name="editval[oxpayments__oxactive]" value='1' {% if edit.oxpayments__oxactive.value == 1 and paymentModel.getMolliePaymentCode() is not same as('giropay') %}checked{% endif %} {% if paymentModel.getMolliePaymentCode() is same as('giropay') %}disabled{% endif %} {{ readonly }}>
-            {% if paymentModel.getMolliePaymentCode() is same as('giropay') %}
-                {{ translate({ ident: "MOLLIE_PAYMENT_DISABLED_ACTIVATION" }) }}
-            {% endif %}
-            {% include "inputhelp.html.twig" with {'sHelpId': help_id("HELP_GENERAL_ACTIVE"), 'sHelpText': help_text("HELP_GENERAL_ACTIVE")} %}
-        </td>
-    </tr>
-    <tr>
-        <td class="edittext" width="100">
-            {{ translate({ ident: "PAYMENT_MAIN_NAME" }) }}
-        </td>
-        <td class="edittext">
-            <input type="text" class="editinput" size="25" maxlength="{{ edit.oxpayments__oxdesc.fldmax_length }}" name="editval[oxpayments__oxdesc]" value="{{ edit.oxpayments__oxdesc.value }}" {{ readonly }}>
-            {% include "inputhelp.html.twig" with {'sHelpId': help_id("HELP_PAYMENT_MAIN_NAME"), 'sHelpText': help_text("HELP_PAYMENT_MAIN_NAME")} %}
-        </td>
-    </tr>
-    <tr>
-        <td class="edittext">
-            {{ translate({ ident: "PAYMENT_MAIN_ADDPRICE" }) }} ({{ oActCur.sign }})
-        </td>
-        <td class="edittext">
-            <input type="text" class="editinput" size="15" maxlength="{{ edit.oxpayments__oxaddsum.fldmax_length }}" name="editval[oxpayments__oxaddsum]" value="{{ edit.oxpayments__oxaddsum.value }}" {{ readonly }}>
-            <select name="editval[oxpayments__oxaddsumtype]" class="editinput" {% include "help.html.twig" with {helpid: "addsumtype"} %} {{ readonly }}>
-                {% for sum in sumtype %}
-                    <option value="{{ sum }}" {% if sum == edit.oxpayments__oxaddsumtype.value %}SELECTED{% endif %}>{{ sum }}</option>
-                {% endfor %}
-            </select>
-            {% include "inputhelp.html.twig" with {'sHelpId': help_id("HELP_PAYMENT_MAIN_ADDPRICE"), 'sHelpText': help_text("HELP_PAYMENT_MAIN_ADDPRICE")} %}
-        </td>
-    </tr>
-    {% if noticeoxaddsumrules == 1 %}
-        <tr>
-            <td colspan="2">
-                <div class="errorbox">{{ translate({ ident: "PAYMENT_MAIN_NOTICEDEFAULTVALUESSELECTED" }) }}</div>
-            </td>
-        </tr>
-    {% endif %}
-    <tr>
-        <td class="edittext" valign="top">
-            {{ translate({ ident: "PAYMENT_MAIN_ADDSUMRULES" }) }}:
-        </td>
-        <td class="edittext">
-            <table cellspacing="0" cellpadding="0" border="0">
-                <tr>
-                    <td><input type="checkbox" name="oxpayments__oxaddsumrules[]" value="1" {% if not edit.oxpayments__oxaddsumrules.value or edit.oxpayments__oxaddsumrules.value b-and 1 %}checked{% endif %} {{ readonly }}> {{ translate({ ident: "PAYMENT_MAIN_ADDSUMRULES_ALLGOODS" }) }}</td>
-                    <td rowspan="5" valign="top">{% include "inputhelp.html.twig" with {'sHelpId': help_id("HELP_PAYMENT_MAIN_ADDSUMRULES"), 'sHelpText': help_text("HELP_PAYMENT_MAIN_ADDSUMRULES")} %}</td>
-                </tr>
-                <tr><td><input type="checkbox" name="oxpayments__oxaddsumrules[]" value="2" {% if not edit.oxpayments__oxaddsumrules.value or edit.oxpayments__oxaddsumrules.value b-and 2 %}checked{% endif %} {{ readonly }}> {{ translate({ ident: "PAYMENT_MAIN_ADDSUMRULES_DISCOUNTS" }) }}</td></tr>
-                <tr><td><input type="checkbox" name="oxpayments__oxaddsumrules[]" value="4" {% if not edit.oxpayments__oxaddsumrules.value or edit.oxpayments__oxaddsumrules.value b-and 4 %}checked{% endif %} {{ readonly }}> {{ translate({ ident: "PAYMENT_MAIN_ADDSUMRULES_VOUCHERS" }) }}</td></tr>
-                <tr><td><input type="checkbox" name="oxpayments__oxaddsumrules[]" value="8" {% if not edit.oxpayments__oxaddsumrules.value or edit.oxpayments__oxaddsumrules.value b-and 8 %}checked{% endif %} {{ readonly }}> {{ translate({ ident: "PAYMENT_MAIN_ADDSUMRULES_SHIPCOSTS" }) }}</td></tr>
-                <tr><td><input type="checkbox" name="oxpayments__oxaddsumrules[]" value="16" {% if edit.oxpayments__oxaddsumrules.value b-and 16 %}checked{% endif %} {{ readonly }}> {{ translate({ ident: "PAYMENT_MAIN_ADDSUMRULES_GIFTS" }) }}</td></tr>
-            </table>
-        </td>
-    </tr>
-    <tr>
-        <td class="edittext">
-            {{ translate({ ident: "PAYMENT_MAIN_FROMBONI" }) }}
-        </td>
-        <td class="edittext">
-            <input type="text" class="editinput" size="25" maxlength="{{ edit.oxpayments__oxfromboni.fldmax_length }}" name="editval[oxpayments__oxfromboni]" value="{{ edit.oxpayments__oxfromboni.value }}" {{ readonly }}>
-            {% include "inputhelp.html.twig" with {'sHelpId': help_id("HELP_PAYMENT_MAIN_FROMBONI"), 'sHelpText': help_text("HELP_PAYMENT_MAIN_FROMBONI")} %}
-        </td>
-    </tr>
-    <tr>
-        <td class="edittext">
-            {{ translate({ ident: "PAYMENT_MAIN_AMOUNT" }) }} ({{ oActCur.sign }})
-        </td>
-        <td class="edittext">
-            {{ translate({ ident: "PAYMENT_MAIN_FROM" }) }} <input type="text" class="editinput" size="5" maxlength="{{ edit.oxpayments__oxfromamount.fldmax_length }}" name="editval[oxpayments__oxfromamount]" value="{{ edit.oxpayments__oxfromamount.value }}" {{ readonly }}>  {{ translate({ ident: "PAYMENT_MAIN_TILL" }) }} <input type="text" class="editinput" size="5" maxlength="{{ edit.oxpayments__oxtoamount.fldmax_length }}" name="editval[oxpayments__oxtoamount]" value="{{ edit.oxpayments__oxtoamount.value }}" {{ readonly }}>
-            {% include "inputhelp.html.twig" with {'sHelpId': help_id("HELP_PAYMENT_MAIN_AMOUNT"), 'sHelpText': help_text("HELP_PAYMENT_MAIN_AMOUNT")} %}
-        </td>
-    </tr>
-
-    <tr>
-        <td class="edittext">
-            {{ translate({ ident: "PAYMENT_MAIN_SELECTED" }) }}
-        </td>
-        <td class="edittext">
-            <input type="checkbox" name="editval[oxpayments__oxchecked]" value="1" {% if edit.oxpayments__oxchecked.value %}checked{% endif %} {{ readonly }}>
-            {% include "inputhelp.html.twig" with {'sHelpId': help_id("HELP_PAYMENT_MAIN_SELECTED"), 'sHelpText': help_text("HELP_PAYMENT_MAIN_SELECTED")} %}
-        </td>
-    </tr>
-    <tr>
-        <td class="edittext">
-            {{ translate({ ident: "GENERAL_SORT" }) }}
-        </td>
-        <td class="edittext">
-            <input type="text" class="editinput" size="25" maxlength="{{ edit.oxpayments__oxsort.fldmax_length }}" name="editval[oxpayments__oxsort]" value="{{ edit.oxpayments__oxsort.value }}" {{ readonly }}>
-            {% include "inputhelp.html.twig" with {'sHelpId': help_id("HELP_PAYMENT_MAIN_SORT"), 'sHelpText': help_text("HELP_PAYMENT_MAIN_SORT")} %}
-        </td>
-    </tr>
+    {{ parent() }}
 {% endblock %}

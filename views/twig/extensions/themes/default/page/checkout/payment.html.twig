@@ -5,9 +5,7 @@
         {% set paymentModel = paymentmethod.getMolliePaymentModel() %}
         {% if (attribute(oViewConf, 'mollieShowIcons') is defined and oViewConf.mollieShowIcons is same as(true))
             or (paymentModel and paymentModel.getCustomFrontendTemplate is not same as(false)) %}
-            {% if paymentModel.getMolliePaymentCode() is not same as('giropay') %}
-                {% include "@molliepayment/frontend/mollie_payment_custom.html.twig" %}
-            {% endif %}
+            {% include "@molliepayment/frontend/mollie_payment_custom.html.twig" %}
         {% else %}
             {% include "page/checkout/inc/payment_other.html.twig" %}
         {% endif %}
