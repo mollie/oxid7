@@ -9,6 +9,35 @@
         </select>
         {% include "inputhelp.html.twig" with {'sHelpId': help_id("MOLLIE_CREDITCARD_DATA_INPUT_HELP"), 'sHelpText': help_text("MOLLIE_CREDITCARD_DATA_INPUT_HELP")} %}
     </td>
+    {#ManuTest TODO Testen#}
+</tr>
+<tr>
+    <td class="edittext" width="70">
+        {{ translate({ ident: "MOLLIE_CREDITCARD_CAPTURE" }) }}
+    </td>
+    <td  class="edittext" width="150">
+        <select name="mollie[creditcard_capture_method]" style="width:177px;" {{ readonly }}>
+            <option value="creditcard_authorize_capture" {% if paymentModel.getConfigParam('creditcard_capture_method') == 'creditcard_authorize_capture' %}selected{% endif %}>{{ translate({ ident: "MOLLIE_CC_CAPTURE_AUTH" }) }}</option>
+            <option value="creditcard_direct_capture" {% if paymentModel.getConfigParam('creditcard_capture_method') == 'creditcard_direct_capture' %}selected{% endif %}>{{ translate({ ident: "MOLLIE_CC_CAPTURE_DIRECT" }) }}</option>
+            <option value="creditcard_automatic_capture" {% if paymentModel.getConfigParam('creditcard_capture_method') == 'creditcard_automatic_capture' %}selected{% endif %}>{{ translate({ ident: "MOLLIE_CC_CAPTURE_AUTOMATIC" }) }}</option>
+        </select>
+        {% include "inputhelp.html.twig" with {'sHelpId': help_id("MOLLIE_CREDITCARD_DATA_INPUT_HELP"), 'sHelpText': help_text("MOLLIE_CREDITCARD_DATA_INPUT_HELP")} %}
+    </td>
+
+</tr>
+<tr>
+    <td class="edittext" width="70">
+        {{ translate({ ident: "MOLLIE_CAPTURE_DAYS" }) }}
+    </td>
+    <td class="edittext">
+        <select name="mollie[captureDays]" [{$readonly}]>
+            {% for days, title in oView.mollieGetAutomaticCaptureDays() %}
+            <option value="{{ days }}" {% if paymentModel.getCaptureDays() == days %}selected{% endif %}>{{ title }}</option>
+            {% endfor %}
+        </select>
+        {% include "inputhelp.html.twig" with {'sHelpId': help_id("MOLLIE_CAPTURE_DAYS_HELP"), 'sHelpText': help_text("MOLLIE_CAPTURE_DAYS_HELP")} %}
+    </td>
+    {#ManuTest Ende#}
 </tr>
 <tr>
     <td class="edittext" width="70">

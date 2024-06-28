@@ -77,7 +77,128 @@
 {% else %}
     {% set readonly = "" %}
 {% endif %}
+{#ManuTest TODO Testen#}
+{% set order = oView.getOrder() %}
+{% set paymentType = order.getPaymentType() %}
 
+{% if oView.isMollieOrder() === true %}
+<fieldset>
+    <legend>{{ translate({ ident: "MOLLIE_PAYMENT_DETAILS" }) }}</legend>
+    <table>
+        <tr>
+            <td class="edittext">
+                {{ translate({ ident: "MOLLIE_PAYMENT_TYPE" }) }}
+            </td>
+            <td class="edittext">
+                {{ paymentType.oxpayments__oxdesc.value }}
+            </td>
+            <td class="edittext"></td>
+        </tr>
+        <tr>
+            <td class="edittext">
+                {{ translate({ ident: "MOLLIE_TRANSACTION_ID" }) }}:
+            </td>
+            <td class="edittext">
+                {{ order.oxorder__oxtransid.value }}
+            </td>
+            <td class="edittext"></td>
+        </tr>
+        {% if order.oxorder__mollieexternaltransid.value != "" %}
+        <tr>
+            <td class="edittext">
+                {{ translate({ ident: "MOLLIE_EXTERNAL_TRANSACTION_ID" }) }}:
+            </td>
+            <td class="edittext">
+                {{ order.oxorder__mollieexternaltransid.value }}
+            </td>
+            <td class="edittext"></td>
+        </tr>
+        {% endif%}
+    </table>
+</fieldset>
+{% if oView.getErrorMessage() is not same as(false) %}
+    <fieldset class="refundError message">
+        <strong>Error</strong>
+        {{ oView.getErrorMessage() }}
+    </fieldset>
+{% endif %}
+{% if oView.wasRefundSuccessful() is same as(true) %}
+    <fieldset class="refundSuccess message">
+        {{ translate({ ident: "MOLLIE_REFUND_SUCCESSFUL" }) }}
+    </fieldset>
+{% endif %}
+{% if oView.wasCaptureSuccessful() is same as(true) %}
+    <fieldset class="refundSuccess message">
+        {{ translate({ ident: "MOLLIE_CAPTURE_SUCCESSFUL" }) }}
+    </fieldset>
+{% endif %}
+
+{% set blIsOrderRefundable = oView.isOrderRefundable() %}
+{% if blIsOrderRefundable is same as(false) %}
+    <fieldset class="refundNotice message">
+        <strong>{{ translate({ ident: "MOLLIE_NOTICE" }) }}</strong>
+        {{ translate({ ident: "MOLLIE_ORDER_NOT_REFUNDABLE" }) }}
+    </fieldset>
+{% endif %}
+
+{% if oView.hasOrderVoucher() is same as(true) %}
+    <fieldset class="refundNotice message">
+        <strong>{{ translate({ ident: "MOLLIE_NOTICE" }) }}</strong>
+        {{ translate({ ident: "MOLLIE_VOUCHERS_EXISTING" }) }}
+    </fieldset>
+{% endif %}
+{% if oView.isDirektOrAuthorizedOrder() %}
+    <fieldset class="capturelist">
+        <legend>{{ translate({ ident: "MOLLIE_CAPTURE_TITLE" }) }}</legend>
+        {% if oView.getOrderCaptures() is same as(false) %}
+            <form name="capturelist" id="search" action="{{ oViewConf.getSelfLink()|raw }}" method="post">
+                {{ oViewConf.getHiddenSid()|raw }}
+                <input type="hidden" name="cl" value="mollie_order_refund">
+                <input type="hidden" name="oxid" value="{{ oxid }}">
+                <input type="hidden" name="fnc" value="captureOrder">
+
+                <span><label for="refund_description">{{ translate({ ident: "MOLLIE_CAPTURE_DESCRIPTION" }) }}:</label></span>
+                <input type="text" name="capture_partial" value="{{ edit.oxorder__oxtotalordersum.value }}" placeholder="{{ edit.oxorder__oxtotalordersum.value }}" maxlength="140" size="120"><br>
+                <input type="submit" value="{{ translate({ ident: "MOLLIE_CAPTURE_AMOUNT" }) }}" class="refundSubmit">
+            </form>
+        {% endif %}
+        {% if oView.getOrderCaptures() %}
+            <table cellspacing="0" cellpadding="0" border="0" width="98%" class="refundTable">
+                <tr>
+                    <td class="listheader first" height="15" width="10%">{{ translate({ ident: "MOLLIE_AMOUNT" }) }}</td>
+                    <td class="listheader" width="10%">{{ translate({ ident: "MOLLIE_TRANSACTION_ID" }) }}</td>
+                    <td class="listheader" width="10%">{{ translate({ ident: "MOLLIE_CAPTURE_ID" }) }}</td>
+                    <td class="listheader" width="10%">{{ translate({ ident: "SHOP_MODULE_sMollieMode" }) }}</td>
+                    <td class="listheader" width="10%">{{ translate({ ident: "MOLLIE_CAPTURE_STATUS" }) }}</td>
+                </tr>
+                {% for listitem in oView.getOrderCaptures() name=orderCaptures %}
+                    <tr id="art.{{ loop.index }}">
+                        {% if listitem.isOrderarticle is same as(false) AND blBorderDrawn is same as(false) %}
+                            {% set class = " borderTop" %}
+                            {% set blBorderDrawn = true %}
+                        {% endif %}
+                        {% set listclass = listitem ~ blWhite %}
+                        <td valign="top" class="{{ listclass }}{{ class }}" height="15">{{ oView.getFormatedPrice(listitem.amount) }}  <small>{{ edit.oxorder__oxcurrency.value }}</small></td>
+                        <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.paymentId|strip_tags|raw }}</td>
+                        <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.captureId }}</td>
+                        <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.mode }}</td>
+                        <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.status }}</td>
+
+                        {% if listitem.isOrderarticle is same as(false) %}
+                            {% set class = "" %}
+                        {% endif %}
+                    </tr>
+                    {% if blWhite is same as("2") }]
+                        {% set blWhite = "" %}
+                    {% else %}
+                        {% set blWhite = "2" %}
+                    {% endif %}
+                {% endfor %}
+            </table>
+        {% endif %}
+    </fieldset>
+{% endif %}
+{#ManuTest Ende#}
 <form name="transfer" id="transfer" action="{{ oViewConf.getSelfLink()|raw }}" method="post">
     {{ oViewConf.getHiddenSid()|raw }}
     <input type="hidden" name="oxid" value="{{ oxid }}">
@@ -95,59 +216,6 @@
             {{ oView.getErrorMessage() }}
         </fieldset>
     {% endif %}
-
-    {% set blIsOrderRefundable = oView.isOrderRefundable() %}
-
-    {% if blIsOrderRefundable == false %}
-        <fieldset class="refundNotice message">
-            <strong>{{ translate({ ident: "MOLLIE_NOTICE" }) }}</strong>
-            {{ translate({ ident: "MOLLIE_ORDER_NOT_REFUNDABLE" }) }}
-        </fieldset>
-    {% endif %}
-
-    {% if oView.hasOrderVoucher() == true %}
-        <fieldset class="refundNotice message">
-            <strong>{{ translate({ ident: "MOLLIE_NOTICE" }) }}</strong>
-            {{ translate({ ident: "MOLLIE_VOUCHERS_EXISTING" }) }}
-        </fieldset>
-    {% endif %}
-
-    {% set order = oView.getOrder() %}
-    {% set paymentType = order.getPaymentType() %}
-    <fieldset>
-        <legend>{{ translate({ ident: "MOLLIE_PAYMENT_DETAILS" }) }}</legend>
-        <table>
-            <tr>
-                <td class="edittext">
-                    {{ translate({ ident: "MOLLIE_PAYMENT_TYPE" }) }}:
-                </td>
-                <td class="edittext">
-                    {{ paymentType.oxpayments__oxdesc.value }}
-                </td>
-                <td class="edittext"></td>
-            </tr>
-            <tr>
-                <td class="edittext">
-                    {{ translate({ ident: "MOLLIE_TRANSACTION_ID" }) }}:
-                </td>
-                <td class="edittext">
-                    {{ order.oxorder__oxtransid.value }}
-                </td>
-                <td class="edittext"></td>
-            </tr>
-            {% if order.oxorder__mollieexternaltransid.value != "" %}
-            <tr>
-                <td class="edittext">
-                    {{ translate({ ident: "MOLLIE_EXTERNAL_TRANSACTION_ID" }) }}:
-                </td>
-                <td class="edittext">
-                    {{ order.oxorder__mollieexternaltransid.value }}
-                </td>
-                <td class="edittext"></td>
-            </tr>
-            {% endif %}
-        </table>
-    </fieldset>
 
     {% if order.mollieIsEligibleForPaymentFinish() %}
         <fieldset>
