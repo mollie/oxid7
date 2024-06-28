@@ -1,9 +1,8 @@
 {% extends "page/checkout/order.html.twig" %}
 
 {% block checkout_order_address %}
-    {#ManuTest (mollie_checkout_order_address.tpl) TODO Testen#}
     {{ parent() }}
-    {% if method_exists(oViewConf, 'isMolliePayPalExpressCheckout') and oViewConf.isMolliePayPalExpressCheckout() is same as(true) %}
+    {% if attribute(oViewConf, 'isMolliePayPalExpressCheckout') is defined and oViewConf.isMolliePayPalExpressCheckout() is same as(true) %}
         {% capture name = "mollie_hide_changebuttons" %}
             $(function () {
                 $('#payment > .panel.panel-default:first').hide();

@@ -71,7 +71,7 @@ class PayPalExpressTest extends UnitTestCase
         $oPPEHelper = PayPalExpress::getInstance();
         $result = $oPPEHelper->getPayPalButtonUrl("pl", "not_existing", "not_existing", "not_existing");
 
-        $result = strpos($result, "out/img/ppe/pl/rounded_pay_golden.png") !== false ? true : false;
+        $result = strpos($result, "img/ppe/pl/rounded_pay_golden.png") !== false ? true : false;
         $this->assertTrue($result);
     }
 }

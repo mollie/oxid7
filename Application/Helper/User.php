@@ -208,8 +208,10 @@ class User
     }
 
     /**
-     * @param $oUser
-     * @param $oMollieSessionAddress
+     * Fills an Oxid Address object with information from Mollie session address
+     *
+     * @param  $oUser
+     * @param  \stdClass $oMollieSessionAddress
      * @return void
      */
     protected function setShippingAddressFromMollieSession($oUser, $oMollieSessionAddress)
@@ -386,7 +388,9 @@ class User
     }
 
     /**
-     * @param $oMollieSessionAddress
+     * Generates a user or loads an existing user from Mollie session shipping address
+     *
+     * @param  \stdClass $oMollieSessionAddress
      * @return false|\OxidEsales\Eshop\Application\Model\User
      */
     public function getMollieSessionUser($oMollieSessionAddress)

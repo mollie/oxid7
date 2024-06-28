@@ -1,17 +1,19 @@
-<a id="molliePayPalExpressButton{{ _mollie_position }}" class="molliePayPalExpress{{ _mollie_position }}" href="#" title="PayPal Express">
-    <img src="{{ oViewConf.getMolliePayPalExpressButtonImageUrl() }}" alt="PayPal Express" />
-</a><br>
-{% capture assign = "molliePayPalExpressAjaxSpinner" %}
-    addSpinnerDiv();
-    $(document).on({
-        ajaxStart: function(){
-            $("#mollie-overlay").fadeIn(300);
-        },
-        ajaxStop: function(){
-            $("#mollie-overlay").fadeOut(300);
-        }
-    });
-{% endcapture %}
-{{ script({ add: molliePayPalExpressAjaxSpinner, dynamic: __oxid_include_dynamic }) }}
-{{ script({ add: "var shopBaseUrl = '" ~ oViewConf.mollieGetShopUrl() ~ "';", dynamic: __oxid_include_dynamic }) }}
-{{ script({ add: "mollieAddPayPalExpressClickEvent('molliePayPalExpressButton" ~ _mollie_position ~ "', '" ~ _mollie_position ~ "')", dynamic: __oxid_include_dynamic }) }}
+{% if oViewConf.mollieCanShowPayPalExpressButton() %}
+    <a id="molliePayPalExpressButton{{ _mollie_position }}" class="molliePayPalExpress{{ _mollie_position }}" href="#" title="PayPal Express">
+        <img src="{{ oViewConf.getMolliePayPalExpressButtonImageUrl() }}" alt="PayPal Express" />
+    </a><br>
+    {% capture assign = "molliePayPalExpressAjaxSpinner" %}
+        addSpinnerDiv();
+        $(document).on({
+            ajaxStart: function(){
+                $("#mollie-overlay").fadeIn(300);
+            },
+            ajaxStop: function(){
+                $("#mollie-overlay").fadeOut(300);
+            }
+        });
+    {% endcapture %}
+    {{ script({ add: molliePayPalExpressAjaxSpinner, dynamic: __oxid_include_dynamic }) }}
+    {{ script({ add: "var shopBaseUrl = '" ~ oViewConf.mollieGetShopUrl() ~ "';", dynamic: __oxid_include_dynamic }) }}
+    {{ script({ add: "mollieAddPayPalExpressClickEvent('molliePayPalExpressButton" ~ _mollie_position ~ "', '" ~ _mollie_position ~ "')", dynamic: __oxid_include_dynamic }) }}
+{% endif %}

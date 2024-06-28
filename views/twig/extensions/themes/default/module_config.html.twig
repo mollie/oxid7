@@ -56,7 +56,6 @@
                 </dl>
             {% endif %}
         {% endif %}
-    {#ManuTest TODO Testen komplettes elseif#}
     {% elseif module_var == 'sMolliePPEButtonPreviewPaceholder' %}
         <dl>
             <dd>
@@ -67,7 +66,8 @@
                     <option value="nl">{{ translate({ ident: "SHOP_MODULE_sMolliePPEButtonLangNl" }) }}</option>
                     <option value="fr">{{ translate({ ident: "SHOP_MODULE_sMolliePPEButtonLangFr" }) }}</option>
                     <option value="pl">{{ translate({ ident: "SHOP_MODULE_sMolliePPEButtonLangPl" }) }}</option>
-                </select>{% include "inputhelp.html.twig" with {'sHelpId': help_id("HELP_SHOP_MODULE_sMolliePPEButtonLang"), 'sHelpText': help_text("HELP_SHOP_MODULE_sMolliePPEButtonLang")} %}<br>
+                </select>
+                {% include "inputhelp.html.twig" with {'sHelpId': help_id("HELP_SHOP_MODULE_sMolliePPEButtonLang"), 'sHelpText': help_text("HELP_SHOP_MODULE_sMolliePPEButtonLang")} %}<br>
                 <script type="text/javascript">
                     function mollieAddChangeEvents() {
                         document.getElementsByName("confselects[sMolliePPEButtonShape]")[0].addEventListener("change", updatePreviewImgUrl);
@@ -76,8 +76,7 @@
                         document.getElementById("sMolliePPEButtonLanguage").addEventListener("change", updatePreviewImgUrl);
                     }
                     function updatePreviewImgUrl() {
-                        /*ManuTest TODO Prüfen ob die URL korrekt zusammengestellt wird*/
-                        let shopBaseUrl = {{ oViewConf.mollieGetShopUrl() }} ~ "admin/";
+                        let shopBaseUrl = "{{ oViewConf.mollieGetShopUrl() ~ "admin/" }}";
                         var data = new FormData();
                         data.append('cl', 'module_config');
                         data.append('oxid', 'molliepayment');
@@ -114,7 +113,6 @@
                 <div id="sMolliePPEButtonPreview"></div>
             </dd>
         </dl>
-        {#ManuTest TODO Testen komplettes elseif - ENDE#}
     {% elseif module_var == 'sMolliePaymentLogosPlaceholder' %}
         {{ style({ include: oViewConf.getModuleUrl('molliepayment','css/mollie.css') }) }}
         <input type="hidden" name="mollieDeleteAltLogo" value="">

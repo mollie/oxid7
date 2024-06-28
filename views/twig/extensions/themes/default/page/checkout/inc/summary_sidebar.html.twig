@@ -10,10 +10,9 @@
         {% if oViewConf.mollieShowApplePayButtonOnBasket() %}
             {% include_dynamic "@molliepayment/frontend/mollieapplepaybutton.html.twig" with {type: "mollie", position: "BasketBottom", payment_price: oViewConf.mollieGetApplePayBasketSum(), delivery_costs: oxcmp_basket.getDeliveryCosts(), shipping_id: oxcmp_basket.getShippingId()} %}
         {% endif %}
-        {#ManuTest TODO Testen#}
+
         {% if oViewConf.mollieShowPayPalExpressButtonOnBasket() %}
-            {% include_dynamic "@molliepayment/frontend/molliepaypalexpress.html.twig" with {type: "mollie", position: "BasketBottom", payment_price: oViewConf.mollieGetApplePayBasketSum(), delivery_costs: oxcmp_basket.getDeliveryCosts(), shipping_id: oxcmp_basket.getShippingId()} %}
+            {% include_dynamic "@molliepayment/frontend/molliepaypalexpress.html.twig" with {type: "mollie", position: "BasketBottom"} %}
         {% endif %}
-        {#ManuTest#}
     {% endif %}
 {% endblock %}

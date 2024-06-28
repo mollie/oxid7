@@ -42,7 +42,7 @@ class MollieApiClient
     /**
      * Version of our client.
      */
-    public const CLIENT_VERSION = "2.62.0";
+    const CLIENT_VERSION = "2.62.0";
 
     /**
      * Endpoint of the remote API.
@@ -342,9 +342,6 @@ class MollieApiClient
         $this->subscriptions = new SubscriptionEndpoint($this);
         $this->customerPayments = new CustomerPaymentsEndpoint($this);
         $this->mandates = new MandateEndpoint($this);
-        $this->balances = new BalanceEndpoint($this);
-        $this->balanceTransactions = new BalanceTransactionEndpoint($this);
-        $this->balanceReports = new BalanceReportEndpoint($this);
         $this->invoices = new InvoiceEndpoint($this);
         $this->permissions = new PermissionEndpoint($this);
         $this->profiles = new ProfileEndpoint($this);
@@ -363,10 +360,6 @@ class MollieApiClient
         $this->paymentChargebacks = new PaymentChargebackEndpoint($this);
         $this->wallets = new WalletEndpoint($this);
         $this->paymentLinks = new PaymentLinkEndpoint($this);
-        $this->terminals = new TerminalEndpoint($this);
-        $this->organizationPartners = new OrganizationPartnerEndpoint($this);
-        $this->clients = new ClientEndpoint($this);
-        $this->clientLinks = new ClientLinkEndpoint($this);
         $this->sessions = new SessionEndpoint($this);
     }
 

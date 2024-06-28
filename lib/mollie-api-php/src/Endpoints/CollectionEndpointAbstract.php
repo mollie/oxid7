@@ -20,7 +20,7 @@ abstract class CollectionEndpointAbstract extends EndpointAbstract
      * @return mixed
      * @throws ApiException
      */
-    protected function rest_list(?string $from = null, ?int $limit = null, array $filters = [])
+    protected function rest_list($from = null, $limit = null, array $filters = [])
     {
         $filters = array_merge(["from" => $from, "limit" => $limit], $filters);
 

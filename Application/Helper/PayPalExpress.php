@@ -17,11 +17,11 @@ class PayPalExpress
      * @var string[]
      */
     protected $aPayPalExpressFallBackButtons = [
-        "en" => "out/img/ppe/en/rounded_pay_golden.png",
-        "de" => "out/img/ppe/de/rounded_pay_golden.png",
-        "nl" => "out/img/ppe/nl/rounded_pay_golden.png",
-        "fr" => "out/img/ppe/fr/rounded_pay_golden.png",
-        "pl" => "out/img/ppe/pl/rounded_pay_golden.png",
+        "en" => "img/ppe/en/rounded_pay_golden.png",
+        "de" => "img/ppe/de/rounded_pay_golden.png",
+        "nl" => "img/ppe/nl/rounded_pay_golden.png",
+        "fr" => "img/ppe/fr/rounded_pay_golden.png",
+        "pl" => "img/ppe/pl/rounded_pay_golden.png",
     ];
 
     /**
@@ -81,7 +81,7 @@ class PayPalExpress
      */
     protected function getPayPalButtonPath($sLang, $sShape, $sType, $sColor)
     {
-        return "out/img/ppe/".$sLang."/".$sShape."_".$sType."_".$sColor.".png";
+        return "img/ppe/".$sLang."/".$sShape."_".$sType."_".$sColor.".png";
     }
 
     /**
