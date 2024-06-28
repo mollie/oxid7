@@ -30,7 +30,7 @@
         {{ translate({ ident: "MOLLIE_CAPTURE_DAYS" }) }}
     </td>
     <td class="edittext">
-        <select name="mollie[captureDays]" [{$readonly}]>
+        <select name="mollie[captureDays]" {{ readonly }}>
             {% for days, title in oView.mollieGetAutomaticCaptureDays() %}
             <option value="{{ days }}" {% if paymentModel.getCaptureDays() == days %}selected{% endif %}>{{ title }}</option>
             {% endfor %}
