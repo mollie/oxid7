@@ -11,7 +11,7 @@
     </td>
     {#ManuTest TODO Testen#}
 </tr>
-<tr>
+<tr class="mollieOnlyPaymentApi" {% if paymentModel.getApiMethod() != 'payment' %}style="display:none;"{% endif %}>
     <td class="edittext" width="70">
         {{ translate({ ident: "MOLLIE_CREDITCARD_CAPTURE" }) }}
     </td>
@@ -25,14 +25,14 @@
     </td>
 
 </tr>
-<tr>
+<tr class="mollieOnlyPaymentApi" {% if paymentModel.getApiMethod() != 'payment' %}style="display:none;"{% endif %}>
     <td class="edittext" width="70">
         {{ translate({ ident: "MOLLIE_CAPTURE_DAYS" }) }}
     </td>
     <td class="edittext">
         <select name="mollie[captureDays]" {{ readonly }}>
             {% for days, title in oView.mollieGetAutomaticCaptureDays() %}
-            <option value="{{ days }}" {% if paymentModel.getCaptureDays() == days %}selected{% endif %}>{{ title }}</option>
+                <option value="{{ days }}" {% if paymentModel.getCaptureDays() == days %}selected{% endif %}>{{ title }}</option>
             {% endfor %}
         </select>
         {% include "inputhelp.html.twig" with {'sHelpId': help_id("MOLLIE_CAPTURE_DAYS_HELP"), 'sHelpText': help_text("MOLLIE_CAPTURE_DAYS_HELP")} %}

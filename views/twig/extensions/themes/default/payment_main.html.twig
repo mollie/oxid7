@@ -30,6 +30,7 @@
                     {{ translate({ ident: "MOLLIE_CONFIG_METHOD" }) }}
                 </td>
                 <td class="edittext">
+                    {#ManuTest TODO Testen#}
                     <script type="text/javascript">
                         <!--
                         function mollieHandleApiChange(oSelect)
@@ -46,13 +47,26 @@
                             }
 
                             if (oSelect.value === 'payment') {
-                                document.getElementById('mollie_payment_description').style.display = '';
+                                mollieToggleDisplayByClass('mollieOnlyPaymentApi', '');
+                                mollieToggleDisplayByClass('mollieOnlyOrderApi', 'none');
                             } else {
-                                document.getElementById('mollie_payment_description').style.display = 'none';
+                                mollieToggleDisplayByClass('mollieOnlyPaymentApi', 'none');
+                                mollieToggleDisplayByClass('mollieOnlyOrderApi', '');
+                            }
+                        }
+
+                        function mollieToggleDisplayByClass(class, display)
+                        {
+                            var aElements = document.getElementsByClassName(class);
+                            if (typeof aElements !== undefined && aElements.length > 0) {
+                                for (var i = 0; i < aElements.length; i++) {
+                                    aElements[i].style.display = display;
+                                }
                             }
                         }
                         -->
                     </script>
+                    {#ManuTest Ende#}
                     <select name="mollie[api]" onchange="mollieHandleApiChange(this)" {{ readonly }}>
                         <option value="payment" {% if paymentModel.getApiMethod() == 'payment' %}selected{% endif %}>Payment API</option>
                         <option value="order" {% if paymentModel.getApiMethod() == 'order' %}selected{% endif %}>Order API</option>
@@ -65,7 +79,7 @@
                     </span>
                 </td>
             </tr>
-            <tr id="mollie_payment_description" {% if paymentModel.getApiMethod() != 'payment' %}style="display:none;"{% endif %}>
+            <tr class="mollieOnlyPaymentApi" {% if paymentModel.getApiMethod() != 'payment' %}style="display:none;"{% endif %}>
                 <td class="edittext" width="70">
                     {{ translate({ ident: "MOLLIE_PAYMENT_DESCRIPTION" }) }}
                 </td>
