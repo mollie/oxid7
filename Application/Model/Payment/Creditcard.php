@@ -93,4 +93,18 @@ class Creditcard extends Base
 
         return $aParams;
     }
+
+    /**
+     * Returns if payment has to be captured manually
+     *
+     * @param Order $oOrder
+     * @return bool
+     */
+    public function isManualCaptureNeeded(Order $oOrder)
+    {
+        if ($oOrder->mollieIsManualCaptureMethod() === true) {
+            return true;
+        }
+        return parent::isManualCaptureNeeded($oOrder);
+    }
 }

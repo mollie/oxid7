@@ -103,6 +103,13 @@ abstract class Base
     protected $aAllowedCurrencies = [];
 
     /**
+     * Determines if payment has to be captured manually
+     *
+     * @var bool
+     */
+    protected $blNeedsManualCapture = false;
+
+    /**
      * Determines if a shipping address has to be sent every time
      *
      * @var bool
@@ -561,5 +568,16 @@ abstract class Base
     public function isShippingAddressMandatory()
     {
         return $this->blShippingAddressIsMandatory;
+    }
+
+    /**
+     * Returns if payment has to be captured manually
+     *
+     * @param Order $oOrder
+     * @return bool
+     */
+    public function isManualCaptureNeeded(Order $oOrder)
+    {
+        return $this->blNeedsManualCapture;
     }
 }
