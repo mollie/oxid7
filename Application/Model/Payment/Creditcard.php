@@ -86,6 +86,15 @@ class Creditcard extends Base
             $aParams['customerId'] = (string)$oUser->oxuser__molliecustomerid->value;
         }
 
+        $sMethod = $this->getCaptureMethod();
+        if ($this->getApiMethod($oOrder) == 'payment' && $sMethod !== false) { // Merchant capture only available for Payment API
+            $oOrder->mollieSetCaptureMode($sMethod);
+            $aParams['captureMode'] = $sMethod;
+            if ($sMethod === 'automatic') {
+                $aParams['captureDelay'] = $this->getCaptureDays().' days';
+            }
+        }
+
         $sCCToken = $this->getDynValueParameter('mollieCCToken');
         if (!empty($sCCToken)) {
             $aParams['cardToken'] = $sCCToken;
