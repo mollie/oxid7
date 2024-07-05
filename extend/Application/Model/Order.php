@@ -572,43 +572,6 @@ class Order extends Order_parent
     }
 
     /**
-     * @param $aParams
-     * @return Exception|ApiException|Capture|void
-     * @throws ApiException
-     */
-    public function mollieCaptureOrder($aParams = null)
-    {
-        if ($this->mollieIsMolliePaymentUsed() === true) {
-            $oMollieApi = Payment::getInstance()->loadMollieApi($this->oxorder__molliemode->value);
-            if ($aParams === null) {
-                return $oMollieApi->paymentCaptures->createForId($this->oxorder__oxtransid->value);
-            }
-            return $oMollieApi->paymentCaptures->createForId($this->oxorder__oxtransid->value, $aParams);
-        }
-    }
-
-    /**
-     * @return array
-     * @throws ApiException
-     */
-    public function mollieGetCaptures() {
-
-        $oMollieApi = Payment::getInstance()->loadMollieApi($this->oxorder__molliemode->value);
-        $payment = $oMollieApi->payments->get($this->oxorder__oxtransid->value);
-        $captures = $payment->captures();
-        $aOrderCaptures = [];
-
-        foreach ($captures as $key => $capture) {
-            $aOrderCaptures[$key]['amount'] =  $capture->amount->value;
-            $aOrderCaptures[$key]['paymentId'] = $payment->id;
-            $aOrderCaptures[$key]['captureId'] = $capture->id;
-            $aOrderCaptures[$key]['mode'] = $capture->mode;
-            $aOrderCaptures[$key]['status'] = $capture->status;
-        }
-        return $aOrderCaptures;
-    }
-
-    /**
      * Returns finish payment url
      *
      * @return string|bool
