@@ -515,6 +515,9 @@ abstract class Base
         $this->addParameter('billingAddress', $this->getBillingAddressParameters($oOrder));
         if ($oOrder->oxorder__oxdellname && $oOrder->oxorder__oxdellname->value != '') {
             $this->addParameter('shippingAddress', $this->getShippingAddressParameters($oOrder));
+        } elseif ($oPaymentModel->isShippingAddressMandatory() === true) {
+            // will send billing address as shipping address as shipping address is mandatory
+            $this->addParameter('shippingAddress', $this->getBillingAddressParameters($oOrder));
         }
 
         $this->addParameter('locale', PaymentHelper::getInstance()->getLocale());
