@@ -135,6 +135,7 @@ $aLang = array(
     'MOLLIE_PAYMENT_LIMITATION_FROM'                    => 'From',
     'MOLLIE_PAYMENT_LIMITATION_TO'                      => 'to',
     'MOLLIE_PAYMENT_LIMITATION_UNLIMITED'               => 'unlimited',
+    'MOLLIE_PAYMENT_DISABLED_ACTIVATION'                => 'Deze Mollie-betaalmethode kan niet langer worden geactiveerd omdat deze binnenkort wordt verwijderd!',
     'MOLLIE_PAYMENT_DETAILS'                            => 'Betalingsgegevens',
     'MOLLIE_PAYMENT_TYPE'                               => 'Type betaling',
     'MOLLIE_TRANSACTION_ID'                             => 'Mollie Transactie ID',
