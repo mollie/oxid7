@@ -10,15 +10,13 @@ abstract class BaseCollection extends \ArrayObject
      * @var int
      */
     public $count;
-
     /**
      * @var \stdClass
      */
     public $_links;
-
     /**
      * @param int $count
-     * @param \stdClass $_links
+     * @param \stdClass $_links|null
      */
     public function __construct($count, $_links)
     {
@@ -26,9 +24,8 @@ abstract class BaseCollection extends \ArrayObject
         $this->_links = $_links;
         parent::__construct();
     }
-
     /**
      * @return string|null
      */
-    abstract public function getCollectionResourceName();
+    public abstract function getCollectionResourceName();
 }

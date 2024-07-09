@@ -65,7 +65,7 @@ class Order extends Base
             $blSuccess = true;
         }
 
-        if (($oTransaction->isCanceled() || $oTransaction->isExpired())) {
+        if (($oTransaction->isCanceled() || $oTransaction->isExpired()) && $oOrder->oxorder__oxstorno->value == 0) {
             $oOrder->cancelOrder();
         }
 
