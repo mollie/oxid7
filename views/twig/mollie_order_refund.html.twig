@@ -162,7 +162,7 @@
                     <input type="submit" value="{{ translate({ ident: "MOLLIE_CAPTURE_AMOUNT" }) }}" class="refundSubmit">
                 </form>
             {% endif %}
-            {% if oView.getOrderCaptures() %}
+            {% if oView.getOrderCaptures() is iterable %}
                 <table cellspacing="0" cellpadding="0" border="0" width="98%" class="refundTable">
                     <tr>
                         <td class="listheader first" height="15" width="10%">{{ translate({ ident: "MOLLIE_AMOUNT" }) }}</td>
