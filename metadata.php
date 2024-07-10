@@ -114,6 +114,9 @@ ni costes de configuración. Solo va a pagar por las transacciones exitosas. Y s
         'MollieApplePay' => Mollie\Payment\Application\Controller\MollieApplePay::class,
         'MollieFinishPayment' => Mollie\Payment\Application\Controller\MollieFinishPayment::class,
         'mollie_order_refund' => Mollie\Payment\Application\Controller\Admin\OrderRefund::class,
+        'mollie_apilog' => Mollie\Payment\Application\Controller\Admin\ApiLog::class,
+        'mollie_apilog_main' => Mollie\Payment\Application\Controller\Admin\ApiLogMain::class,
+        'mollie_apilog_list' => Mollie\Payment\Application\Controller\Admin\ApiLogList::class,
     ],
     'events'        => [
         'onActivate' => \Mollie\Payment\Core\Events::class.'::onActivate',
