@@ -42,6 +42,13 @@
         width: 1600px;
         margin: 0 18px 20px 24px;
     }
+    .linebox {
+        border: 1px solid #A9A9A9;
+        margin-bottom: 15px;
+        padding-left: 10px;
+        width: 1572px;
+        background-color: #eee;
+    }
 </style>
 
 <form name="transfer" id="transfer" action="{{ oViewConf.getSelfLink()|raw }}" method="post">
@@ -83,6 +90,24 @@
                                 {% endif %}
                             {% endfor %}
                             <br>
+                        {% elseif requestkey == 'lines' %}
+                            {% for line in requestvalue %}
+                                <div class="linebox">
+                                    <h2>{{ loop.index }}. line</h2>
+                                    {% for lineelementkey, lineelementvalue in line %}
+                                        {% if lineelementkey == 'unitPrice'
+                                            or lineelementkey == 'discountAmount'
+                                            or lineelementkey == 'totalAmount'
+                                            or lineelementkey == 'vatAmount' %}
+                                            <b>{{ lineelementkey }}:</b> {{ lineelementvalue.value }} {{ lineelementvalue.currency }}<br><br>
+                                        {% else %}
+                                            {% if isset(lineelementvalue) and lineelementvalue != '' %}
+                                                <b>{{ lineelementkey }}:</b> {{ lineelementvalue }}<br><br>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
                         {% elseif requestvalue is same as(false) or requestvalue is same as(true) %}
                             <b>{{ requestkey }}:</b> {% if requestvalue is same as(false) %}false{% else %}true{% endif %}<br><br>
                         {% else %}
@@ -135,7 +160,38 @@
                                 {% endif %}
                             {% endfor %}
                             <br>
-                        {% elseif responsekey == 'shopperCountryMustMatchBillingCountry' %}
+                        {% elseif responsekey == 'lines' %}
+                            {% for line in responsevalue %}
+                                <div class="linebox">
+                                    <h2>{{ loop.index }}. line</h2>
+                                    {% for lineelementkey, lineelementvalue in line %}
+                                        {% if lineelementkey == 'unitPrice'
+                                            or lineelementkey == 'discountAmount'
+                                            or lineelementkey == 'totalAmount'
+                                            or lineelementkey == 'vatAmount'
+                                            or lineelementkey == 'amountShipped'
+                                            or lineelementkey == 'amountRefunded'
+                                            or lineelementkey == 'amountCanceled' %}
+                                            <b>{{ lineelementkey }}:</b> {{ lineelementvalue.value }} {{ lineelementvalue.currency }}<br><br>
+                                        {% elseif lineelementkey == '_links' %}
+                                            {% for linkskey, linksvalue in lineelementvalue %}
+                                                {% if linkskey == 'productUrl' %}
+                                                    <b><u>{{ linkskey }}</u></b><br>
+                                                    {% for producturlkey, producturlvalue in linksvalue %}
+                                                        <b>{{ producturlkey }}:</b> {{ producturlvalue }}<br>
+                                                        {% if loop.last %}<br>{% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            {% if isset(lineelementvalue) and lineelementvalue != '' %}
+                                                <b>{{ lineelementkey }}:</b> {{ lineelementvalue }}<br><br>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                        {% elseif responsevalue is same as(false) or responsevalue is same as(true) %}
                             <b>{{ responsekey }}:</b> {% if responsevalue is same as(false) %}false{% else %}true{% endif %}<br><br>
                         {% else %}
                             {% if isset(responsevalue) and responsevalue != '' %}
