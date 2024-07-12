@@ -150,7 +150,7 @@
     {% if oView.isDirektOrAuthorizedOrder() %}
         <fieldset class="capturelist">
             <legend>{{ translate({ ident: "MOLLIE_CAPTURE_TITLE" }) }}</legend>
-            {% if oView.getOrderCaptures() is same as(false) %}
+            {% if oView.getOrderCaptures()|length == 0 %}
                 <form name="capturelist" id="search" action="{{ oViewConf.getSelfLink()|raw }}" method="post">
                     {{ oViewConf.getHiddenSid()|raw }}
                     <input type="hidden" name="cl" value="mollie_order_refund">
@@ -162,7 +162,7 @@
                     <input type="submit" value="{{ translate({ ident: "MOLLIE_CAPTURE_AMOUNT" }) }}" class="refundSubmit">
                 </form>
             {% endif %}
-            {% if oView.getOrderCaptures() is iterable %}
+            {% if oView.getOrderCaptures()|length > 0 %}
                 <table cellspacing="0" cellpadding="0" border="0" width="98%" class="refundTable">
                     <tr>
                         <td class="listheader first" height="15" width="10%">{{ translate({ ident: "MOLLIE_AMOUNT" }) }}</td>
@@ -173,11 +173,11 @@
                     </tr>
                     {% for listitem in oView.getOrderCaptures() %}
                         <tr id="art.{{ loop.index }}">
-                            {% if listitem.isOrderarticle == false and blBorderDrawn == false %}
+                            {% if listitem.isOrderarticle is same as(false) and blBorderDrawn is same as(false) %}
                                 {% set class = " borderTop" %}
                                 {% set blBorderDrawn = true %}
                             {% endif %}
-                            {% set listclass = listitem ~ blWhite %}
+                            {% set listclass = 'listitem' ~ blWhite %}
                             <td valign="top" class="{{ listclass }}{{ class }}" height="15">{{ oView.getFormatedPrice(listitem.amount) }}  <small>{{ edit.oxorder__oxcurrency.value }}</small></td>
                             <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.paymentId|striptags }}</td>
                             <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.captureId }}</td>

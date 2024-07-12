@@ -44,7 +44,6 @@
                     {{ translate({ ident: "MOLLIE_CONFIG_METHOD" }) }}
                 </td>
                 <td class="edittext">
-                    {#ManuTest TODO Testen#}
                     <script type="text/javascript">
                         <!--
                         function mollieCustomApiChange()
@@ -87,7 +86,6 @@
                         }
                         -->
                     </script>
-                    {#ManuTest Ende#}
                     <select name="mollie[api]" onchange="mollieHandleApiChange(this)" {{ readonly }}>
                         <option value="payment" {% if paymentModel.getApiMethod() == 'payment' %}selected{% endif %}>Payment API</option>
                         <option value="order" {% if paymentModel.getApiMethod() == 'order' %}selected{% endif %}>Order API</option>

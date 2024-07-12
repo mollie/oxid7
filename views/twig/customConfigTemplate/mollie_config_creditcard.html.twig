@@ -10,7 +10,7 @@
         {% include "inputhelp.html.twig" with {'sHelpId': help_id("MOLLIE_CREDITCARD_DATA_INPUT_HELP"), 'sHelpText': help_text("MOLLIE_CREDITCARD_DATA_INPUT_HELP")} %}
     </td>
 </tr>
-<tr class="mollieOnlyPaymentApi Manutest" {% if paymentModel.getApiMethod() != 'payment' %}style="display:none;"{% endif %}>
+<tr class="mollieOnlyPaymentApi" {% if paymentModel.getApiMethod() != 'payment' %}style="display:none;"{% endif %}>
     <td class="edittext" width="70">
         {{ translate({ ident: "MOLLIE_CREDITCARD_CAPTURE" }) }}
     </td>
