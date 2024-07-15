@@ -104,6 +104,12 @@ abstract class Base
      */
     protected $blMethodIsDeprecated = false;
 
+     * If filled, the payment method will only be shown if one of the allowed currencies is active in checkout
+     *
+     * @var array
+     */
+    protected $aAllowedCurrencies = [];
+
     /**
      * Return Oxid payment id
      *
@@ -401,15 +407,28 @@ abstract class Base
      * Determines if payment method is activated for this Mollie account
      *
      * @param string|false $sBillingCountryCode
+     * @param double|false $dAmount
+     * @param string|false $sCurrency
      * @return bool
      */
-    public function isMolliePaymentActive($sBillingCountryCode = false)
+    public function isMolliePaymentActive($sBillingCountryCode = false, $dAmount = false, $sCurrency = false)
     {
-        $aInfo = Payment::getInstance()->getMolliePaymentInfo(false, false, $sBillingCountryCode);
+        $aInfo = Payment::getInstance()->getMolliePaymentInfo($dAmount, $sCurrency, $sBillingCountryCode);
         if (isset($aInfo[$this->sMolliePaymentCode])) {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Is used to show in backend if payment method can be used in general
+     * This method has the purpose to be overloaded by child-classes with specific parameters
+     *
+     * @return bool
+     */
+    public function isMolliePaymentActiveInGeneral()
+    {
+        return $this->isMolliePaymentActive();
     }
 
     /**
@@ -543,5 +562,18 @@ abstract class Base
     public function isMethodDeprecated()
     {
         return $this->blMethodIsDeprecated;
+    }
+  
+     * Returns if given currency is allowed for mollie payment method
+     *
+     * @param  string $sCurrency
+     * @return bool
+     */
+    public function isCurrencySupported($sCurrency)
+    {
+        if (!empty($this->aAllowedCurrencies) && !in_array($sCurrency, $this->aAllowedCurrencies)) {
+            return false;
+        }
+        return true;
     }
 }
