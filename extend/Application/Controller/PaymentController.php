@@ -67,7 +67,8 @@ class PaymentController extends PaymentController_parent
      * 2. Config option "blMollieRemoveByBillingCountry" activated AND payment method is not available for given billing country
      * 3. BasketSum is outside of the min-/max-limits of the payment method
      * 4. Payment method has a billing country restriction and customer is not from that country
-     * 5. Config option "blShowInPaymentList" is false
+     * 5. Payment method is deprecated
+     * 6. Config option "blShowInPaymentList" is false
      *
      * @return void
      */
@@ -85,7 +86,8 @@ class PaymentController extends PaymentController_parent
                     $oMolliePayment->mollieIsBasketSumInLimits($oBasket->getPrice()->getBruttoPrice()) === false ||
                     $oMolliePayment->mollieIsMethodAvailableForCountry($sBillingCountryCode) === false ||
                     ($oMolliePayment->isOnlyB2BSupported() === true && $this->mollieIsB2BOrder($oBasket) === false) ||
-                    $oMolliePayment->isMethodDisplayableInPaymentList() === false
+                    $oMolliePayment->isMethodDisplayableInPaymentList() === false ||
+                    $oMolliePayment->isMethodDeprecated() === true
                 ) {
                     unset($this->_oPaymentList[$oPayment->getId()]);
                 }

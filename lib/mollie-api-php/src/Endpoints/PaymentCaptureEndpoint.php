@@ -6,11 +6,9 @@ use Mollie\Api\Resources\Capture;
 use Mollie\Api\Resources\CaptureCollection;
 use Mollie\Api\Resources\LazyCollection;
 use Mollie\Api\Resources\Payment;
-
-class PaymentCaptureEndpoint extends CollectionEndpointAbstract
+class PaymentCaptureEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "payments_captures";
-
     /**
      * Get the object that is used by this API endpoint. Every API endpoint uses one type of object.
      *
@@ -18,9 +16,8 @@ class PaymentCaptureEndpoint extends CollectionEndpointAbstract
      */
     protected function getResourceObject()
     {
-        return new Capture($this->client);
+        return new \Mollie\Api\Resources\Capture($this->client);
     }
-
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
      *
@@ -31,9 +28,8 @@ class PaymentCaptureEndpoint extends CollectionEndpointAbstract
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new CaptureCollection($this->client, $count, $_links);
+        return new \Mollie\Api\Resources\CaptureCollection($this->client, $count, $_links);
     }
-
     /**
      * Creates a payment capture in Mollie.
      *
@@ -44,11 +40,10 @@ class PaymentCaptureEndpoint extends CollectionEndpointAbstract
      * @return Capture
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function createFor(Payment $payment, array $data = [], array $filters = [])
+    public function createFor(\Mollie\Api\Resources\Payment $payment, array $data = [], array $filters = [])
     {
         return $this->createForId($payment->id, $data, $filters);
     }
-
     /**
      * Creates a payment capture in Mollie.
      *
@@ -62,10 +57,8 @@ class PaymentCaptureEndpoint extends CollectionEndpointAbstract
     public function createForId($paymentId, array $data = [], array $filters = [])
     {
         $this->parentId = $paymentId;
-
         return $this->rest_create($data, $filters);
     }
-
     /**
      * @param Payment $payment
      * @param string $captureId
@@ -74,26 +67,23 @@ class PaymentCaptureEndpoint extends CollectionEndpointAbstract
      * @return Capture
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function getFor(Payment $payment, $captureId, array $parameters = [])
+    public function getFor(\Mollie\Api\Resources\Payment $payment, $captureId, array $parameters = [])
     {
         return $this->getForId($payment->id, $captureId, $parameters);
     }
-
     /**
      * @param string $paymentId
      * @param string $captureId
      * @param array $parameters
      *
-     * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Capture
+     * @return \Mollie\Api\Resources\Capture
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function getForId($paymentId, $captureId, array $parameters = [])
     {
         $this->parentId = $paymentId;
-
         return parent::rest_read($captureId, $parameters);
     }
-
     /**
      * @param Payment $payment
      * @param array $parameters
@@ -101,11 +91,22 @@ class PaymentCaptureEndpoint extends CollectionEndpointAbstract
      * @return Capture
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function listFor(Payment $payment, array $parameters = [])
+    public function listFor(\Mollie\Api\Resources\Payment $payment, array $parameters = [])
     {
         return $this->listForId($payment->id, $parameters);
     }
-
+    /**
+     * @param string $paymentId
+     * @param array $parameters
+     *
+     * @return \Mollie\Api\Resources\BaseCollection|\Mollie\Api\Resources\Capture
+     * @throws \Mollie\Api\Exceptions\ApiException
+     */
+    public function listForId($paymentId, array $parameters = [])
+    {
+        $this->parentId = $paymentId;
+        return parent::rest_list(null, null, $parameters);
+    }
     /**
      * Create an iterator for iterating over captures for the given payment, retrieved from Mollie.
      *

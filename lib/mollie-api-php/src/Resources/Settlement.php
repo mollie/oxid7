@@ -3,29 +3,26 @@
 namespace Mollie\Api\Resources;
 
 use Mollie\Api\Exceptions\ApiException;
+use Mollie\Api\MollieApiClient;
 use Mollie\Api\Types\SettlementStatus;
-
-class Settlement extends BaseResource
+class Settlement extends \Mollie\Api\Resources\BaseResource
 {
     /**
      * @var string
      */
     public $resource;
-
     /**
-     * Id of the settlement.
+     * ID of the settlement.
      *
      * @var string
      */
     public $id;
-
     /**
      * The settlement reference. This corresponds to an invoice that's in your Dashboard.
      *
      * @var string
      */
     public $reference;
-
     /**
      * UTC datetime the payment was created in ISO-8601 format.
      *
@@ -33,7 +30,6 @@ class Settlement extends BaseResource
      * @var string
      */
     public $createdAt;
-
     /**
      * The date on which the settlement was settled, in ISO 8601 format. When requesting the open settlement or next settlement the return value is null.
      *
@@ -41,40 +37,34 @@ class Settlement extends BaseResource
      * @var string|null
      */
     public $settledAt;
-
     /**
      * Status of the settlement.
      *
      * @var string
      */
     public $status;
-
     /**
      * Total settlement amount in euros.
      *
      * @var \stdClass
      */
     public $amount;
-
     /**
      * Revenues and costs nested per year, per month, and per payment method.
      *
      * @var \stdClass
      */
     public $periods;
-
     /**
      * The ID of the invoice on which this settlement is invoiced, if it has been invoiced.
      *
      * @var string|null
      */
     public $invoiceId;
-
     /**
      * @var \stdClass
      */
     public $_links;
-
     /**
      * Is this settlement still open?
      *
@@ -82,9 +72,8 @@ class Settlement extends BaseResource
      */
     public function isOpen()
     {
-        return $this->status === SettlementStatus::STATUS_OPEN;
+        return $this->status === \Mollie\Api\Types\SettlementStatus::STATUS_OPEN;
     }
-
     /**
      * Is this settlement pending?
      *
@@ -92,9 +81,8 @@ class Settlement extends BaseResource
      */
     public function isPending()
     {
-        return $this->status === SettlementStatus::STATUS_PENDING;
+        return $this->status === \Mollie\Api\Types\SettlementStatus::STATUS_PENDING;
     }
-
     /**
      * Is this settlement paidout?
      *
@@ -102,19 +90,17 @@ class Settlement extends BaseResource
      */
     public function isPaidout()
     {
-        return $this->status === SettlementStatus::STATUS_PAIDOUT;
+        return $this->status === \Mollie\Api\Types\SettlementStatus::STATUS_PAIDOUT;
     }
-
     /**
-     * Has this settlement failed?
+     * Is this settlement failed?
      *
      * @return bool
      */
     public function isFailed()
     {
-        return $this->status === SettlementStatus::STATUS_FAILED;
+        return $this->status === \Mollie\Api\Types\SettlementStatus::STATUS_FAILED;
     }
-
     /**
      * Retrieve the first page of payments associated with this settlement.
      *
@@ -132,7 +118,6 @@ class Settlement extends BaseResource
             $parameters
         );
     }
-
     /**
      * Retrieve the first page of refunds associated with this settlement.
      *
@@ -150,7 +135,6 @@ class Settlement extends BaseResource
             $parameters
         );
     }
-
     /**
      * Retrieve the first page of chargebacks associated with this settlement.
      *
@@ -168,7 +152,6 @@ class Settlement extends BaseResource
             $parameters
         );
     }
-
     /**
      * Retrieve the first page of cap associated with this settlement.
      *

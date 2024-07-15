@@ -3,83 +3,60 @@
 namespace Mollie\Api\Resources;
 
 use Mollie\Api\Exceptions\ApiException;
-
-class Customer extends BaseResource
+class Customer extends \Mollie\Api\Resources\BaseResource
 {
     use HasPresetOptions;
 
     /**
-     * @var string
-     */
-    public $resource;
-
-    /**
-     * Id of the customer.
+     * ID of the customer.
      *
      * @var string
      */
     public $id;
-
     /**
      * Either "live" or "test". Indicates this being a test or a live (verified) customer.
      *
      * @var string
      */
     public $mode;
-
     /**
      * @var string
      */
     public $name;
-
     /**
      * @var string
      */
     public $email;
-
     /**
      * @var string|null
      */
     public $locale;
-
     /**
      * @var \stdClass|mixed|null
      */
     public $metadata;
-
     /**
      * @var string[]|array
      */
     public $recentlyUsedMethods;
-
     /**
      * @var string
      */
     public $createdAt;
-
     /**
      * @var \stdClass
      */
     public $_links;
-
     /**
-     * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Customer
+     * @return \Mollie\Api\Resources\Customer
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function update()
     {
-        $body = [
-            "name" => $this->name,
-            "email" => $this->email,
-            "locale" => $this->locale,
-            "metadata" => $this->metadata,
-        ];
-
+        $body = ["name" => $this->name, "email" => $this->email, "locale" => $this->locale, "metadata" => $this->metadata];
         $result = $this->client->customers->update($this->id, $body);
-
-        return ResourceFactory::createFromApiResult($result, new Customer($this->client));
+        return \Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \Mollie\Api\Resources\Customer($this->client));
     }
-
     /**
      * @param array $options
      * @param array $filters
@@ -91,7 +68,6 @@ class Customer extends BaseResource
     {
         return $this->client->customerPayments->createFor($this, $this->withPresetOptions($options), $filters);
     }
-
     /**
      * Get all payments for this customer
      *
@@ -102,7 +78,6 @@ class Customer extends BaseResource
     {
         return $this->client->customerPayments->listFor($this, null, null, $this->getPresetOptions());
     }
-
     /**
      * @param array $options
      * @param array $filters
@@ -114,7 +89,6 @@ class Customer extends BaseResource
     {
         return $this->client->subscriptions->createFor($this, $this->withPresetOptions($options), $filters);
     }
-
     /**
      * @param string $subscriptionId
      * @param array $parameters
@@ -126,7 +100,6 @@ class Customer extends BaseResource
     {
         return $this->client->subscriptions->getFor($this, $subscriptionId, $this->withPresetOptions($parameters));
     }
-
     /**
      * @param string $subscriptionId
      *
@@ -137,7 +110,6 @@ class Customer extends BaseResource
     {
         return $this->client->subscriptions->cancelFor($this, $subscriptionId, $this->getPresetOptions());
     }
-
     /**
      * Get all subscriptions for this customer
      *
@@ -148,7 +120,6 @@ class Customer extends BaseResource
     {
         return $this->client->subscriptions->listFor($this, null, null, $this->getPresetOptions());
     }
-
     /**
      * @param array $options
      * @param array $filters
@@ -160,7 +131,6 @@ class Customer extends BaseResource
     {
         return $this->client->mandates->createFor($this, $this->withPresetOptions($options), $filters);
     }
-
     /**
      * @param string $mandateId
      * @param array $parameters
@@ -172,7 +142,6 @@ class Customer extends BaseResource
     {
         return $this->client->mandates->getFor($this, $mandateId, $parameters);
     }
-
     /**
      * @param string $mandateId
      *
@@ -183,7 +152,6 @@ class Customer extends BaseResource
     {
         return $this->client->mandates->revokeFor($this, $mandateId, $this->getPresetOptions());
     }
-
     /**
      * Get all mandates for this customer
      *
@@ -194,7 +162,6 @@ class Customer extends BaseResource
     {
         return $this->client->mandates->listFor($this, null, null, $this->getPresetOptions());
     }
-
     /**
      * Helper function to check for mandate with status valid
      *
@@ -205,13 +172,11 @@ class Customer extends BaseResource
         $mandates = $this->mandates();
         foreach ($mandates as $mandate) {
             if ($mandate->isValid()) {
-                return true;
+                return \true;
             }
         }
-
-        return false;
+        return \false;
     }
-
     /**
      * Helper function to check for specific payment method mandate with status valid
      *
@@ -222,10 +187,32 @@ class Customer extends BaseResource
         $mandates = $this->mandates();
         foreach ($mandates as $mandate) {
             if ($mandate->method === $method && $mandate->isValid()) {
-                return true;
+                return \true;
             }
         }
-
-        return false;
+        return \false;
+    }
+    /**
+     * When accessed by oAuth we want to pass the testmode by default
+     *
+     * @return array
+     */
+    private function getPresetOptions()
+    {
+        $options = [];
+        if ($this->client->usesOAuth()) {
+            $options["testmode"] = $this->mode === "test" ? \true : \false;
+        }
+        return $options;
+    }
+    /**
+     * Apply the preset options.
+     *
+     * @param array $options
+     * @return array
+     */
+    private function withPresetOptions(array $options)
+    {
+        return \array_merge($this->getPresetOptions(), $options);
     }
 }
