@@ -104,6 +104,7 @@ abstract class Base
      */
     protected $blMethodIsDeprecated = false;
 
+    /**
      * If filled, the payment method will only be shown if one of the allowed currencies is active in checkout
      *
      * @var array
@@ -563,7 +564,8 @@ abstract class Base
     {
         return $this->blMethodIsDeprecated;
     }
-  
+
+    /**
      * Returns if given currency is allowed for mollie payment method
      *
      * @param  string $sCurrency
