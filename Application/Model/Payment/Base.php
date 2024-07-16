@@ -96,6 +96,14 @@ abstract class Base
     protected $blIsOnlyB2BSupported = false;
 
     /**
+     * Determines if payment method is deprecated.
+     * Deprecated methods are disabled, can't be used anymore and will be removed in a future release.
+     * They stay in the module to allow finishing old orders where these methods have been used
+     *
+     * @var bool
+     */
+    protected $blMethodIsDeprecated = false;
+
      * If filled, the payment method will only be shown if one of the allowed currencies is active in checkout
      *
      * @var array
@@ -326,6 +334,20 @@ abstract class Base
     }
 
     /**
+     * Returns configured expiryDay count or default value if not saved yet
+     *
+     * @return int
+     */
+    public function getCaptureDays()
+    {
+        $iExpiryDays = $this->getConfigParam('captureDays');
+        if (!empty($iExpiryDays)) {
+            return $iExpiryDays;
+        }
+        return 7; // default value
+    }
+
+    /**
      * Gather issuer info from Mollie API
      *
      * @param array $aDynValue
@@ -533,6 +555,15 @@ abstract class Base
     }
 
     /**
+     * Returns im this method is deprecated
+     *
+     * @return bool
+     */
+    public function isMethodDeprecated()
+    {
+        return $this->blMethodIsDeprecated;
+    }
+  
      * Returns if given currency is allowed for mollie payment method
      *
      * @param  string $sCurrency

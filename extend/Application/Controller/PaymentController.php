@@ -62,11 +62,14 @@ class PaymentController extends PaymentController_parent
 
     /**
      * Removes Mollie payment methods which are not available for the current basket situation. The limiting factors can be:
-     * 1. Payment method not activated in the Mollie dashboard or for the current billing country, basket amount, currency situation
-     * 2. BasketSum is outside of the min-/max-limits of the payment method
-     * 3. Payment method has a billing country restriction and customer is not from that country
-     * 4. Payment method is only available for B2B orders and current order is not a B2B order
-     * 5. Currently selected currency is not supported by payment method
+     * 1. Config option "blMollieRemoveDeactivatedMethods" activated AND payment method not activated in the Mollie dashboard
+     * 2. Config option "blMollieRemoveByBillingCountry" activated AND payment method is not available for given billing country
+     * 3. BasketSum is outside of the min-/max-limits of the payment method
+     * 4. Payment method has a billing country restriction and customer is not from that country
+     * 5. Payment method is deprecated
+     * 6. Payment method not activated in the Mollie dashboard or for the current billing country, basket amount, currency situation
+     * 7. Payment method is only available for B2B orders and current order is not a B2B order
+     * 8. Currently selected currency is not supported by payment method
      *
      * @return void
      */
@@ -82,6 +85,7 @@ class PaymentController extends PaymentController_parent
                     $oMolliePayment->mollieIsBasketSumInLimits($oBasket->getPrice()->getBruttoPrice()) === false ||
                     $oMolliePayment->mollieIsMethodAvailableForCountry($sBillingCountryCode) === false ||
                     ($oMolliePayment->isOnlyB2BSupported() === true && $this->mollieIsB2BOrder($oBasket) === false) ||
+                    $oMolliePayment->isMethodDeprecated() === true ||
                     $oMolliePayment->isCurrencySupported($sCurrency) === false
                 ) {
                     unset($this->_oPaymentList[$oPayment->getId()]);
