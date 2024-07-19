@@ -39,10 +39,6 @@ class Payment extends Base
             $blSuccess = true;
         }
 
-        if ($oTransaction->isAuthorized()) {
-            $blSuccess = true;
-        }
-
         if ($oTransaction->hasRefunds()) {
             $blSuccess = true;
         }
@@ -57,7 +53,7 @@ class Payment extends Base
             $blSuccess = true;
         }
 
-        if (($oTransaction->isCanceled() || $oTransaction->isExpired())) {
+        if (($oTransaction->isCanceled() || $oTransaction->isExpired()) && $oOrder->oxorder__oxstorno->value == 0) {
             $oOrder->cancelOrder();
         }
 

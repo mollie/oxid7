@@ -349,6 +349,20 @@ abstract class Base
     }
 
     /**
+     * Returns configured expiryDay count or default value if not saved yet
+     *
+     * @return int
+     */
+    public function getCaptureDays()
+    {
+        $iExpiryDays = $this->getConfigParam('captureDays');
+        if (!empty($iExpiryDays)) {
+            return $iExpiryDays;
+        }
+        return 7; // default value
+    }
+
+    /**
      * Gather issuer info from Mollie API
      *
      * @param array $aDynValue
@@ -408,13 +422,11 @@ abstract class Base
      * Determines if payment method is activated for this Mollie account
      *
      * @param string|false $sBillingCountryCode
-     * @param double|false $dAmount
-     * @param string|false $sCurrency
      * @return bool
      */
-    public function isMolliePaymentActive($sBillingCountryCode = false, $dAmount = false, $sCurrency = false)
+    public function isMolliePaymentActive($sBillingCountryCode = false)
     {
-        $aInfo = Payment::getInstance()->getMolliePaymentInfo($dAmount, $sCurrency, $sBillingCountryCode);
+        $aInfo = Payment::getInstance()->getMolliePaymentInfo(false, false, $sBillingCountryCode);
         if (isset($aInfo[$this->sMolliePaymentCode])) {
             return true;
         }

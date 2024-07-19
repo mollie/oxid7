@@ -1,4 +1,7 @@
 <?php
+
+namespace _PhpScoperf7c63b60b99d;
+
 /*
  * Retrieve a shipment using the Mollie API.
  */
@@ -14,14 +17,12 @@ try {
      *
      * See: https://docs.mollie.com/reference/v2/shipments-api/get-shipment
      */
-
     $order = $mollie->orders->get('ord_8wmqcHMN4U');
     $shipment = $order->getShipment("shp_3wmsgCJN4U");
-
-    echo 'Shipment with ID ' . $shipment->id. ' for order with ID ' . $order->id . '.';
+    echo 'Shipment with ID ' . $shipment->id . ' for order with ID ' . $order->id . '.';
     foreach ($shipment->lines as $line) {
         echo $line->name . ' - status: <b>' . $line->status . '</b>.';
     }
 } catch (\Mollie\Api\Exceptions\ApiException $e) {
-    echo "API call failed: " . htmlspecialchars($e->getMessage());
+    echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

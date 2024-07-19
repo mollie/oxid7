@@ -2,22 +2,20 @@
 
 namespace Mollie\Api\Resources;
 
-class Issuer extends BaseResource
+class Issuer extends \Mollie\Api\Resources\BaseResource
 {
     /**
-     * Id of the issuer.
+     * ID of the issuer.
      *
      * @var string
      */
     public $id;
-
     /**
      * Name of the issuer.
      *
      * @var string
      */
     public $name;
-
     /**
      * The payment method this issuer belongs to.
      *
@@ -25,7 +23,6 @@ class Issuer extends BaseResource
      * @var string
      */
     public $method;
-
     /**
      * Object containing a size1x or size2x image
      *

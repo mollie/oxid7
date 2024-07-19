@@ -65,14 +65,11 @@ class Order extends Base
             $blSuccess = true;
         }
 
-        if (($oTransaction->isCanceled() || $oTransaction->isExpired())) {
+        if (($oTransaction->isCanceled() || $oTransaction->isExpired()) && $oOrder->oxorder__oxstorno->value == 0) {
             $oOrder->cancelOrder();
         }
 
         if ($oTransaction->isCompleted()) {
-            if ($oOrder->oxorder__oxpaid->value == '0000-00-00 00:00:00') {
-                $oOrder->mollieMarkAsPaid();
-            }
             $blSuccess = true;
         }
 

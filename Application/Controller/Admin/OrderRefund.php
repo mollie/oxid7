@@ -4,6 +4,7 @@ namespace Mollie\Payment\Application\Controller\Admin;
 
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Payment\Application\Helper\Payment as PaymentHelper;
+use Mollie\Payment\Application\Model\Payment\Creditcard;
 use OxidEsales\Eshop\Application\Model\Order;
 use OxidEsales\Eshop\Core\Registry;
 use Mollie\Payment\Application\Model\RequestLog;
@@ -140,18 +141,18 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
         if ($oOrder) {
             $this->_aViewData["edit"] = $oOrder;
         }
-
         return $this->_sTemplate;
     }
 
-    /**
-     * @return bool
-     */
-    public function orderNeedsManualCapture() {
+    public function isDirektOrAuthorizedOrder() {
         $oOrder = $this->getOrder();
-        return $oOrder->mollieGetPaymentModel()->isManualCaptureNeeded($oOrder);
+        if ($oOrder->mollieGetPaymentModel() instanceof Creditcard) {
+            if ($oOrder->mollieIsManualCaptureMethod() === true) {
+                return true;
+            }
+        }
+        return false;
     }
-
     /**
      * @return mixed
      */
@@ -161,7 +162,7 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
         /** @var \Mollie\Payment\extend\Application\Model\Order $oOrder */
         $oOrder = $this->getOrder();
         try {
-            return $oOrder->mollieGetCaptures();
+            return $oOrder->getCaptures();
         } catch(ApiException $e) {
             $oRequestLog->logExceptionResponse([], $e->getCode(), $e->getMessage(), 'capture', $oOrder->getId(), Registry::getConfig()->getShopId());
             $this->setErrorMessage($e->getMessage());
@@ -179,7 +180,7 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
         $oOrder = $this->getOrder();
         $aParams = $this->getCaptureParams();
         try {
-            $oOrder->mollieCaptureOrder($aParams);
+            $oOrder->captureOrder($aParams);
             $this->_blSuccessCapture = true;
         } catch (ApiException $e) {
             $oRequestLog->logExceptionResponse($aParams, $e->getCode(), $e->getMessage(), 'capture', $oOrder->getId(), Registry::getConfig()->getShopId());
@@ -676,9 +677,9 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
     protected function getMollieApiOrder($blRefresh = false)
     {
         if ($this->getOrder()->mollieGetPaymentTransactionId()) {
-        if ($this->_oMollieApiOrder === null || $blRefresh === true) {
-            $this->_oMollieApiOrder = $this->getMollieApiRequestModel()->get($this->getOrder()->oxorder__oxtransid->value, ["embed" => "payments"]);
-        }
+            if ($this->_oMollieApiOrder === null || $blRefresh === true) {
+                $this->_oMollieApiOrder = $this->getMollieApiRequestModel()->get($this->getOrder()->oxorder__oxtransid->value, ["embed" => "payments"]);
+            }
         }
 
         return $this->_oMollieApiOrder;

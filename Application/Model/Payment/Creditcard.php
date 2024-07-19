@@ -87,7 +87,7 @@ class Creditcard extends Base
         }
 
         $sMethod = $this->getCaptureMethod();
-        if ($this->getApiMethod($oOrder) == 'payment' && $sMethod !== false) { // Merchant capture only available for Payment API
+        if ($this->getApiMethod($oOrder) == 'payment' && $this->getCaptureMethod() !== false) { // Merchant capture only available for Payment API
             $oOrder->mollieSetCaptureMode($sMethod);
             $aParams['captureMode'] = $sMethod;
             if ($sMethod === 'automatic') {
@@ -104,16 +104,18 @@ class Creditcard extends Base
     }
 
     /**
-     * Returns if payment has to be captured manually
+     * Returns the capture method
      *
-     * @param Order $oOrder
-     * @return bool
+     * @return string|false
      */
-    public function isManualCaptureNeeded(Order $oOrder)
+    protected function getCaptureMethod()
     {
-        if ($oOrder->mollieIsManualCaptureMethod() === true) {
-            return true;
+        $sCaptureMethod = $this->getConfigParam('creditcard_capture_method');
+        if ($sCaptureMethod == 'creditcard_authorize_capture') {
+            return 'manual';
+        } elseif ($sCaptureMethod == 'creditcard_automatic_capture') {
+            return 'automatic';
         }
-        return parent::isManualCaptureNeeded($oOrder);
+        return false;
     }
 }
