@@ -8,6 +8,11 @@ use Mollie\Api\Types\OrderStatus;
 class Order extends \Mollie\Api\Resources\BaseResource
 {
     /**
+     * @var string
+     */
+    public $resource;
+
+    /**
      * ID of the order.
      *
      * @example ord_8wmqcHMN4U
@@ -467,6 +472,7 @@ class Order extends \Mollie\Api\Resources\BaseResource
     private function getPresetOptions()
     {
         $options = [];
+
         if ($this->client->usesOAuth()) {
             $options["testmode"] = $this->mode === "test" ? \true : \false;
         }

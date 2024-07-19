@@ -78,30 +78,6 @@
     {% set readonly = "" %}
 {% endif %}
 
-<form name="transfer" id="transfer" action="{{ oViewConf.getSelfLink()|raw }}" method="post">
-    {{ oViewConf.getHiddenSid()|raw }}
-    <input type="hidden" name="oxid" value="{{ oxid }}">
-    <input type="hidden" name="cl" value="mollie_order_refund">
-</form>
-{% if oView.isMollieOrder() is same as(true) %}
-    {% set blIsOrderRefundable = oView.isOrderRefundable() %}
-
-    {% if blIsOrderRefundable == false %}
-        <fieldset class="refundNotice message">
-            <strong>{{ translate({ ident: "MOLLIE_NOTICE" }) }}</strong>
-            {{ translate({ ident: "MOLLIE_ORDER_NOT_REFUNDABLE" }) }}
-        </fieldset>
-    {% endif %}
-
-    {% if oView.hasOrderVoucher() == true %}
-        <fieldset class="refundNotice message">
-            <strong>{{ translate({ ident: "MOLLIE_NOTICE" }) }}</strong>
-            {{ translate({ ident: "MOLLIE_VOUCHERS_EXISTING" }) }}
-        </fieldset>
-    {% endif %}
-
-    {% set order = oView.getOrder() %}
-    {% set paymentType = order.getPaymentType() %}
 {% set order = oView.getOrder() %}
 {% set paymentType = order.getPaymentType() %}
 
@@ -140,6 +116,17 @@
             {% endif%}
         </table>
     </fieldset>
+    {% if oView.getErrorMessage() is not same as(false) %}
+        <fieldset class="refundError message">
+            <strong>Error</strong>
+            {{ oView.getErrorMessage() }}
+        </fieldset>
+    {% endif %}
+    {% if oView.wasRefundSuccessful() is same as(true) %}
+        <fieldset class="refundSuccess message">
+            {{ translate({ ident: "MOLLIE_REFUND_SUCCESSFUL" }) }}
+        </fieldset>
+    {% endif %}
     {% if oView.wasCaptureSuccessful() is same as(true) %}
         <fieldset class="refundSuccess message">
             {{ translate({ ident: "MOLLIE_CAPTURE_SUCCESSFUL" }) }}
@@ -219,18 +206,6 @@
     <input type="hidden" name="cl" value="mollie_order_refund">
 </form>
 {% if oView.isMollieOrder() is same as(true) %}
-    {% if oView.wasRefundSuccessful() is same as(true) %}
-        <fieldset class="refundSuccess message">
-            {{ translate({ ident: "MOLLIE_REFUND_SUCCESSFUL" }) }}
-        </fieldset>
-    {% endif %}
-    {% if oView.getErrorMessage() is not same as(false) %}
-        <fieldset class="refundError message">
-            <strong>Error</strong>
-            {{ oView.getErrorMessage() }}
-        </fieldset>
-    {% endif %}
-
     {% if order.mollieIsEligibleForPaymentFinish() %}
         <fieldset>
             <legend>{{ translate({ ident: "MOLLIE_SUBSEQUENT_ORDER_COMPLETION" }) }}</legend>
