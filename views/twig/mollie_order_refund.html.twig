@@ -206,18 +206,6 @@
     <input type="hidden" name="cl" value="mollie_order_refund">
 </form>
 {% if oView.isMollieOrder() is same as(true) %}
-    {% if oView.wasRefundSuccessful() is same as(true) %}
-        <fieldset class="refundSuccess message">
-            {{ translate({ ident: "MOLLIE_REFUND_SUCCESSFUL" }) }}
-        </fieldset>
-    {% endif %}
-    {% if oView.getErrorMessage() is not same as(false) %}
-        <fieldset class="refundError message">
-            <strong>Error</strong>
-            {{ oView.getErrorMessage() }}
-        </fieldset>
-    {% endif %}
-
     {% if order.mollieIsEligibleForPaymentFinish() %}
         <fieldset>
             <legend>{{ translate({ ident: "MOLLIE_SUBSEQUENT_ORDER_COMPLETION" }) }}</legend>

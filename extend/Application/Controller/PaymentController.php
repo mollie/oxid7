@@ -85,8 +85,8 @@ class PaymentController extends PaymentController_parent
                     $oMolliePayment->mollieIsBasketSumInLimits($oBasket->getPrice()->getBruttoPrice()) === false ||
                     $oMolliePayment->mollieIsMethodAvailableForCountry($sBillingCountryCode) === false ||
                     ($oMolliePayment->isOnlyB2BSupported() === true && $this->mollieIsB2BOrder($oBasket) === false) ||
-                    $oMolliePayment->isMethodDeprecated() === true ||
-                    $oMolliePayment->isCurrencySupported($sCurrency) === false
+                    $oMolliePayment->isCurrencySupported($sCurrency) === false ||
+                    $oMolliePayment->isMethodDeprecated() === true
                 ) {
                     unset($this->_oPaymentList[$oPayment->getId()]);
                 }

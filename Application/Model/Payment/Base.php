@@ -96,6 +96,27 @@ abstract class Base
     protected $blIsOnlyB2BSupported = false;
 
     /**
+     * If filled, the payment method will only be shown if one of the allowed currencies is active in checkout
+     *
+     * @var array
+     */
+    protected $aAllowedCurrencies = [];
+
+    /**
+     * Determines if payment has to be captured manually
+     *
+     * @var bool
+     */
+    protected $blNeedsManualCapture = false;
+
+    /**
+     * Determines if a shipping address has to be sent every time
+     *
+     * @var bool
+     */
+    protected $blShippingAddressIsMandatory = false;
+
+    /**
      * Determines if payment method is deprecated.
      * Deprecated methods are disabled, can't be used anymore and will be removed in a future release.
      * They stay in the module to allow finishing old orders where these methods have been used
@@ -553,6 +574,41 @@ abstract class Base
             return $aPaymentConfig[$sParameterName];
         }
         return false;
+    }
+
+    /**
+     * Returns if given currency is allowed for mollie payment method
+     *
+     * @param  string $sCurrency
+     * @return bool
+     */
+    public function isCurrencySupported($sCurrency)
+    {
+        if (!empty($this->aAllowedCurrencies) && !in_array($sCurrency, $this->aAllowedCurrencies)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns if shipping address has to be sent to Mollie
+     *
+     * @return bool
+     */
+    public function isShippingAddressMandatory()
+    {
+        return $this->blShippingAddressIsMandatory;
+    }
+
+    /**
+     * Returns if payment has to be captured manually
+     *
+     * @param Order $oOrder
+     * @return bool
+     */
+    public function isManualCaptureNeeded(Order $oOrder)
+    {
+        return $this->blNeedsManualCapture;
     }
 
     /**

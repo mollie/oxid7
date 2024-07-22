@@ -122,8 +122,8 @@ ni costes de configuración. Solo va a pagar por las transacciones exitosas. Y s
     ],
     'settings'      => [
         ['group' => 'MOLLIE_GENERAL',           'name' => 'sMollieMode',                        'type' => 'select',     'value' => 'test',      'position' => 10, 'constraints' => 'live|test'],
-        ['group' => 'MOLLIE_GENERAL',           'name' => 'sMollieTestToken',                   'type' => 'str',        'value' => '',          'position' => 20],
-        ['group' => 'MOLLIE_GENERAL',           'name' => 'sMollieLiveToken',                   'type' => 'str',        'value' => '',          'position' => 30],
+        ['group' => 'MOLLIE_GENERAL',           'name' => 'sMollieLiveToken',                   'type' => 'str',        'value' => '',          'position' => 20],
+        ['group' => 'MOLLIE_GENERAL',           'name' => 'sMollieTestToken',                   'type' => 'str',        'value' => '',          'position' => 30],
         ['group' => 'MOLLIE_GENERAL',           'name' => 'blMollieLogTransactionInfo',         'type' => 'bool',       'value' => '1',         'position' => 33],
         ['group' => 'MOLLIE_GENERAL',           'name' => 'blMollieShowIcons',                  'type' => 'bool',       'value' => '1',         'position' => 40],
         ['group' => 'MOLLIE_STATUS_MAPPING',    'name' => 'sMollieStatusPending',               'type' => 'select',     'value' => '',          'position' => 50],

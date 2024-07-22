@@ -617,6 +617,7 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
         $oRequestLog = oxNew(RequestLog::class);
         try {
             $oMollieApiOrder = $this->getMollieApiOrder();
+
             if ($oMollieApiOrder instanceof \Mollie\Api\Resources\Payment) {
                 $oResponse = $oMollieApiOrder->refund($aParams);
             } else {
