@@ -122,21 +122,6 @@ class PaymentCaptureEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbs
     {
         return $this->iteratorForId($payment->id, $from, $limit, $parameters, $iterateBackwards);
     }
-
-    /**
-     * @param string $paymentId
-     * @param array $parameters
-     *
-     * @return \Mollie\Api\Resources\BaseCollection|\Mollie\Api\Resources\Capture
-     * @throws \Mollie\Api\Exceptions\ApiException
-     */
-    public function listForId($paymentId, array $parameters = [])
-    {
-        $this->parentId = $paymentId;
-
-        return parent::rest_list(null, null, $parameters);
-    }
-
     /**
      * Create an iterator for iterating over captures for the given payment id, retrieved from Mollie.
      *
@@ -151,7 +136,6 @@ class PaymentCaptureEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbs
     public function iteratorForId(string $paymentId, ?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = false): LazyCollection
     {
         $this->parentId = $paymentId;
-
         return $this->rest_iterator($from, $limit, $parameters, $iterateBackwards);
     }
 }
