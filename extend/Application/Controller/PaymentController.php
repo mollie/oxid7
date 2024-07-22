@@ -67,6 +67,7 @@ class PaymentController extends PaymentController_parent
      * 3. BasketSum is outside of the min-/max-limits of the payment method
      * 4. Payment method has a billing country restriction and customer is not from that country
      * 5. Payment method is deprecated
+     * 6. Currently selected currency is not supported by payment method
      *
      * @return void
      */
@@ -84,6 +85,7 @@ class PaymentController extends PaymentController_parent
                     $oMolliePayment->mollieIsBasketSumInLimits($oBasket->getPrice()->getBruttoPrice()) === false ||
                     $oMolliePayment->mollieIsMethodAvailableForCountry($sBillingCountryCode) === false ||
                     ($oMolliePayment->isOnlyB2BSupported() === true && $this->mollieIsB2BOrder($oBasket) === false) ||
+                    $oMolliePayment->isCurrencySupported($sCurrency) === false ||
                     $oMolliePayment->isMethodDeprecated() === true
                 ) {
                     unset($this->_oPaymentList[$oPayment->getId()]);
