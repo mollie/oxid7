@@ -1,0 +1,7 @@
+{% extends "widget/minibasket/minibasket.html.twig" %}
+
+{% block widget_minibasket %}
+    {% if attribute(oViewConf, 'mollieSuppressBasketModal') is not defined or oViewConf.mollieSuppressBasketModal() is same as(false) %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}

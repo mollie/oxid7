@@ -11,7 +11,6 @@ class Order extends \Mollie\Api\Resources\BaseResource
      * @var string
      */
     public $resource;
-
     /**
      * ID of the order.
      *

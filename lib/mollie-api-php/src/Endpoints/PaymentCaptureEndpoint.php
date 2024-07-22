@@ -4,6 +4,7 @@ namespace Mollie\Api\Endpoints;
 
 use Mollie\Api\Resources\Capture;
 use Mollie\Api\Resources\CaptureCollection;
+use Mollie\Api\Resources\LazyCollection;
 use Mollie\Api\Resources\Payment;
 class PaymentCaptureEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
@@ -105,5 +106,52 @@ class PaymentCaptureEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbs
     {
         $this->parentId = $paymentId;
         return parent::rest_list(null, null, $parameters);
+    }
+    /**
+     * Create an iterator for iterating over captures for the given payment, retrieved from Mollie.
+     *
+     * @param Payment $payment
+     * @param string $from The first resource ID you want to include in your list.
+     * @param int $limit
+     * @param array $parameters
+     * @param bool $iterateBackwards Set to true for reverse order iteration (default is false).
+     *
+     * @return LazyCollection
+     */
+    public function iteratorFor(Payment $payment, ?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = false): LazyCollection
+    {
+        return $this->iteratorForId($payment->id, $from, $limit, $parameters, $iterateBackwards);
+    }
+
+    /**
+     * @param string $paymentId
+     * @param array $parameters
+     *
+     * @return \Mollie\Api\Resources\BaseCollection|\Mollie\Api\Resources\Capture
+     * @throws \Mollie\Api\Exceptions\ApiException
+     */
+    public function listForId($paymentId, array $parameters = [])
+    {
+        $this->parentId = $paymentId;
+
+        return parent::rest_list(null, null, $parameters);
+    }
+
+    /**
+     * Create an iterator for iterating over captures for the given payment id, retrieved from Mollie.
+     *
+     * @param string $paymentId
+     * @param string $from The first resource ID you want to include in your list.
+     * @param int $limit
+     * @param array $parameters
+     * @param bool $iterateBackwards Set to true for reverse order iteration (default is false).
+     *
+     * @return LazyCollection
+     */
+    public function iteratorForId(string $paymentId, ?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = false): LazyCollection
+    {
+        $this->parentId = $paymentId;
+
+        return $this->rest_iterator($from, $limit, $parameters, $iterateBackwards);
     }
 }

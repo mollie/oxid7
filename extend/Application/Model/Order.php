@@ -7,6 +7,7 @@ use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Capture;
 use Mollie\Payment\Application\Helper\Payment;
 use Mollie\Payment\Application\Helper\Payment as PaymentHelper;
+use Mollie\Payment\Application\Helper\PayPalExpress;
 use Mollie\Payment\Application\Model\Payment\Base;
 use Mollie\Payment\Application\Model\RequestLog;
 use OxidEsales\Eshop\Application\Model\Basket;
@@ -148,7 +149,7 @@ class Order extends Order_parent
 
                 DatabaseProvider::getDb()->Execute("UPDATE oxorder SET mollieshipmenthasbeenmarked = 1 WHERE oxid = ?", array($this->getId()));
             }
-        } catch (Exception $exc) {
+        } catch (\Exception $exc) {
             $oRequestLog->logExceptionResponse([], $exc->getCode(), $exc->getMessage(), 'shipAll', $this->getId(), Registry::getConfig()->getShopId());
         }
     }
@@ -171,7 +172,7 @@ class Order extends Order_parent
                     $oResponse[0]->update();
                 }
             }
-        } catch (Exception $exc) {
+        } catch (\Exception $exc) {
             $oRequestLog = oxNew(RequestLog::class);
             $oRequestLog->logExceptionResponse([], $exc->getCode(), $exc->getMessage(), 'updateTracking', $this->getId(), Registry::getConfig()->getShopId());
         }
@@ -503,6 +504,25 @@ class Order extends Order_parent
     }
 
     /**
+     * Send order to shop owner and user
+     *
+     * Overload: sendOrderByEmail is the very last action in finalizeOrder.
+     *           Using it to append an action there and making sure that finalizeOrder went all the way through
+     *
+     * @param \OxidEsales\Eshop\Application\Model\User        $oUser    order user
+     * @param \OxidEsales\Eshop\Application\Model\Basket      $oBasket  current order basket
+     * @param \OxidEsales\Eshop\Application\Model\UserPayment $oPayment order payment
+     *
+     * @return bool
+     */
+    protected function sendOrderByEmail($oUser = null, $oBasket = null, $oPayment = null)
+    {
+        $blParentReturn = parent::sendOrderByEmail($oUser, $oBasket, $oPayment);
+        PayPalExpress::getInstance()->mollieCancelPayPalExpress(false); // unset PPE session variables
+        return $blParentReturn;
+    }
+
+    /**
      * Assigns to new oxorder object customer delivery and shipping info
      *
      * @param object $oUser user object
@@ -518,7 +538,7 @@ class Order extends Order_parent
         $aShippingContact = $oRequest->getRequestEscapedParameter('shippingContact');
 
         if (empty($aBillingContact) || empty($aShippingContact)) {
-            throw new Exception('Address information is missing');
+            throw new \Exception('Address information is missing');
         }
 
         $oCountry = oxNew(Country::class);

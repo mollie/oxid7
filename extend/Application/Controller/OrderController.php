@@ -2,6 +2,7 @@
 
 namespace Mollie\Payment\extend\Application\Controller;
 
+use Mollie\Payment\Application\Helper\PayPalExpress;
 use OxidEsales\Eshop\Application\Model\Order;
 use OxidEsales\Eshop\Core\Registry;
 use Mollie\Payment\Application\Helper\Order as OrderHelper;
@@ -55,6 +56,20 @@ class OrderController extends OrderController_parent
     }
 
     /**
+     * Cleans PayPal Express session variables after a failure
+     *
+     * @return void
+     */
+    protected function mollieCleanUpSessionAfterFailure()
+    {
+        Registry::getSession()->deleteVariable('sess_challenge');
+
+        if (PayPalExpress::getInstance()->isMolliePayPalExpressCheckout() === true) {
+            PayPalExpress::getInstance()->mollieCancelPayPalExpress(false);
+        }
+    }
+
+    /**
      *
      * @return string
      */
@@ -78,7 +93,7 @@ class OrderController extends OrderController_parent
 
             Registry::getLogger()->critical(print_r($aResult,true));
             if ($aResult['success'] === false && $aResult['type'] !== 'success' ) {
-                Registry::getSession()->deleteVariable('sess_challenge');
+                $this->mollieCleanUpSessionAfterFailure();
 
                 $sErrorIdent = 'MOLLIE_ERROR_SOMETHING_WENT_WRONG';
                 if ($aResult['status'] == 'canceled') {

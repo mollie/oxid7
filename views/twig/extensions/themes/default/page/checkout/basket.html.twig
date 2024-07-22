@@ -1,0 +1,9 @@
+{% extends "page/checkout/basket.html.twig" %}
+
+{% block checkout_basket_main %}
+    {% set sMollieErrorMessage = oViewConf.mollieGetErrorMessage() %}
+    {% if sMollieErrorMessage %}
+        <div class="alert alert-danger">{{ sMollieErrorMessage }}</div>
+    {% endif %}
+    {{ parent() }}
+{% endblock %}

@@ -5,6 +5,8 @@ namespace Mollie\Api\Resources;
 use Mollie\Api\Exceptions\ApiException;
 class Customer extends \Mollie\Api\Resources\BaseResource
 {
+    use HasPresetOptions;
+
     /**
      * ID of the customer.
      *

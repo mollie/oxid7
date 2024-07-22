@@ -4,6 +4,7 @@ namespace Mollie\Api\Endpoints;
 
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
+use Mollie\Api\Resources\BaseCollection;
 use Mollie\Api\Resources\BaseResource;
 use Mollie\Api\Resources\ResourceFactory;
 abstract class EndpointAbstract
@@ -84,7 +85,6 @@ abstract class EndpointAbstract
         }
         return \Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, $this->getResourceObject());
     }
-
     /**
      * Retrieves a single object from the REST API.
      *
@@ -102,7 +102,6 @@ abstract class EndpointAbstract
         $result = $this->client->performHttpCall(self::REST_READ, "{$this->getResourcePath()}/{$id}" . $this->buildQueryString($filters));
         return \Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, $this->getResourceObject());
     }
-
     /**
      * Sends a DELETE request to a single Molle API object.
      *
@@ -124,6 +123,35 @@ abstract class EndpointAbstract
         }
         return \Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, $this->getResourceObject());
     }
+
+    /**
+     * Get a collection of objects from the REST API.
+     *
+     * @param string $from The first resource ID you want to include in your list.
+     * @param int $limit
+     * @param array $filters
+     *
+     * @return BaseCollection
+     * @throws ApiException
+     */
+    protected function rest_list($from = null, $limit = null, array $filters = [])
+    {
+        $filters = array_merge(["from" => $from, "limit" => $limit], $filters);
+
+        $apiPath = $this->getResourcePath() . $this->buildQueryString($filters);
+
+        $result = $this->client->performHttpCall(self::REST_LIST, $apiPath);
+
+        /** @var BaseCollection $collection */
+        $collection = $this->getResourceCollectionObject($result->count, $result->_links);
+
+        foreach ($result->_embedded->{$collection->getCollectionResourceName()} as $dataResult) {
+            $collection[] = ResourceFactory::createFromApiResult($dataResult, $this->getResourceObject());
+        }
+
+        return $collection;
+    }
+
     /**
      * Get the object that is used by this API endpoint. Every API endpoint uses one type of object.
      *

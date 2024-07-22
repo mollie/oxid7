@@ -3,6 +3,7 @@
 namespace Mollie\Payment\extend\Application\Controller;
 
 use Mollie\Payment\Application\Helper\Payment;
+use Mollie\Payment\Application\Helper\PayPalExpress;
 use OxidEsales\Eshop\Application\Model\Basket;
 use OxidEsales\Eshop\Application\Model\Country;
 use OxidEsales\Eshop\Core\Registry;
@@ -68,6 +69,7 @@ class PaymentController extends PaymentController_parent
      * 4. Payment method has a billing country restriction and customer is not from that country
      * 5. Payment method is deprecated
      * 6. Currently selected currency is not supported by payment method
+     * 7. Config option "blShowInPaymentList" is false
      *
      * @return void
      */
@@ -86,6 +88,7 @@ class PaymentController extends PaymentController_parent
                     $oMolliePayment->mollieIsMethodAvailableForCountry($sBillingCountryCode) === false ||
                     ($oMolliePayment->isOnlyB2BSupported() === true && $this->mollieIsB2BOrder($oBasket) === false) ||
                     $oMolliePayment->isCurrencySupported($sCurrency) === false ||
+                    $oMolliePayment->isMethodDisplayableInPaymentList() === false ||
                     $oMolliePayment->isMethodDeprecated() === true
                 ) {
                     unset($this->_oPaymentList[$oPayment->getId()]);
@@ -104,5 +107,35 @@ class PaymentController extends PaymentController_parent
         parent::getPaymentList();
         $this->mollieRemoveUnavailablePaymentMethods();
         return $this->_oPaymentList;
+    }
+
+    /**
+     * Returns url to cancel PayPal Express checkout session and show payment list
+     *
+     * @return string
+     */
+    public function getMolliePayPaylExpressCheckoutCancelUrl()
+    {
+        return Registry::getConfig()->getSslShopUrl()."?cl=payment&fnc=mollieCancelPayPalExpress";
+    }
+
+    /**
+     * Cancel PPE action
+     *
+     * @return void
+     */
+    public function mollieCancelPayPalExpress()
+    {
+        PayPalExpress::getInstance()->mollieCancelPayPalExpress();
+    }
+
+    /**
+     * Returns oxid payment id of PPE
+     *
+     * @return string
+     */
+    public function mollieGetPayPalExpressPaymentId()
+    {
+        return \Mollie\Payment\Application\Model\Payment\PayPalExpress::OXID;
     }
 }
