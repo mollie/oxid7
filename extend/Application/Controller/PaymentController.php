@@ -79,6 +79,7 @@ class PaymentController extends PaymentController_parent
         $sBillingCountryCode = $this->mollieGetBillingCountry($oBasket);
         foreach ($this->_oPaymentList as $oPayment) {
             if (method_exists($oPayment, 'isMolliePaymentMethod') && $oPayment->isMolliePaymentMethod() === true) {
+                $sCurrency = $oBasket->getBasketCurrency()->name;
                 $oMolliePayment = $oPayment->getMolliePaymentModel($oBasket->getPrice()->getBruttoPrice(), $oBasket->getBasketCurrency()->name);
                 if (($blRemoveDeactivated === true && $oMolliePayment->isMolliePaymentActive() === false) ||
                     ($blRemoveByBillingCountry === true && $oMolliePayment->isMolliePaymentActive($sBillingCountryCode) === false) ||
