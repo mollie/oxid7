@@ -6,15 +6,13 @@ use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Customer;
 use Mollie\Api\Resources\CustomerCollection;
 
-class CustomerEndpoint extends CollectionEndpointAbstract
+class CustomerEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "customers";
-
     /**
      * @var string
      */
-    const RESOURCE_ID_PREFIX = 'cst_';
-
+    public const RESOURCE_ID_PREFIX = 'cst_';
     /**
      * Get the object that is used by this API endpoint. Every API endpoint uses one type of object.
      *
@@ -22,9 +20,8 @@ class CustomerEndpoint extends CollectionEndpointAbstract
      */
     protected function getResourceObject()
     {
-        return new Customer($this->client);
+        return new \Mollie\Api\Resources\Customer($this->client);
     }
-
     /**
      * Get the collection object that is used by this API endpoint. Every API endpoint uses one type of collection object.
      *
@@ -35,9 +32,8 @@ class CustomerEndpoint extends CollectionEndpointAbstract
      */
     protected function getResourceCollectionObject($count, $_links)
     {
-        return new CustomerCollection($this->client, $count, $_links);
+        return new \Mollie\Api\Resources\CustomerCollection($this->client, $count, $_links);
     }
-
     /**
      * Creates a customer in Mollie.
      *
@@ -51,7 +47,6 @@ class CustomerEndpoint extends CollectionEndpointAbstract
     {
         return $this->rest_create($data, $filters);
     }
-
     /**
      * Retrieve a single customer from Mollie.
      *
@@ -66,7 +61,6 @@ class CustomerEndpoint extends CollectionEndpointAbstract
     {
         return $this->rest_read($customerId, $parameters);
     }
-
     /**
      * Update a specific Customer resource.
      *
@@ -80,13 +74,12 @@ class CustomerEndpoint extends CollectionEndpointAbstract
      */
     public function update($customerId, array $data = [])
     {
-        if (empty($customerId) || strpos($customerId, self::RESOURCE_ID_PREFIX) !== 0) {
-            throw new ApiException("Invalid order ID: '{$customerId}'. An order ID should start with '".self::RESOURCE_ID_PREFIX."'.");
+        if (empty($customerId) || \strpos($customerId, self::RESOURCE_ID_PREFIX) !== 0) {
+            throw new \Mollie\Api\Exceptions\ApiException("Invalid order ID: '{$customerId}'. An order ID should start with '" . self::RESOURCE_ID_PREFIX . "'.");
         }
 
         return parent::rest_update($customerId, $data);
     }
-
     /**
      * Deletes the given Customer.
      *
@@ -103,7 +96,6 @@ class CustomerEndpoint extends CollectionEndpointAbstract
     {
         return $this->rest_delete($customerId, $data);
     }
-
     /**
      * Retrieves a collection of Customers from Mollie.
      *
