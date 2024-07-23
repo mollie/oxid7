@@ -126,13 +126,6 @@ abstract class Base
     protected $blMethodIsDeprecated = false;
 
     /**
-     * If filled, the payment method will only be shown if one of the allowed currencies is active in checkout
-     *
-     * @var array
-     */
-    protected $aAllowedCurrencies = [];
-
-    /**
      * Return Oxid payment id
      *
      * @return string
@@ -619,19 +612,5 @@ abstract class Base
     public function isMethodDeprecated()
     {
         return $this->blMethodIsDeprecated;
-    }
-
-    /**
-     * Returns if given currency is allowed for mollie payment method
-     *
-     * @param  string $sCurrency
-     * @return bool
-     */
-    public function isCurrencySupported($sCurrency)
-    {
-        if (!empty($this->aAllowedCurrencies) && !in_array($sCurrency, $this->aAllowedCurrencies)) {
-            return false;
-        }
-        return true;
     }
 }
