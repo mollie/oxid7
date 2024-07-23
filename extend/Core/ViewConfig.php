@@ -119,7 +119,7 @@ class ViewConfig extends ViewConfig_parent
      */
     public function mollieShowPayPalExpressButtonOnBasket()
     {
-        return (bool)Registry::getConfig()->getShopConfVar('blMolliePayPalButtonOnBasket');
+        return (bool)Payment::getInstance()->getShopConfVar('blMolliePayPalButtonOnBasket');
     }
 
     /**
@@ -129,7 +129,7 @@ class ViewConfig extends ViewConfig_parent
      */
     public function mollieShowPayPalExpressButtonOnDetails()
     {
-        return (bool)Registry::getConfig()->getShopConfVar('blMolliePayPalButtonOnDetails');
+        return (bool)Payment::getInstance()->getShopConfVar('blMolliePayPalButtonOnDetails');
     }
 
     /**

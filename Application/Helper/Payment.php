@@ -48,6 +48,7 @@ class Payment
         'mollieklarnapaynow'    => array('title' => 'Klarna Pay Now',       'model' => \Mollie\Payment\Application\Model\Payment\KlarnaPayNow::class),
         'mollieklarnasliceit'   => array('title' => 'Klarna Slice It',      'model' => \Mollie\Payment\Application\Model\Payment\KlarnaSliceIt::class),
         'molliepaypal'          => array('title' => 'PayPal',               'model' => \Mollie\Payment\Application\Model\Payment\PayPal::class),
+        'molliepaypalexpress'   => array('title' => 'PayPal Express',       'model' => \Mollie\Payment\Application\Model\Payment\PayPalExpress::class),
         'molliepaysafecard'     => array('title' => 'Paysafecard',          'model' => \Mollie\Payment\Application\Model\Payment\Paysafecard::class),
         'molliesofort'          => array('title' => 'Sofort',               'model' => \Mollie\Payment\Application\Model\Payment\Sofort::class),
         'mollieapplepay'        => array('title' => 'Apple Pay',            'model' => \Mollie\Payment\Application\Model\Payment\ApplePay::class),

@@ -118,17 +118,18 @@ class PayPalExpress
             }
         }
         if (!$sShape) {
-            $sShape = Registry::getConfig()->getShopConfVar('sMolliePPEButtonShape');
+            $sShape = Payment::getInstance()->getShopConfVar('sMolliePPEButtonShape');
         }
         if (!$sType) {
-            $sType = Registry::getConfig()->getShopConfVar('sMolliePPEButtonType');
+            $sType = Payment::getInstance()->getShopConfVar('sMolliePPEButtonType');
         }
         if (!$sColor) {
-            $sColor = Registry::getConfig()->getShopConfVar('sMolliePPEButtonColor');
+            $sColor = Payment::getInstance()->getShopConfVar('sMolliePPEButtonColor');
         }
 
         $sImagePath = $this->getPayPalButtonPath($sLang, $sShape, $sType, $sColor);
-        if (!file_exists(getShopBasePath()."/modules/mollie/molliepayment/".$sImagePath)) {
+
+        if (!file_exists(getShopBasePath()."/out/modules/molliepayment/".$sImagePath)) {
             $sImagePath = $this->getFallbackPayPalButtonUrl($sLang);
         }
         return Registry::getConfig()->getActiveView()->getViewConfig()->getModuleUrl('molliepayment', $sImagePath);
