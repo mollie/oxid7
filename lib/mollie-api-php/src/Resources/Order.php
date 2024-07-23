@@ -471,6 +471,7 @@ class Order extends \Mollie\Api\Resources\BaseResource
     private function getPresetOptions()
     {
         $options = [];
+
         if ($this->client->usesOAuth()) {
             $options["testmode"] = $this->mode === "test" ? \true : \false;
         }
