@@ -71,6 +71,7 @@ class PaymentController extends PaymentController_parent
      * 6. Payment method not activated in the Mollie dashboard or for the current billing country, basket amount, currency situation
      * 7. Payment method is only available for B2B orders and current order is not a B2B order
      * 8. Currently selected currency is not supported by payment method
+     * 9. Config option "blShowInPaymentList" is false
      *
      * @return void
      */
@@ -87,6 +88,7 @@ class PaymentController extends PaymentController_parent
                     $oMolliePayment->mollieIsMethodAvailableForCountry($sBillingCountryCode) === false ||
                     ($oMolliePayment->isOnlyB2BSupported() === true && $this->mollieIsB2BOrder($oBasket) === false) ||
                     $oMolliePayment->isCurrencySupported($sCurrency) === false ||
+                    $oMolliePayment->isMethodDisplayableInPaymentList() === false ||
                     $oMolliePayment->isMethodDeprecated() === true
                 ) {
                     unset($this->_oPaymentList[$oPayment->getId()]);

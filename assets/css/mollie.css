@@ -169,17 +169,14 @@
     margin-bottom: 10px;
 }
 
-#molliePayPalExpressButtonDetails img {
-    margin-bottom: 10px;
-}
-
-.cl-basket #molliePayPalExpressButtonBasketBottom img {
+.cl-basket #molliePayPalExpressButtonBasketBottom img,
+.modal.fade.basketFlyout .modal-dialog #molliePayPalExpressButtonMiniBasketBottom img {
     margin-top: 10px;
 }
 
 .cl-user.is-checkout #molliePayPalExpressButtonBasketBottom img,
 .cl-payment.is-checkout #molliePayPalExpressButtonBasketBottom img,
-.cl-order.is-checkout #molliePayPalExpressButtonBasketBottom img {
+#molliePayPalExpressButtonDetails img {
     margin-bottom: 10px;
 }
 

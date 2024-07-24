@@ -5,3 +5,14 @@
         {{ parent() }}
     {% endif %}
 {% endblock %}
+
+{% block dd_layout_page_header_icon_menu_minibasket_functions %}
+    {{ parent() }}
+    {% if oViewConf.mollieShowPayPalExpressButtonOnBasket() %}
+        {{ script({ include: oViewConf.getModuleUrl('molliepayment','js/jquery.min.js'), dynamic: __oxid_include_dynamic }) }}
+        {{ script({ include: oViewConf.getModuleUrl('molliepayment','js/mollie.js'), dynamic: __oxid_include_dynamic }) }}
+        {{ style({ include: oViewConf.getModuleUrl('molliepayment','css/mollie.css') }) }}
+        {% include_dynamic "@molliepayment/frontend/molliepaypalexpress.html.twig" with {type: "mollie", position: "MiniBasketBottom"} %}
+    {% endif %}
+{% endblock %}
+
