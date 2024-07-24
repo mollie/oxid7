@@ -68,27 +68,25 @@ class PaymentController extends PaymentController_parent
      * 3. BasketSum is outside of the min-/max-limits of the payment method
      * 4. Payment method has a billing country restriction and customer is not from that country
      * 5. Payment method is deprecated
-     * 6. Currently selected currency is not supported by payment method
-     * 7. Config option "blShowInPaymentList" is false
+     * 6. Payment method not activated in the Mollie dashboard or for the current billing country, basket amount, currency situation
+     * 7. Payment method is only available for B2B orders and current order is not a B2B order
+     * 8. Currently selected currency is not supported by payment method
      *
      * @return void
      */
     protected function mollieRemoveUnavailablePaymentMethods()
     {
-        $blRemoveDeactivated = (bool)Payment::getInstance()->getShopConfVar('blMollieRemoveDeactivatedMethods');
-        $blRemoveByBillingCountry = (bool)Payment::getInstance()->getShopConfVar('blMollieRemoveByBillingCountry');
         $oBasket = Registry::getSession()->getBasket();
         $sBillingCountryCode = $this->mollieGetBillingCountry($oBasket);
         foreach ($this->_oPaymentList as $oPayment) {
             if (method_exists($oPayment, 'isMolliePaymentMethod') && $oPayment->isMolliePaymentMethod() === true) {
-                $oMolliePayment = $oPayment->getMolliePaymentModel($oBasket->getPrice()->getBruttoPrice(), $oBasket->getBasketCurrency()->name);
-                if (($blRemoveDeactivated === true && $oMolliePayment->isMolliePaymentActive() === false) ||
-                    ($blRemoveByBillingCountry === true && $oMolliePayment->isMolliePaymentActive($sBillingCountryCode) === false) ||
+                $sCurrency = $oBasket->getBasketCurrency()->name;
+                $oMolliePayment = $oPayment->getMolliePaymentModel($oBasket->getPrice()->getBruttoPrice(), $sCurrency);
+                if ($oMolliePayment->isMolliePaymentActive($sBillingCountryCode, $oBasket->getPrice()->getBruttoPrice(), $sCurrency) === false ||
                     $oMolliePayment->mollieIsBasketSumInLimits($oBasket->getPrice()->getBruttoPrice()) === false ||
                     $oMolliePayment->mollieIsMethodAvailableForCountry($sBillingCountryCode) === false ||
                     ($oMolliePayment->isOnlyB2BSupported() === true && $this->mollieIsB2BOrder($oBasket) === false) ||
                     $oMolliePayment->isCurrencySupported($sCurrency) === false ||
-                    $oMolliePayment->isMethodDisplayableInPaymentList() === false ||
                     $oMolliePayment->isMethodDeprecated() === true
                 ) {
                     unset($this->_oPaymentList[$oPayment->getId()]);

@@ -440,11 +440,13 @@ abstract class Base
      * Determines if payment method is activated for this Mollie account
      *
      * @param string|false $sBillingCountryCode
+     * @param double|false $dAmount
+     * @param string|false $sCurrency
      * @return bool
      */
-    public function isMolliePaymentActive($sBillingCountryCode = false)
+    public function isMolliePaymentActive($sBillingCountryCode = false, $dAmount = false, $sCurrency = false)
     {
-        $aInfo = Payment::getInstance()->getMolliePaymentInfo(false, false, $sBillingCountryCode);
+        $aInfo = Payment::getInstance()->getMolliePaymentInfo($dAmount, $sCurrency, $sBillingCountryCode);
         if (isset($aInfo[$this->sMolliePaymentCode])) {
             return true;
         }

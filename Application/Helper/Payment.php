@@ -208,7 +208,11 @@ class Payment
      */
     public function getMolliePaymentInfo($dAmount = false, $sCurrency = false, $sBillingCountryCode = false)
     {
-        if ($this->aPaymentInfo === null || ($dAmount !== false && $sCurrency !== false)) {
+        $sCacheKey = $dAmount.$sCurrency.$sBillingCountryCode;
+        if (empty($sCacheKey)) {
+            $sCacheKey = 'none';
+        }
+        if (empty($this->aPaymentInfo[$sCacheKey])) {
             $aParams = ['resource' => 'orders', 'includeWallets' => 'applepay'];
             if ($dAmount !== false && $sCurrency !== false) {
                 $aParams['amount[value]'] = number_format($dAmount, 2, '.', '');
@@ -231,9 +235,9 @@ class Payment
             } catch (\Exception $exc) {
                 Logger::logMessage($exc->getMessage());
             }
-            $this->aPaymentInfo = $aPaymentInfo;
+            $this->aPaymentInfo[$sCacheKey] = $aPaymentInfo;
         }
-        return $this->aPaymentInfo;
+        return $this->aPaymentInfo[$sCacheKey];
     }
 
     /**
