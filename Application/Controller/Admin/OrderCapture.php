@@ -481,7 +481,8 @@ class OrderCapture extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
      */
     public function isOrderRefundable()
     {
-        if ($this->wasRefundSuccessful() === true && Registry::getRequest()->getRequestEscapedParameter('fnc') == 'fullRefund') {
+        $oOrder = $this->getOrder();
+        if (($this->wasRefundSuccessful() === true && Registry::getRequest()->getRequestEscapedParameter('fnc') == 'fullRefund')  || $oOrder->oxorder__oxpaid->value == '0000-00-00 00:00:00') {
             // the mollie order is not updated instantly, so this is used to show that the order was fully refunded already
             return false;
         }
