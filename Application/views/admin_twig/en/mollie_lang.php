@@ -151,4 +151,5 @@ $aLang = array(
     'MOLLIE_CAPTURE_SUCCESSFUL'                         => 'Amount captured successfully.',
     'MOLLIE_CREDITCARD_CAPTURE'                         => 'Capture Method',
     'MOLLIE_CREDITCARD_CAPTURE_METHOD_HELP'             => 'This option defines which capture method is used.<br><strong>Authenticate credit card before capture</strong>:The amount will be authorized and you have to manually capture the amount via the mollie tab within the order or via provided cron job<br><strong>Directly capture credit card amounts:</strong> The amount will be directly captured<br><strong>Automatically capture credit card amounts:</strong> The amount will be automatically captured by mollie after X days',
+    'MOLLIE_PAYMENT_HISTORY'                            => 'Payment history',
 );
