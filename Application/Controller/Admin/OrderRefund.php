@@ -180,7 +180,7 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
         $oOrder = $this->getOrder();
         $aParams = $this->getCaptureParams();
         try {
-            $oOrder->mollieCaptureOrder($aParams);
+            $oOrder->captureOrder($aParams);
             $this->_blSuccessCapture = true;
         } catch (ApiException $e) {
             $oRequestLog->logExceptionResponse($aParams, $e->getCode(), $e->getMessage(), 'capture', $oOrder->getId(), Registry::getConfig()->getShopId());
@@ -341,7 +341,16 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
     {
         $oMollieApiOrder = $this->getMollieApiOrder(true);
 
-        return ($oMollieApiOrder->amount->value - $oMollieApiOrder->amountRefunded->value);
+        $dAmount = 0;
+        if ($oMollieApiOrder && $oMollieApiOrder->amount && $oMollieApiOrder->amount->value) {
+            $dAmount = $oMollieApiOrder->amount->value;
+        }
+
+        $dAmountRefunded = 0;
+        if ($oMollieApiOrder && $oMollieApiOrder->amountRefunded && $oMollieApiOrder->amountRefunded->value) {
+            $dAmountRefunded = $oMollieApiOrder->amountRefunded->valu;
+        }
+        return ($dAmount - $dAmountRefunded);
     }
 
     /**
