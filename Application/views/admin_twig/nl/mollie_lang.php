@@ -150,4 +150,8 @@ $aLang = array(
     'MOLLIE_CREDITCARD_CAPTURE_METHOD_HELP'             => 'Deze optie bepaalt welke betaalmethode wordt gebruikt.<br><strong>Creditcardbedragen autoriseren voor de inning</strong>:Het bedrag wordt geautoriseerd en u moet het bedrag handmatig vastleggen via het mollie tabblat in de bestelling sectie of via de bijbehorende cronjob.<br><strong>Creditcardbedragen direct innen:</strong> Het bedrag wordt direct geïnd.<br><strong>Creditcardbedragen automatisch innen:</strong> Het bedrag wordt na X dagen automatisch door mollie geïnd.',
     'HELP_SHOP_MODULE_sMollieCronCaptureOrdersActive'   => 'Deze optie werkt alleen als je <strong>Creditcardbedragen autoriseren voor de inning</strong> als methode hebt geselecteerd. Deze cronjob legt orders vast die zijn uitgevoerd en die je normaal gesproken handmatig zou moeten vastleggen.',
     'MOLLIE_PAYMENT_HISTORY'                            => 'Betalingsgeschiedenis',
+    'MOLLIE_PAYMENT_HISTORY_TYPE'                       => 'Type',
+    'MOLLIE_PAYMENT_HISTORY_STATUS'                     => 'Status',
+    'MOLLIE_PAYMENT_HISTORY_TIMESTAMP'                  => 'Timestamp',
+    'MOLLIE_PAYMENT_HISTORY_TYPE_IS_PAYMENT'            => 'payment',
 );

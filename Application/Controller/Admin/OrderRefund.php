@@ -153,6 +153,7 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
         }
         return false;
     }
+
     /**
      * @return mixed
      */
@@ -162,7 +163,7 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
         /** @var \Mollie\Payment\extend\Application\Model\Order $oOrder */
         $oOrder = $this->getOrder();
         try {
-           return $oOrder->mollieGetCaptures();
+           return $oOrder->getCaptures();
         } catch(ApiException $e) {
             $oRequestLog->logExceptionResponse([], $e->getCode(), $e->getMessage(), 'capture', $oOrder->getId(), Registry::getConfig()->getShopId());
             $this->setErrorMessage($e->getMessage());
@@ -170,6 +171,7 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
         }
 
     }
+
 
     /**
      * @return void
@@ -1003,5 +1005,44 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
         if ($oOrder && $oOrder->mollieIsMolliePaymentUsed()) {
             $oOrder->mollieSendSecondChanceEmail();
         }
+    }
+
+    /**
+     * @return array|bool
+     */
+    public function getPaymentHistory()
+    {
+        $sOxid = $this->getEditObjectId();
+        $oRequestLog = oxNew(RequestLog::class);
+        try {
+            $aLogEntries = $oRequestLog->getLogEntryForOrder($sOxid, true);
+            if(count($aLogEntries) > 0) {
+                foreach ($aLogEntries as &$aLogEntry) {
+                    if(isset($aLogEntry['request'])) {
+                        $aLogEntry['request'] = $oRequestLog->decodeData($aLogEntry['request']);
+                    }
+                    if(isset($aLogEntry['response'])) {
+                        $aLogEntry['response'] = $oRequestLog->decodeData($aLogEntry['response']);
+                    }
+                }
+                /*$manuTest = $this->_oRequestLog->decodeData($this->_oRequestLog->mollierequestlog__request->rawValue);
+                $manuTest = $this->_oRequestLog->decodeData($sLogEntry);*/
+                //ManuTest
+                //var_dump('ManuTest: ' . __method__);
+                //$sLogEntry['REQUESTTYPE']
+
+                //var_dump($sOxid);
+                //var_dump($aLogEntries);
+                //die();
+                //ManuTest
+                return $aLogEntries;
+            }
+        } catch (\Exception $e) {
+            //do nothing
+            //to intercept potential errors from the database.
+            //Especially if the respective OXID is not yet present in the table mollierequestlog
+        }
+
+        return false;
     }
 }

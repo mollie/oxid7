@@ -45,7 +45,7 @@ class RequestLog
      * @param string $sData
      * @return array
      */
-    protected function decodeData($sData)
+    public function decodeData($sData)
     {
         return json_decode($sData, true);
     }
@@ -98,19 +98,27 @@ class RequestLog
      * Returns log entry for given order id
      *
      * @param  string $sOrderId
+     * @param  bool $blForPaymentHistory
      * @return array|bool
      * @throws \OxidEsales\Eshop\Core\Exception\DatabaseConnectionException
      */
-    public function getLogEntryForOrder($sOrderId)
+    public function getLogEntryForOrder($sOrderId, $blForPaymentHistory = false)
     {
         $oDb = DatabaseProvider::getDb();
         $oDb->setFetchMode(DatabaseProvider::FETCH_MODE_ASSOC);
 
-        $sQuery = "SELECT * FROM ".self::$sTableName." WHERE orderid = ? AND ((requesttype = 'order' AND responsestatus = 'created') OR (requesttype = 'payment' AND responsestatus = 'open')) AND response LIKE '%checkoutUrl%'";
-        $aRow = $oDb->getRow($sQuery, array($sOrderId));
-        if ($aRow) {
-            return $aRow;
+        if($blForPaymentHistory) {
+            $sQuery = "SELECT requesttype, responsestatus, request, timestamp, response FROM " . self::$sTableName . " WHERE orderid = ? AND (requesttype = 'payment' OR requesttype = 'refund')";
+            return $oDb->getAll($sQuery, array($sOrderId));
+        } else {
+            $sQuery = "SELECT * FROM " . self::$sTableName . " WHERE orderid = ? AND ((requesttype = 'order' AND responsestatus = 'created') OR (requesttype = 'payment' AND responsestatus = 'open')) AND response LIKE '%checkoutUrl%'";
+            $aRow = $oDb->getRow($sQuery, array($sOrderId));
+            if ($aRow) {
+                return $aRow;
+            }
         }
+
+
         return false;
     }
 

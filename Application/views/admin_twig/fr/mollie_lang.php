@@ -150,4 +150,8 @@ $aLang = array(
     'MOLLIE_CREDITCARD_CAPTURE_METHOD_HELP'             => 'Cette option définit quelle méthode de capture est utilisée.<br><strong>Authentifier la carte de crédit avant la capture</strong> : Le montant sera autorisé et vous devrez capturer manuellement le montant via l\'onglet Mollie dans la commande ou via le cron fourni <br><strong>Capturer directement les montants des cartes de crédit :</strong> Le montant sera directement capturé<br><strong>Capturer automatiquement les montants des cartes de crédit :</strong> Le montant sera automatiquement capturé par Mollie après X jours',
     'HELP_SHOP_MODULE_sMollieCronCaptureOrdersActive'   => 'Cette option ne fonctionne que si vous avez sélectionné <strong>Authentifier la carte de crédit avant la capture</strong> comme méthode de capture. Cette tâche cron capture les commandes qui sont exécutées et que vous auriez normalement besoin de capturer manuellement',
     'MOLLIE_PAYMENT_HISTORY'                            => 'Historique des paiements',
+    'MOLLIE_PAYMENT_HISTORY_TYPE'                       => 'Type',
+    'MOLLIE_PAYMENT_HISTORY_STATUS'                     => 'Statut',
+    'MOLLIE_PAYMENT_HISTORY_TIMESTAMP'                  => 'Timestamp',
+    'MOLLIE_PAYMENT_HISTORY_TYPE_IS_PAYMENT'            => 'payment',
 );

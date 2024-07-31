@@ -116,43 +116,81 @@
             {% endif%}
         </table>
     </fieldset>
-    {% if edit.oxorder__oxpaid.value != '0000-00-00 00:00:00' %}
+    {% set paymentHistory = oView.getPaymentHistory() %}
+    {% if edit.oxorder__oxpaid.value != '0000-00-00 00:00:00' and paymentHistory is iterable %}
         <fieldset>
             <legend>{{ translate({ ident: "MOLLIE_PAYMENT_HISTORY" }) }}</legend>
-            {% if oView.getOrderCaptures()|length > 0 %}
                 <table cellspacing="0" cellpadding="0" border="0" width="98%" class="refundTable">
                     <tr>
-                        <td class="listheader first" height="15" width="10%">{{ translate({ ident: "MOLLIE_AMOUNT" }) }}</td>
+                        <td class="listheader first" height="15" width="5%">{{ translate({ ident: "MOLLIE_PAYMENT_HISTORY_TYPE" }) }}</td>
+                        <td class="listheader" width="5%">{{ translate({ ident: "MOLLIE_AMOUNT" }) }}</td>
+                        {#ManuTestXXX: {{ paymentType | json_encode(constant('JSON_PRETTY_PRINT')) }}#}
                         <td class="listheader" width="10%">{{ translate({ ident: "MOLLIE_TRANSACTION_ID" }) }}</td>
-                        <td class="listheader" width="10%">{{ translate({ ident: "MOLLIE_CAPTURE_ID" }) }}</td>
-                        <td class="listheader" width="10%">{{ translate({ ident: "SHOP_MODULE_sMollieMode" }) }}</td>
-                        <td class="listheader" width="10%">{{ translate({ ident: "MOLLIE_CAPTURE_STATUS" }) }}</td>
-                    </tr>
-                    {% for listitem in oView.getOrderCaptures() %}
-                        <tr id="art.{{ loop.index }}">
-                            {% if listitem.isOrderarticle is same as(false) and blBorderDrawn is same as(false) %}
-                                {% set class = " borderTop" %}
-                                {% set blBorderDrawn = true %}
+                        {% if paymentType.oxuserpayments__oxpaymentsid.value == 'molliecreditcard' %}
+                            {% set orderCaptures = oView.getOrderCaptures() %}
+                            {% if orderCaptures|length > 0 %}
+                                <td class="listheader" width="10%">{{ translate({ ident: "MOLLIE_CAPTURE_ID" }) }}</td>
                             {% endif %}
-                            {% set listclass = 'listitem' ~ blWhite %}
-                            <td valign="top" class="{{ listclass }}{{ class }}" height="15">{{ oView.getFormatedPrice(listitem.amount) }}  <small>{{ edit.oxorder__oxcurrency.value }}</small></td>
-                            <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.paymentId|striptags }}</td>
-                            <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.captureId }}</td>
-                            <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.mode }}</td>
-                            <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.status }}</td>
-
-                            {% if listitem.isOrderarticle is same as(false) %}
-                                {% set class = "" %}
-                            {% endif %}
-                        </tr>
-                        {% if blWhite == "2" %}
-                            {% set blWhite = "" %}
-                        {% else %}
-                            {% set blWhite = "2" %}
                         {% endif %}
-                    {% endfor %}
+                        <td class="listheader" width="10%">{{ translate({ ident: "SHOP_MODULE_sMollieMode" }) }}</td>
+                        <td class="listheader" width="10%">{{ translate({ ident: "MOLLIE_PAYMENT_HISTORY_STATUS" }) }}</td>
+                        <td class="listheader" width="10%">{{ translate({ ident: "MOLLIE_PAYMENT_HISTORY_TIMESTAMP" }) }}</td>
+                    </tr>
+                        {% if orderCaptures|length > 0 %}
+                            {% for listitem in orderCaptures %}
+                            <tr id="art.{{ loop.index }}">
+                                {% if listitem.isOrderarticle is same as(false) and blBorderDrawn is same as(false) %}
+                                    {% set class = " borderTop" %}
+                                    {% set blBorderDrawn = true %}
+                                {% endif %}
+                                {% set listclass = 'listitem' ~ blWhite %}
+                                <td valign="top" class="{{ listclass }}{{ class }}" height="15">{{ translate({ ident: "MOLLIE_PAYMENT_HISTORY_TYPE_IS_PAYMENT" }) }}</td>
+                                <td valign="top" class="{{ listclass }}{{ class }}">{{ oView.getFormatedPrice(listitem.amount) }}  <small>{{ edit.oxorder__oxcurrency.value }}</small></td>
+                                <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.paymentId|striptags }}</td>
+                                <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.captureId }}</td>
+                                <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.mode }}</td>
+                                <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.status }}</td>
+                                <td valign="top" class="{{ listclass }}{{ class }}"><span style="color:red">ManuTestTimestamp</span></td>
+
+                                {% if listitem.isOrderarticle is same as(false) %}
+                                    {% set class = "" %}
+                                {% endif %}
+                            </tr>
+                            {% if blWhite == "2" %}
+                                {% set blWhite = "" %}
+                            {% else %}
+                                {% set blWhite = "2" %}
+                            {% endif %}
+
+                            {% endfor %}
+                        {% endif %}
+                        {% for listitem in paymentHistory %}
+                            {% if paymentType.oxuserpayments__oxpaymentsid.value == 'molliecreditcard' and listitem.requesttype == 'payment'%}
+                                {#No output#}
+                            {% else %}
+                                <tr id="art.{{ loop.index }}">
+                                    {% set listclass = 'listitem' ~ blWhite %}
+
+                                    <td valign="top" class="{{ listclass }}{{ class }}" height="15">{{ listitem.requesttype }}</td>
+                                    <td valign="top" class="{{ listclass }}{{ class }}">{{ oView.getFormatedPrice(listitem.response.amount.value) }}  <small>{{ listitem.response.amount.currency }}</small></td>
+                                    <td valign="top" class="{{ listclass }}{{ class }}">{{ order.oxorder__oxtransid.value }}</td>
+                                    {% if paymentType.oxuserpayments__oxpaymentsid.value == 'molliecreditcard' %}
+                                        {% if orderCaptures|length > 0 %}
+                                            <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.captureId }}</td>
+                                        {% endif %}
+                                    {% endif %}
+                                    <td valign="top" class="{{ listclass }}{{ class }}"><span style="color:red">ManuTestModus</span></td>
+                                    <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.responsestatus }}</td>
+                                    <td valign="top" class="{{ listclass }}{{ class }}">{{ listitem.timestamp }}</td>
+                                </tr>
+                                {% if blWhite == "2" %}
+                                    {% set blWhite = "" %}
+                                {% else %}
+                                    {% set blWhite = "2" %}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
                 </table>
-            {% endif %}
         </fieldset>
     {% endif %}
     {% if oView.getErrorMessage() is not same as(false) %}
