@@ -1024,17 +1024,11 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
                     if(isset($aLogEntry['response'])) {
                         $aLogEntry['response'] = $oRequestLog->decodeData($aLogEntry['response']);
                     }
+                    if($aOrderCaptures = $this->getOrderCaptures()) {
+                        $aLogEntry['captureid'] =  $aOrderCaptures[0]['captureId'];
+                        $aLogEntry['capturestatus'] =  $aOrderCaptures[0]['status'];
+                    }
                 }
-                /*$manuTest = $this->_oRequestLog->decodeData($this->_oRequestLog->mollierequestlog__request->rawValue);
-                $manuTest = $this->_oRequestLog->decodeData($sLogEntry);*/
-                //ManuTest
-                //var_dump('ManuTest: ' . __method__);
-                //$sLogEntry['REQUESTTYPE']
-
-                //var_dump($sOxid);
-                //var_dump($aLogEntries);
-                //die();
-                //ManuTest
                 return $aLogEntries;
             }
         } catch (\Exception $e) {

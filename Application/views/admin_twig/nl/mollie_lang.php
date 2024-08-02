@@ -153,5 +153,5 @@ $aLang = array(
     'MOLLIE_PAYMENT_HISTORY_TYPE'                       => 'Type',
     'MOLLIE_PAYMENT_HISTORY_STATUS'                     => 'Status',
     'MOLLIE_PAYMENT_HISTORY_TIMESTAMP'                  => 'Timestamp',
-    'MOLLIE_PAYMENT_HISTORY_TYPE_IS_PAYMENT'            => 'payment',
+    'MOLLIE_PAYMENT_HISTORY_TYPE_IS_AUTHORIZED'         => 'authorized',
 );

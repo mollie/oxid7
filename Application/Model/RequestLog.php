@@ -108,7 +108,7 @@ class RequestLog
         $oDb->setFetchMode(DatabaseProvider::FETCH_MODE_ASSOC);
 
         if($blForPaymentHistory) {
-            $sQuery = "SELECT requesttype, responsestatus, request, timestamp, response FROM " . self::$sTableName . " WHERE orderid = ? AND (requesttype = 'payment' OR requesttype = 'refund')";
+            $sQuery = "SELECT requesttype, responsestatus, request, timestamp, response FROM " . self::$sTableName . " WHERE orderid = ? AND (requesttype = 'payment' OR requesttype = 'refund' OR requesttype = 'order')";
             return $oDb->getAll($sQuery, array($sOrderId));
         } else {
             $sQuery = "SELECT * FROM " . self::$sTableName . " WHERE orderid = ? AND ((requesttype = 'order' AND responsestatus = 'created') OR (requesttype = 'payment' AND responsestatus = 'open')) AND response LIKE '%checkoutUrl%'";
