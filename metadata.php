@@ -114,6 +114,9 @@ ni costes de configuración. Solo va a pagar por las transacciones exitosas. Y s
         'MollieApplePay' => Mollie\Payment\Application\Controller\MollieApplePay::class,
         'MollieFinishPayment' => Mollie\Payment\Application\Controller\MollieFinishPayment::class,
         'mollie_order_refund' => Mollie\Payment\Application\Controller\Admin\OrderRefund::class,
+        'mollie_apilog' => Mollie\Payment\Application\Controller\Admin\ApiLog::class,
+        'mollie_apilog_main' => Mollie\Payment\Application\Controller\Admin\ApiLogMain::class,
+        'mollie_apilog_list' => Mollie\Payment\Application\Controller\Admin\ApiLogList::class,
         'mollie_order_capture' => Mollie\Payment\Application\Controller\Admin\OrderCapture::class,
     ],
     'events'        => [
@@ -125,8 +128,6 @@ ni costes de configuración. Solo va a pagar por las transacciones exitosas. Y s
         ['group' => 'MOLLIE_GENERAL',           'name' => 'sMollieLiveToken',                   'type' => 'str',        'value' => '',          'position' => 20],
         ['group' => 'MOLLIE_GENERAL',           'name' => 'sMollieTestToken',                   'type' => 'str',        'value' => '',          'position' => 30],
         ['group' => 'MOLLIE_GENERAL',           'name' => 'blMollieLogTransactionInfo',         'type' => 'bool',       'value' => '1',         'position' => 33],
-        ['group' => 'MOLLIE_GENERAL',           'name' => 'blMollieRemoveDeactivatedMethods',   'type' => 'bool',       'value' => '1',         'position' => 35],
-        ['group' => 'MOLLIE_GENERAL',           'name' => 'blMollieRemoveByBillingCountry',     'type' => 'bool',       'value' => '1',         'position' => 36],
         ['group' => 'MOLLIE_GENERAL',           'name' => 'blMollieShowIcons',                  'type' => 'bool',       'value' => '1',         'position' => 40],
         ['group' => 'MOLLIE_STATUS_MAPPING',    'name' => 'sMollieStatusPending',               'type' => 'select',     'value' => '',          'position' => 50],
         ['group' => 'MOLLIE_STATUS_MAPPING',    'name' => 'sMollieStatusProcessing',            'type' => 'select',     'value' => '',          'position' => 60],

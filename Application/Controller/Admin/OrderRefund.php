@@ -162,7 +162,7 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
         /** @var \Mollie\Payment\extend\Application\Model\Order $oOrder */
         $oOrder = $this->getOrder();
         try {
-            return $oOrder->getCaptures();
+           return $oOrder->getCaptures();
         } catch(ApiException $e) {
             $oRequestLog->logExceptionResponse([], $e->getCode(), $e->getMessage(), 'capture', $oOrder->getId(), Registry::getConfig()->getShopId());
             $this->setErrorMessage($e->getMessage());
@@ -693,7 +693,8 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
      */
     public function isOrderRefundable()
     {
-        if ($this->wasRefundSuccessful() === true && Registry::getRequest()->getRequestEscapedParameter('fnc') == 'fullRefund') {
+        $oOrder = $this->getOrder();
+        if (($this->wasRefundSuccessful() === true && Registry::getRequest()->getRequestEscapedParameter('fnc') == 'fullRefund') || $oOrder->oxorder__oxpaid->value == '0000-00-00 00:00:00') {
             // the mollie order is not updated instantly, so this is used to show that the order was fully refunded already
             return false;
         }

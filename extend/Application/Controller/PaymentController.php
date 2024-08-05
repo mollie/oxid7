@@ -67,7 +67,9 @@ class PaymentController extends PaymentController_parent
      * 3. BasketSum is outside of the min-/max-limits of the payment method
      * 4. Payment method has a billing country restriction and customer is not from that country
      * 5. Payment method is deprecated
-     * 6. Currently selected currency is not supported by payment method
+     * 6. Payment method not activated in the Mollie dashboard or for the current billing country, basket amount, currency situation
+     * 7. Payment method is only available for B2B orders and current order is not a B2B order
+     * 8. Currently selected currency is not supported by payment method
      *
      * @return void
      */
