@@ -140,7 +140,6 @@
             {{ translate({ ident: "MOLLIE_ORDER_NOT_REFUNDABLE" }) }}
         </fieldset>
     {% endif %}
-    {#ManuTest#}
     {% set blIsOrderPaid = order.mollieIsPaid() %}
     {% if blIsOrderPaid is same as(false) %}
         <fieldset class="refundNotice message">
@@ -149,7 +148,6 @@
         </fieldset>
         {% set blIsOrderRefundable = false %}
     {% endif %}
-    {#ManuTest#}
 
     {% if oView.hasOrderVoucher() is same as(true) %}
         <fieldset class="refundNotice message">
@@ -260,7 +258,6 @@
         {% if oView.isMollieOrder() is same as(false) %}
             {{ translate({ ident: "MOLLIE_NO_MOLLIE_PAYMENT" }) }}
         {% else %}
-            {#ManuTest#}
             {% if blIsOrderPaid is same as(true) %}
             {% if blIsOrderRefundable is same as(true) %}
                 <legend>{{ translate({ ident: "MOLLIE_PARTIAL_REFUND" }) }}</legend>
@@ -378,7 +375,6 @@
         {% endif %}
     </fieldset>
     {% endif %}
-    {#ManuTest#}
 {% endif %}
 
 {% include "bottomnaviitem.html.twig" %}
