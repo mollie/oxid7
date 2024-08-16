@@ -199,6 +199,14 @@
             {{ translate({ ident: "MOLLIE_ORDER_NOT_REFUNDABLE" }) }}
         </fieldset>
     {% endif %}
+    {% set blIsOrderPaid = order.mollieIsPaid() %}
+    {% if blIsOrderPaid is same as(false) %}
+        <fieldset class="refundNotice message">
+            <strong>{{ translate({ ident: "MOLLIE_NOTICE" }) }}</strong>
+            {{ translate({ ident: "MOLLIE_NOT_YET_PAID" }) }}
+        </fieldset>
+        {% set blIsOrderRefundable = false %}
+    {% endif %}
 
     {% if oView.hasOrderVoucher() is same as(true) %}
         <fieldset class="refundNotice message">
