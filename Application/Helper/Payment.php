@@ -59,6 +59,7 @@ class Payment
         'mollieblik'            => array('title' => 'BLIK',                 'model' => \Mollie\Payment\Application\Model\Payment\Blik::class),
         'mollietrustly'         => array('title' => 'Trustly',              'model' => \Mollie\Payment\Application\Model\Payment\Trustly::class),
         'molliebancomatpay'     => array('title' => 'BANCOMAT PAY',         'model' => \Mollie\Payment\Application\Model\Payment\BancomatPay::class),
+        'mollieriverty'         => array('title' => 'Riverty',              'model' => \Mollie\Payment\Application\Model\Payment\Riverty::class),
     );
 
     /**
