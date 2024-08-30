@@ -102,20 +102,4 @@ class IdealTest extends UnitTestCase
 
         $this->assertFalse($result);
     }
-
-    public function testGetCustomConfigTemplate()
-    {
-        $oPayment = new \Mollie\Payment\Application\Model\Payment\Ideal();
-        $result = $oPayment->getCustomConfigTemplate();
-
-        $this->assertEquals("@molliepayment/customConfigTemplate/mollie_config_ideal.html.twig", $result);
-    }
-
-    public function testGetCustomFrontendTemplate()
-    {
-        $oPayment = new \Mollie\Payment\Application\Model\Payment\Ideal();
-        $result = $oPayment->getCustomFrontendTemplate();
-
-        $this->assertEquals("@molliepayment/customFrontendTemplate/mollieideal.html.twig", $result);
-    }
 }

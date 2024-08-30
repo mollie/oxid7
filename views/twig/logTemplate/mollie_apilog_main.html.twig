@@ -1,0 +1,217 @@
+{% include "headitem.html.twig" with {title: "GENERAL_ADMIN_TITLE"|translate} %}
+
+{% if readonly %}
+    {% set readonly = "readonly disabled" %}
+{% else %}
+    {% set readonly = "" %}
+{% endif %}
+
+{% set edit = oView.getEdit() %}
+
+<script type="text/javascript">
+
+    function editThis( sID )
+    {
+        var oTransfer = top.basefrm.edit.document.getElementById( "transfer" );
+        oTransfer.oxid.value = sID;
+        oTransfer.cl.value = top.basefrm.list.sDefClass;
+
+        //forcing edit frame to reload after submit
+        top.forceReloadingEditFrame();
+
+        var oSearch = top.basefrm.list.document.getElementById( "search" );
+        oSearch.oxid.value = sID;
+        oSearch.actedit.value = 0;
+        oSearch.submit();
+    }
+
+    window.onload = function ()
+    {
+        top.oxid.admin.updateList('{{ oxid }}');
+    }
+</script>
+
+<style>
+    tr.response {
+        margin-bottom: 29px;
+    }
+    .request, .response {
+        border: 1px solid #A9A9A9;
+        padding-left: 15px;
+        display: block;
+        width: 1600px;
+        margin: 0 18px 20px 24px;
+    }
+    .linebox {
+        border: 1px solid #A9A9A9;
+        margin-bottom: 15px;
+        padding-left: 10px;
+        width: 1572px;
+        background-color: #eee;
+    }
+</style>
+
+<form name="transfer" id="transfer" action="{{ oViewConf.getSelfLink()|raw }}" method="post">
+    {{ oViewConf.getHiddenSid()|raw }}
+    <input type="hidden" name="oxid" value="{{ oxid }}">
+    <input type="hidden" name="oxidCopy" value="{{ oxid }}">
+    <input type="hidden" name="cl" value="mollie_apilog_main">
+    <input type="hidden" name="editlanguage" value="{{ editlanguage }}">
+</form>
+
+{% if edit %}
+    {% set request = oView.getRequest() %}
+    {% set response = oView.getResponse() %}
+    <table cellspacing="0" cellpadding="0" border="0" style="width:98%;border-collapse: collapse;">
+        <tr class="request">
+            <td id="editval_mollierequestlog__request" class="edittext">
+                <h2>Request</h2>
+                {% if request %}
+                    {% for requestkey, requestvalue in request %}
+                        {% if requestkey == 'amount'  %}
+                            <b>{{ requestkey }}:</b> {{ requestvalue.value }} {{ requestvalue.currency }}<br><br>
+                        {% elseif requestkey == 'metadata' %}
+                            {% for metadatakey, metadatavalue in requestvalue %}
+                                <b>{{ metadatakey }}:</b> {{ metadatavalue }}<br><br>
+                            {% endfor %}
+                        {% elseif requestkey == 'billingAddress' or requestkey == 'shippingAddress' %}
+                            <b>{{ requestkey }}:</b><br>
+                            {% if requestvalue.email %}
+                                <u>{{ requestvalue.email }}</u>
+                                <br><br>
+                            {% endif %}
+                            {% if requestvalue.givenName and requestvalue.familyName %}
+                                {{ requestvalue.givenName }} {{ requestvalue.familyName }}
+                                <br>
+                            {% endif %}
+                            {% for addresskey, addressvalue in requestvalue %}
+                                {% if addresskey != 'givenName' and addresskey != 'familyName' and addresskey != 'email' %}
+                                    {{ addressvalue }}{% if addresskey != 'postalCode' %}<br>{% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            <br>
+                        {% elseif requestvalue is same as(false) or requestvalue is same as(true) %}
+                            <b>{{ requestkey }}:</b> {% if requestvalue is same as(false) %}false{% else %}true{% endif %}<br><br>
+                        {% else %}
+                            {% if isset(requestvalue) and requestvalue != '' and requestkey != 'lines' %}
+                                <b>{{ requestkey }}:</b> {{ requestvalue }}<br><br>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if request.lines and request.lines|length > 2 %}
+                        {% for line in request.lines %}
+                            <div class="linebox">
+                                <h2>{{ loop.index }}. Position</h2>
+                                {% for lineelementkey, lineelementvalue in line %}
+                                    {% if lineelementkey == 'unitPrice'
+                                        or lineelementkey == 'discountAmount'
+                                        or lineelementkey == 'totalAmount'
+                                        or lineelementkey == 'vatAmount' %}
+                                        <b>{{ lineelementkey }}:</b> {{ lineelementvalue.value }} {{ lineelementvalue.currency }}<br><br>
+                                    {% else %}
+                                        {% if isset(lineelementvalue) and lineelementvalue != '' %}
+                                            <b>{{ lineelementkey }}:</b> {{ lineelementvalue }}<br><br>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+        <tr class="response">
+            <td id="editval_mollierequestlog__response" class="edittext">
+                <h2>Response</h2>
+                {% if response %}
+                    {% for responsekey, responsevalue in response %}
+                        {% if responsekey == 'amount'
+                            or responsekey == 'settlementAmount'
+                            or responsekey == 'amountRefunded'
+                            or responsekey == 'amountRemaining'
+                            or responsekey == 'amountChargedBack'
+                            or responsekey == 'amountCaptured' %}
+
+                            {% if isset(responsevalue.value) and responsevalue.value != '' %}
+                                <b>{{ responsekey }}:</b> {{ responsevalue.value }} {{ responsevalue.currency }}<br><br>
+                            {% endif %}
+                        {% elseif responsekey == 'metadata' %}
+                            {% for metadatakey, metadatavalue in responsevalue %}
+                                {% if isset(metadatavalue) and metadatavalue != '' %}
+                                    <b>{{ metadatakey }}:</b> {{ metadatavalue }}<br><br>
+                                {% endif %}
+                            {% endfor %}
+                        {% elseif responsekey == 'details' %}
+                            {% for detailskey, detailsvalue in responsevalue %}
+                                {% if isset(detailsvalue) and detailsvalue != '' %}
+                                    <b>{{ detailskey }}:</b> {{ detailsvalue }}<br><br>
+                                {% endif %}
+                            {% endfor %}
+                        {% elseif responsekey == 'billingAddress' or responsekey == 'shippingAddress' %}
+                            <b>{{ responsekey }}:</b><br>
+                            {% if responsevalue.email %}
+                                <u>{{ responsevalue.email }}</u>
+                                <br><br>
+                            {% endif %}
+                            {% if responsevalue.givenName and responsevalue.familyName %}
+                                {{ responsevalue.givenName }} {{ responsevalue.familyName }}
+                                <br>
+                            {% endif %}
+                            {% for addresskey, addressvalue in responsevalue %}
+                                {% if addresskey != 'givenName' and addresskey != 'familyName' and addresskey != 'email' %}
+                                    {{ addressvalue }}{% if addresskey != 'postalCode' %}<br>{% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            <br>
+                        {% elseif responsevalue is same as(false) or responsevalue is same as(true) %}
+                            <b>{{ responsekey }}:</b> {% if responsevalue is same as(false) %}false{% else %}true{% endif %}<br><br>
+                        {% else %}
+                            {% if isset(responsevalue) and responsevalue != '' and responsekey != 'lines' %}
+                                <b>{{ responsekey }}:</b> {{ responsevalue }}<br><br>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if response.lines and response.lines|length > 2 %}
+                        {% for line in response.lines %}
+                            <div class="linebox">
+                                <h2>{{ loop.index }}. Position</h2>
+                                {% for lineelementkey, lineelementvalue in line %}
+                                    {% if lineelementkey == 'unitPrice'
+                                        or lineelementkey == 'discountAmount'
+                                        or lineelementkey == 'totalAmount'
+                                        or lineelementkey == 'vatAmount'
+                                        or lineelementkey == 'amountShipped'
+                                        or lineelementkey == 'amountRefunded'
+                                        or lineelementkey == 'amountCanceled' %}
+                                        <b>{{ lineelementkey }}:</b> {{ lineelementvalue.value }} {{ lineelementvalue.currency }}<br><br>
+                                    {% elseif lineelementkey == '_links' %}
+                                        {% for linkskey, linksvalue in lineelementvalue %}
+                                            {% if linkskey == 'productUrl' %}
+                                                <b><u>{{ linkskey }}</u></b><br>
+                                                {% for producturlkey, producturlvalue in linksvalue %}
+                                                    <b>{{ producturlkey }}:</b> {{ producturlvalue }}<br>
+                                                    {% if loop.last %}<br>{% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        {% if isset(lineelementvalue) and lineelementvalue != '' %}
+                                            <b>{{ lineelementkey }}:</b> {{ lineelementvalue }}<br><br>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+{% else %}
+    {{ translate({ ident: 'MOLLIE_ADMIN_API_LOGS_SELECT_ENTRY' }) }}
+{% endif %}
+
+
+{% include "bottomnaviitem.html.twig" %}
+
+{% include "bottomitem.html.twig" %}
