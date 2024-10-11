@@ -1,0 +1,5 @@
+table_storage:
+  table_name: oxmigrations_mollie
+
+migrations_paths:
+  'Mollie\Payment\Migrations': './data'
