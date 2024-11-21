@@ -61,10 +61,12 @@ class Scheduler
             echo "<p>" . Base::outputInfo("START MOLLIE CRONJOB EXECUTION") . "</p>";
         }
 
+        $oConfig = Registry::getConfig();
         if ($iShopId !== false) {
-            $oConfig = Registry::getConfig();
             $oConfig->setShopId($iShopId);
             Registry::set(\OxidEsales\Eshop\Core\Config::class, $oConfig);
+        } else {
+            $iShopId = $oConfig->getShopId();
         }
 
         foreach ($this->getCronjobs() as $sCronjobClass) {

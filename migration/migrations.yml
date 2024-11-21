@@ -1,4 +1,5 @@
-name: mollie module migration
-migrations_namespace: Mollie\Payment\Migrations
-table_name: oxmigrations_mollie
-migrations_directory: data
+table_storage:
+  table_name: oxmigrations_mollie
+
+migrations_paths:
+  'Mollie\Payment\Migrations': './data'
