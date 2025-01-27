@@ -450,6 +450,22 @@ class Order extends Order_parent
     }
 
     /**
+     * Populates article property in Basketitems without checking stock because this has already been done before redirect
+     * Only allowed in return mode
+     *
+     * @param Basket $oBasket
+     * @return void
+     */
+    protected function molliePopulateBasketItems($oBasket)
+    {
+        if ($this->blMollieFinalizeReturnMode === true) {
+            foreach ($oBasket->getContents() as $key => $oContent) {
+                $oProd = $oContent->getArticle(false);
+            }
+        }
+    }
+
+    /**
      * Extension: Order already existing because order was created before the user was redirected to mollie,
      * therefore no stock validation needed. Otherwise an exception would be thrown on return when last product in stock was bought
      *
@@ -459,6 +475,9 @@ class Order extends Order_parent
     {
         if ($this->blMollieFinalizeReturnMode === false) {
             return parent::validateStock($oBasket);
+        } else {
+            // populates articles property in basketitem objects like parent::validateStock would do but without checking stock
+            $this->molliePopulateBasketItems($oBasket);
         }
     }
 
@@ -763,15 +782,14 @@ class Order extends Order_parent
      * @return Exception|ApiException|Capture|void
      * @throws ApiException
      */
-    public function captureOrder($aParams = null)
+    public function mollieCaptureOrder($aParams = null)
     {
         if ($this->mollieIsMolliePaymentUsed() === true) {
-            $api  = Payment::getInstance()->loadMollieApi($this->oxorder__molliemode->value);
+            $oMollieApi = Payment::getInstance()->loadMollieApi($this->oxorder__molliemode->value);
             if ($aParams === null) {
-                return $api->paymentCaptures->createForId($this->oxorder__oxtransid->value);
-            } else {
-                return $api->paymentCaptures->createForId($this->oxorder__oxtransid->value, $aParams);
+                return $oMollieApi->paymentCaptures->createForId($this->oxorder__oxtransid->value);
             }
+            return $oMollieApi->paymentCaptures->createForId($this->oxorder__oxtransid->value, $aParams);
         }
     }
 
@@ -779,10 +797,10 @@ class Order extends Order_parent
      * @return array
      * @throws ApiException
      */
-    public function getCaptures() {
+    public function mollieGetCaptures() {
 
-        $api  = Payment::getInstance()->loadMollieApi($this->oxorder__molliemode->value);
-        $payment = $api->payments->get($this->oxorder__oxtransid->value);
+        $oMollieApi = Payment::getInstance()->loadMollieApi($this->oxorder__molliemode->value);
+        $payment = $oMollieApi->payments->get($this->oxorder__oxtransid->value);
         $captures = $payment->captures();
         $aOrderCaptures = [];
 
@@ -900,6 +918,10 @@ class Order extends Order_parent
 
         $this->blMollieFinalizeReturnMode = true;
         $this->blMollieFinishOrderReturnMode = true;
+
+        foreach ($oBasket->getContents() as $item) {
+            $item->mollieUnsetArticle();
+        }
 
         //finalizing order (skipping payment execution, vouchers marking and mail sending)
         return $this->finalizeOrder($oBasket, $this->getOrderUser());
