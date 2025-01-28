@@ -182,7 +182,7 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
             $aParams = $this->getCaptureParams();
             $oOrder->mollieCaptureOrder($aParams);
             $this->_blSuccessCapture = true;
-        } catch (ApiException $e) {
+        } catch (\Exception $e) {
             $oRequestLog->logExceptionResponse($aParams, $e->getCode(), $e->getMessage(), 'capture', $oOrder->getId(), Registry::getConfig()->getShopId());
             $this->setErrorMessage($e->getMessage());
             $this->_blSuccessCapture = false;
@@ -619,7 +619,6 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
             $aParams = $this->getRefundParameters();
 
             $oMollieApiOrder = $this->getMollieApiOrder();
-
             if ($oMollieApiOrder instanceof \Mollie\Api\Resources\Payment) {
                 $oResponse = $oMollieApiOrder->refund($aParams);
             } else {
