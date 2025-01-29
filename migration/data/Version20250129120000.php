@@ -6,11 +6,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\DatabaseProvider;
-use Mollie\Payment\Application\Helper\Payment;
 use Mollie\Payment\Application\Model\BaseMigration;
-use Mollie\Payment\Application\Model\PaymentConfig;
-use Mollie\Payment\Application\Model\RequestLog;
-use Mollie\Payment\Application\Model\Cronjob;
 
 class Version20250129120000 extends BaseMigration
 {
