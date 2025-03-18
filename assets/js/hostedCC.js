@@ -1,3 +1,20 @@
+function getApexNextButton()
+{
+    let button = null;
+
+    let result = document.querySelectorAll("BUTTON.btn.btn-highlight.btn-lg.w-100");
+    if (result.length === 1) {
+        button = result[0];
+    } else {
+        for (var i = 0; i < result.length; i++) {
+            button = result[i];
+            break;
+        }
+    }
+
+    return button;
+}
+
 async function mollieHandlePaymentForm(e)
 {
     var paymentForm = document.getElementById('payment');
@@ -21,26 +38,73 @@ async function mollieHandlePaymentForm(e)
     }
 }
 
-function mollieApexAddEventToNextButton()
+function mollieHandleCreditcardRadioChange(e)
 {
-    let button = null;
-
-    let result = document.querySelectorAll("button.btn.btn-highlight.btn-lg.w-100");
-    if (result.length === 1 && result[0].onclick !== null) {
-        button = result[0];
+    if (e.target.id === "payment_molliecreditcard" && e.target.checked === true) {
+        mollieApexAddEvents();
     } else {
+        mollieApexRevertEvents();
+    }
+}
+
+function mollieApexAddEventToRadioButtons()
+{
+    let result = document.querySelectorAll('INPUT[type=radio][name=paymentid]');
+    if (result.length > 0) {
         for (var i = 0; i < result.length; i++) {
-            if(result[i].onclick !== null) {
-                button = result[i];
-                break;
-            }
+            result[i].addEventListener('change', mollieHandleCreditcardRadioChange);
         }
     }
 
+    // Check if Mollie Creditcard is already selected
+    let elemCCRadio = document.getElementById('payment_molliecreditcard');
+    if (elemCCRadio && elemCCRadio.checked === true) {
+        mollieApexAddEvents();
+    }
+}
+
+function mollieGetSubmitButtonClone(createAllowed)
+{
+    let clone = document.getElementById('mollie_creditcard_submit');
+    let button = getApexNextButton();
+    if (clone === null && button !== null && createAllowed === true) {
+        clone = button.cloneNode(true);
+        clone.setAttribute('id', 'mollie_creditcard_submit');
+
+        clone.onclick = null; // remove on click event from button and add an extended on click event which also submits the form
+        clone.removeAttribute("onclick");
+        clone.addEventListener('click', mollieHandlePaymentForm);
+
+        button.after(clone);
+    }
+    return clone;
+}
+
+function mollieApexAddEvents()
+{
+    let button = getApexNextButton();
     if (button !== null) {
-        button.onclick = null; // remove on click event from button and add an extended on click event which also submits the form
-        button.addEventListener('click', async e => {
-            mollieHandlePaymentForm(e);
-        });
+        let clone = mollieGetSubmitButtonClone(true);
+
+        clone.style.display = '';
+        button.style.display = 'none';
+
+        let paymentForm = document.getElementById('payment');
+        paymentForm.addEventListener('submit', mollieHandlePaymentForm);
+    }
+}
+
+function mollieApexRevertEvents()
+{
+    let button = getApexNextButton();
+    if (button !== null) {
+        let clone = mollieGetSubmitButtonClone(false);
+        if (clone !== null) {
+            clone.style.display = 'none';
+            button.style.display = '';
+        }
+
+        let paymentForm = document.getElementById('payment');
+        paymentForm.removeEventListener('submit', mollieHandlePaymentForm);
     }
 }

@@ -56,12 +56,7 @@
         var verificationCode = mollie.createComponent('verificationCode');
         verificationCode.mount('#mollieVerificationCode');
 
-        mollieApexAddEventToNextButton();
-
-        var paymentForm = document.getElementById('payment');
-        paymentForm.addEventListener('submit', async e => {
-            mollieHandlePaymentForm(e);
-        });
+        mollieApexAddEventToRadioButtons();
     {% endset %}
     {{ script({ add: mollieComponentsLoad.__toString(), priority: 10, dynamic: __oxid_include_dynamic }) }}
 {% elseif sDataStyle == "hosted_checkout" and iSingleClickEnabled == 1 and oxcmp_user.hasAccount() %}
