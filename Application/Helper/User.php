@@ -305,6 +305,22 @@ class User
     }
 
     /**
+     * Returns billing country code of current basket
+     *
+     * @param  Basket $oBasket
+     * @return string
+     */
+    public function getBillingCountry($oBasket)
+    {
+        $oUser = $oBasket->getBasketUser();
+
+        $oCountry = oxNew(Country::class);
+        $oCountry->load($oUser->oxuser__oxcountryid->value);
+
+        return $oCountry->oxcountry__oxisoalpha2->value;
+    }
+
+    /**
      * Checks request if shipping contact email is given and returns it.
      * Returns false otherwise
      *
@@ -328,8 +344,10 @@ class User
      */
     protected function getUserIdByEmail($sApplePayEmail)
     {
-        $sQuery = "SELECT oxid FROM oxuser WHERE oxusername = ? LIMIT 1";
-        return \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->getOne($sQuery, array($sApplePayEmail));
+        $sShopId = Registry::getConfig()->getShopId();
+
+        $sQuery = "SELECT oxid FROM oxuser WHERE oxusername = ? AND oxshopid = ? LIMIT 1";
+        return \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->getOne($sQuery, [$sApplePayEmail, $sShopId]);
     }
 
     /**

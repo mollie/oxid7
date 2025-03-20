@@ -108,7 +108,7 @@ abstract class Base
         if (!empty((string)$oOrder->oxorder__oxbillstateid->value)) {
             $aReturn['region'] = $this->getRegionTitle($oOrder->oxorder__oxbillstateid->value);
         }
-        if (!empty((string)$oOrder->oxorder__oxbillcompany->value)) {
+        if (!empty((string)$oOrder->oxorder__oxbillcompany->value) && $this instanceof Order) {
             $aReturn['organizationName'] = $oOrder->oxorder__oxbillcompany->value;
         }
         if ($this->blNeedsExtendedAddress === true) {
@@ -140,7 +140,7 @@ abstract class Base
         if (!empty((string)$oOrder->oxorder__oxdelstateid->value)) {
             $aReturn['region'] = $this->getRegionTitle($oOrder->oxorder__oxdelstateid->value);
         }
-        if (!empty((string)$oOrder->oxorder__oxdelcompany->value)) {
+        if (!empty((string)$oOrder->oxorder__oxdelcompany->value) && $this instanceof Order) {
             $aReturn['organizationName'] = $oOrder->oxorder__oxdelcompany->value;
         }
         if ($this->blNeedsExtendedAddress === true) {
@@ -515,6 +515,8 @@ abstract class Base
         $this->addParameter('billingAddress', $this->getBillingAddressParameters($oOrder));
         if ($oOrder->oxorder__oxdellname && $oOrder->oxorder__oxdellname->value != '') {
             $this->addParameter('shippingAddress', $this->getShippingAddressParameters($oOrder));
+        } elseif ($oPaymentModel->isShippingAddressMandatory() === true) { // will send billing address as shipping address as shipping address is mandatory
+            $this->addParameter('shippingAddress', $this->getBillingAddressParameters($oOrder));
         }
 
         $this->addParameter('locale', PaymentHelper::getInstance()->getLocale());

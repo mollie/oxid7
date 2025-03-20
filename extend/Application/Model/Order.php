@@ -68,6 +68,24 @@ class Order extends Order_parent
     protected $mollieRecalculateOrder = null;
 
     /**
+     * Property to store the Mollie transaction in the order object
+     *
+     * @var object
+     */
+    protected $mollieTransaction = null;
+
+    /**
+     * Array with every status that allows instant access for the webhook
+     *
+     * @var array
+     */
+    protected $mollieInstantWebhookStatusWhitelist = [
+        'failed',
+        'canceled',
+        'expired',
+    ];
+
+    /**
      * Used to trigger the _setNumber() method before the payment-process during finalizeOrder to have the order-number there already
      *
      * @return void
@@ -149,7 +167,7 @@ class Order extends Order_parent
 
                 DatabaseProvider::getDb()->Execute("UPDATE oxorder SET mollieshipmenthasbeenmarked = 1 WHERE oxid = ?", array($this->getId()));
             }
-        } catch (\Exception $exc) {
+        } catch (Exception $exc) {
             $oRequestLog->logExceptionResponse([], $exc->getCode(), $exc->getMessage(), 'shipAll', $this->getId(), Registry::getConfig()->getShopId());
         }
     }
@@ -172,7 +190,7 @@ class Order extends Order_parent
                     $oResponse[0]->update();
                 }
             }
-        } catch (\Exception $exc) {
+        } catch (Exception $exc) {
             $oRequestLog = oxNew(RequestLog::class);
             $oRequestLog->logExceptionResponse([], $exc->getCode(), $exc->getMessage(), 'updateTracking', $this->getId(), Registry::getConfig()->getShopId());
         }
@@ -433,6 +451,22 @@ class Order extends Order_parent
     }
 
     /**
+     * Populates article property in Basketitems without checking stock because this has already been done before redirect
+     * Only allowed in return mode
+     *
+     * @param Basket $oBasket
+     * @return void
+     */
+    protected function molliePopulateBasketItems($oBasket)
+    {
+        if ($this->blMollieFinalizeReturnMode === true) {
+            foreach ($oBasket->getContents() as $key => $oContent) {
+                $oProd = $oContent->getArticle(false);
+            }
+        }
+    }
+
+    /**
      * Extension: Order already existing because order was created before the user was redirected to mollie,
      * therefore no stock validation needed. Otherwise an exception would be thrown on return when last product in stock was bought
      *
@@ -442,6 +476,9 @@ class Order extends Order_parent
     {
         if ($this->blMollieFinalizeReturnMode === false) {
             return parent::validateStock($oBasket);
+        } else {
+            // populates articles property in basketitem objects like parent::validateStock would do but without checking stock
+            $this->molliePopulateBasketItems($oBasket);
         }
     }
 
@@ -494,8 +531,11 @@ class Order extends Order_parent
     public function finalizeOrder(Basket $oBasket, $oUser, $blRecalculatingOrder = false)
     {
         $this->mollieRecalculateOrder = $blRecalculatingOrder;
-        if (PaymentHelper::getInstance()->isMolliePaymentMethod($oBasket->getPaymentId()) === true && $this->mollieIsReturnAfterPayment() === true) {
-            $this->blMollieFinalizeReturnMode = true;
+        if (PaymentHelper::getInstance()->isMolliePaymentMethod($oBasket->getPaymentId()) === true) {
+            $this->mollieSetOrderIsLocked(1, $blRecalculatingOrder);
+            if ($this->mollieIsReturnAfterPayment() === true) {
+                $this->blMollieFinalizeReturnMode = true;
+            }
         }
         if (Registry::getSession()->getVariable('mollieReinitializePaymentMode')) {
             $this->blMollieReinitializePaymentMode = true;
@@ -518,8 +558,100 @@ class Order extends Order_parent
     protected function sendOrderByEmail($oUser = null, $oBasket = null, $oPayment = null)
     {
         $blParentReturn = parent::sendOrderByEmail($oUser, $oBasket, $oPayment);
-        PayPalExpress::getInstance()->mollieCancelPayPalExpress(false); // unset PPE session variables
+        $this->mollieHandleOrderFinished();
         return $blParentReturn;
+    }
+
+    /**
+     * Method for tasks that need to be done when the order is finished all the way
+     *
+     * @return void
+     */
+    protected function mollieHandleOrderFinished()
+    {
+        PayPalExpress::getInstance()->mollieCancelPayPalExpress(false); // unset PPE session variables
+
+        $this->mollieSetOrderIsLocked(0);
+    }
+
+    /**
+     * Sets locked status
+     *
+     * @param  int  $iLockedStatus
+     * @param  bool $blRecalculatingOrder
+     * @return void
+     */
+    protected function mollieSetOrderIsLocked($iLockedStatus, $blRecalculatingOrder = false)
+    {
+        if ($blRecalculatingOrder === false) {
+            $sQuery = "UPDATE oxorder SET mollieorderislocked = ? WHERE oxid = ?";
+            DatabaseProvider::getDb()->Execute($sQuery, [$iLockedStatus, $this->getId()]);
+
+            $this->oxorder__mollieorderislocked = new Field($iLockedStatus);
+        }
+    }
+
+    /**
+     * Determines if the Mollie webhook may access the order
+     * Since Mollie sends a webhook instantly when a payment is done this can lead to problems with
+     * finalizeOrder() AND webhook changing order status at the same time and information getting lost
+     *
+     * @return bool
+     */
+    public function mollieOrderIsWebhookReady()
+    {
+        // Every status in $this->mollieInstantWebhookStatusWhitelist may be handled instantly since these don't go through finalizeOrder
+        if (in_array($this->mollieGetTransactionStatus(), $this->mollieInstantWebhookStatusWhitelist) === true) {
+            return true;
+        }
+
+        // NOT_FINISHED orders are probably still in process and should not be changed by the webhook
+        // Allowing webhook access after a certain timegap to not lockout the order of status changes, assuming something went wrong
+        $iNotFinishedTimegap = (60 * 10); // 10 minutes
+        if ($this->oxorder__oxtransstatus->value == "NOT_FINISHED" && (strtotime($this->oxorder__oxorderdate->value) > (time() - $iNotFinishedTimegap))) {
+            return false;
+        }
+
+        // Orders are set to locked = 1 when a Mollie payment order reaches the finalizeOrder step and is set back to locked = 0 when finalizeOrder is done
+        // Allowing webhook access after a certain timegap to not lockout the order of status changes, assuming something went wrong
+        $iLockedTimegap = (60 * 10); // 10 minutes
+        if ($this->oxorder__mollieorderislocked->value == 1 && (strtotime($this->oxorder__oxorderdate->value) > (time() - $iLockedTimegap))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns mollie transaction
+     *
+     * @return object|false
+     */
+    public function mollieGetTransaction()
+    {
+        if ($this->mollieTransaction === null) {
+            $oPaymentModel = $this->mollieGetPaymentModel();
+            try {
+                $this->mollieTransaction = $oPaymentModel->getApiEndpointByOrder($this)->get($this->oxorder__oxtransid->value, ["embed" => "payments"]);
+            } catch(\Exception $exc) {
+                $this->mollieTransaction = false;
+            }
+        }
+        return $this->mollieTransaction;
+    }
+
+    /**
+     * Returns transaction status
+     *
+     * @return string
+     */
+    public function mollieGetTransactionStatus()
+    {
+        $oTransaction = $this->mollieGetTransaction();
+        if (!empty($oTransaction) && !empty($oTransaction->status)) {
+            return $oTransaction->status;
+        }
+        return 'error';
     }
 
     /**
@@ -538,7 +670,7 @@ class Order extends Order_parent
         $aShippingContact = $oRequest->getRequestEscapedParameter('shippingContact');
 
         if (empty($aBillingContact) || empty($aShippingContact)) {
-            throw new \Exception('Address information is missing');
+            throw new Exception('Address information is missing');
         }
 
         $oCountry = oxNew(Country::class);
@@ -653,15 +785,14 @@ class Order extends Order_parent
      * @return Exception|ApiException|Capture|void
      * @throws ApiException
      */
-    public function captureOrder($aParams = null)
+    public function mollieCaptureOrder($aParams = null)
     {
         if ($this->mollieIsMolliePaymentUsed() === true) {
-            $api  = Payment::getInstance()->loadMollieApi($this->oxorder__molliemode->value);
+            $oMollieApi = Payment::getInstance()->loadMollieApi($this->oxorder__molliemode->value);
             if ($aParams === null) {
-                return $api->paymentCaptures->createForId($this->oxorder__oxtransid->value);
-            } else {
-                return $api->paymentCaptures->createForId($this->oxorder__oxtransid->value, $aParams);
+                return $oMollieApi->paymentCaptures->createForId($this->oxorder__oxtransid->value);
             }
+            return $oMollieApi->paymentCaptures->createForId($this->oxorder__oxtransid->value, $aParams);
         }
     }
 
@@ -669,10 +800,10 @@ class Order extends Order_parent
      * @return array
      * @throws ApiException
      */
-    public function getCaptures() {
+    public function mollieGetCaptures() {
 
-        $api  = Payment::getInstance()->loadMollieApi($this->oxorder__molliemode->value);
-        $payment = $api->payments->get($this->oxorder__oxtransid->value);
+        $oMollieApi = Payment::getInstance()->loadMollieApi($this->oxorder__molliemode->value);
+        $payment = $oMollieApi->payments->get($this->oxorder__oxtransid->value);
         $captures = $payment->captures();
         $aOrderCaptures = [];
 
@@ -791,6 +922,10 @@ class Order extends Order_parent
         $this->blMollieFinalizeReturnMode = true;
         $this->blMollieFinishOrderReturnMode = true;
 
+        foreach ($oBasket->getContents() as $item) {
+            $item->mollieUnsetArticle();
+        }
+
         //finalizing order (skipping payment execution, vouchers marking and mail sending)
         return $this->finalizeOrder($oBasket, $this->getOrderUser());
     }
@@ -852,11 +987,13 @@ class Order extends Order_parent
             return $this->oxorder__oxtransid->value;
         }
 
-        $oApiEndpoint = $this->mollieGetPaymentModel()->getApiEndpointByOrder($this);
-        $oMollieApiOrder = $oApiEndpoint->get($this->oxorder__oxtransid->value, ["embed" => "payments"]);
-        if ($oMollieApiOrder instanceof \Mollie\Api\Resources\Order && !empty($oMollieApiOrder->_embedded) && !empty($oMollieApiOrder->_embedded->payments)) {
-            $oPayment = array_shift($oMollieApiOrder->_embedded->payments);
-            return $oPayment->id;
+        if (!empty($this->oxorder__oxtransid->value)) {
+            $oApiEndpoint = $this->mollieGetPaymentModel()->getApiEndpointByOrder($this);
+            $oMollieApiOrder = $oApiEndpoint->get($this->oxorder__oxtransid->value, ["embed" => "payments"]);
+            if ($oMollieApiOrder instanceof \Mollie\Api\Resources\Order && !empty($oMollieApiOrder->_embedded) && !empty($oMollieApiOrder->_embedded->payments)) {
+                $oPayment = array_shift($oMollieApiOrder->_embedded->payments);
+                return $oPayment->id;
+            }
         }
         return false;
     }

@@ -2,6 +2,7 @@
 
 namespace Mollie\Payment\Application\Model\Payment;
 
+use Mollie\Payment\Application\Helper\User;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Payment\Application\Model\PaymentConfig;
 use OxidEsales\Eshop\Core\Registry;
@@ -467,11 +468,14 @@ abstract class Base
     /**
      * Returnes minimum order sum for Mollie payment type to be usable
      *
+     * @param string|false $sBillingCountryCode
+     * @param double|false $dAmount
+     * @param string|false $sCurrency
      * @return object|false
      */
-    public function getMollieFromAmount()
+    public function getMollieFromAmount($sBillingCountryCode = false, $dAmount = false, $sCurrency = false)
     {
-        $aInfo = Payment::getInstance()->getMolliePaymentInfo();
+        $aInfo = Payment::getInstance()->getMolliePaymentInfo($dAmount, $sCurrency, $sBillingCountryCode);
         if (isset($aInfo[$this->sMolliePaymentCode]['minAmount'])) {
             return $aInfo[$this->sMolliePaymentCode]['minAmount'];
         }
@@ -481,11 +485,14 @@ abstract class Base
     /**
      * Returnes maximum order sum for Mollie payment type to be usable
      *
+     * @param string|false $sBillingCountryCode
+     * @param double|false $dAmount
+     * @param string|false $sCurrency
      * @return object|false
      */
-    public function getMollieToAmount()
+    public function getMollieToAmount($sBillingCountryCode = false, $dAmount = false, $sCurrency = false)
     {
-        $aInfo = Payment::getInstance()->getMolliePaymentInfo();
+        $aInfo = Payment::getInstance()->getMolliePaymentInfo($dAmount, $sCurrency, $sBillingCountryCode);
         if (!empty(isset($aInfo[$this->sMolliePaymentCode]['maxAmount']))) {
             return $aInfo[$this->sMolliePaymentCode]['maxAmount'];
         }
@@ -498,14 +505,14 @@ abstract class Base
      * @param double $dBasketBruttoPrice
      * @return bool
      */
-    public function mollieIsBasketSumInLimits($dBasketBruttoPrice)
+    public function mollieIsBasketSumInLimits($dBasketBruttoPrice, $sBillingCountryCode = false, $sCurrency = false)
     {
-        $oFrom = $this->getMollieFromAmount();
+        $oFrom = $this->getMollieFromAmount($sBillingCountryCode, $dBasketBruttoPrice, $sCurrency);
         if ($oFrom && $dBasketBruttoPrice < $oFrom->value) {
             return false;
         }
 
-        $oTo = $this->getMollieToAmount();
+        $oTo = $this->getMollieToAmount($sBillingCountryCode, $dBasketBruttoPrice, $sCurrency);
         if ($oTo && $dBasketBruttoPrice > $oTo->value) {
             return false;
         }
@@ -553,7 +560,18 @@ abstract class Base
             return $sAltLogoUrl;
         }
 
-        $aInfo = Payment::getInstance()->getMolliePaymentInfo();
+        $dAmount = false;
+        $sCurrency = false;
+        $sBillingCountryCode = false;
+
+        $oBasket = Registry::getSession()->getBasket();
+        if ($oBasket) {
+            $dAmount = $oBasket->getPrice()->getBruttoPrice();
+            $sCurrency = $oBasket->getBasketCurrency()->name;
+            $sBillingCountryCode = User::getInstance()->getBillingCountry($oBasket);
+        }
+
+        $aInfo = Payment::getInstance()->getMolliePaymentInfo($dAmount, $sCurrency, $sBillingCountryCode);
         if (isset($aInfo[$this->sMolliePaymentCode])) {
             return $aInfo[$this->sMolliePaymentCode]['pic'];
         }
@@ -602,16 +620,6 @@ abstract class Base
     }
 
     /**
-     * Returns if shipping address has to be sent to Mollie
-     *
-     * @return bool
-     */
-    public function isShippingAddressMandatory()
-    {
-        return $this->blShippingAddressIsMandatory;
-    }
-
-    /**
      * Returns if payment has to be captured manually
      *
      * @param Order $oOrder
@@ -620,6 +628,16 @@ abstract class Base
     public function isManualCaptureNeeded(Order $oOrder)
     {
         return $this->blNeedsManualCapture;
+    }
+
+    /**
+     * Returns if shipping address has to be sent to Mollie
+     *
+     * @return bool
+     */
+    public function isShippingAddressMandatory()
+    {
+        return $this->blShippingAddressIsMandatory;
     }
 
     /**
