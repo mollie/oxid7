@@ -50,16 +50,11 @@ class Scheduler
      * Starts all cronjobs
      *
      * @param  int|false $iShopId
-     * @param  bool $blCallOverUrl
      * @return void
      */
-    public function start($iShopId = false, $blCallOverUrl = false)
+    public function start($iShopId = false)
     {
-        if(!$blCallOverUrl) {
-            Base::outputInfo("START MOLLIE CRONJOB EXECUTION");
-        } else {
-            echo "<p>" . Base::outputInfo("START MOLLIE CRONJOB EXECUTION") . "</p>";
-        }
+        Base::outputInfo("START MOLLIE CRONJOB EXECUTION");
 
         $oConfig = Registry::getConfig();
         if ($iShopId !== false) {
@@ -76,10 +71,6 @@ class Scheduler
             }
         }
 
-        if(!$blCallOverUrl) {
-            Base::outputInfo("FINISHED MOLLIE CRONJOB EXECUTION");
-        } else {
-            echo "<p>" . Base::outputInfo("FINISHED MOLLIE CRONJOB EXECUTION") . "</p>";
-        }
+        Base::outputInfo("FINISHED MOLLIE CRONJOB EXECUTION");
     }
 }

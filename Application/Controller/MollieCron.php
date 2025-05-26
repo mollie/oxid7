@@ -21,7 +21,7 @@ class MollieCron extends FrontendController
         if (!empty($sSecureKey) && $sSecureKey == Payment::getInstance()->getShopConfVar('sMollieCronSecureKey')) {
             // is called via webserver and secureKey param is given and matches configured secure key
             $oScheduler = oxNew(Scheduler::class);
-            $oScheduler->start(false, true);
+            $oScheduler->start(false);
         } else {
             die('<h1>Permission denied</h1>');
         }
