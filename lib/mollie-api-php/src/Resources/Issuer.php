@@ -5,7 +5,7 @@ namespace Mollie\Api\Resources;
 class Issuer extends \Mollie\Api\Resources\BaseResource
 {
     /**
-     * ID of the issuer.
+     * Id of the issuer.
      *
      * @var string
      */

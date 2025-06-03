@@ -1,11 +1,10 @@
 <?php
 
-namespace _PhpScoperf7c63b60b99d;
+namespace _PhpScoperfb65c95ebc2e;
 
 /*
  * Using OAuth access token to list settlements of an account.
  */
-
 try {
     /*
      * Initialize the Mollie API library with your OAuth access token.

@@ -53,7 +53,7 @@ class Mandate extends \Mollie\Api\Resources\BaseResource
      */
     public function isValid()
     {
-        return $this->status === MandateStatus::STATUS_VALID;
+        return $this->status === \Mollie\Api\Types\MandateStatus::STATUS_VALID;
     }
     /**
      * @return bool
