@@ -12,7 +12,7 @@ class Shipment extends \Mollie\Api\Resources\BaseResource
      */
     public $id;
     /**
-     * ID of the order.
+     * Id of the order.
      *
      * @example ord_8wmqcHMN4U
      * @var string

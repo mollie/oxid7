@@ -13,7 +13,7 @@ class OrderLine extends \Mollie\Api\Resources\BaseResource
      */
     public $resource;
     /**
-     * ID of the order line.
+     * Id of the order line.
      *
      * @var string
      */

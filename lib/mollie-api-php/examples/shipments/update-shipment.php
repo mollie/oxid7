@@ -1,11 +1,10 @@
 <?php
 
-namespace _PhpScoperf7c63b60b99d;
+namespace _PhpScoperfb65c95ebc2e;
 
 /*
  * Update shipment tracking information using the Mollie API.
  */
-
 try {
     /*
      * Initialize the Mollie API library with your API key or OAuth access token.

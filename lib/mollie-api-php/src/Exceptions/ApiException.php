@@ -142,7 +142,7 @@ class ApiException extends \Exception
         return null;
     }
     /**
-     * @param $key
+     * @param string $key
      * @return null
      */
     public function getUrl($key)
@@ -150,7 +150,6 @@ class ApiException extends \Exception
         if ($this->hasLink($key)) {
             return $this->getLink($key)->href;
         }
-
         return null;
     }
     /**

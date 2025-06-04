@@ -11,7 +11,7 @@ class Capture extends \Mollie\Api\Resources\BaseResource
      */
     public $resource;
     /**
-     * ID of the capture
+     * Id of the capture
      * @var string
      */
     public $id;
@@ -21,6 +21,12 @@ class Capture extends \Mollie\Api\Resources\BaseResource
      * @var string
      */
     public $mode;
+    /**
+     * Status of the capture.
+     *
+     * @var string
+     */
+    public $status;
     /**
      * Amount object containing the value and currency
      *
@@ -34,23 +40,31 @@ class Capture extends \Mollie\Api\Resources\BaseResource
      */
     public $settlementAmount;
     /**
-     * ID of the capture's payment (on the Mollie platform).
+     * Id of the capture's payment (on the Mollie platform).
      *
      * @var string
      */
     public $paymentId;
     /**
-     * ID of the capture's shipment (on the Mollie platform).
+     * Id of the capture's shipment (on the Mollie platform).
      *
      * @var string
      */
     public $shipmentId;
     /**
-     * ID of the capture's settlement (on the Mollie platform).
+     * Id of the capture's settlement (on the Mollie platform).
      *
      * @var string
      */
     public $settlementId;
+    /**
+     * Provide any data you like, for example a string or a JSON object. The data will be saved alongside the capture.
+     * Whenever you fetch the capture, the metadata will be included.
+     * You can use up to approximately 1kB on this field.
+     *
+     * @var \stdClass|mixed|null
+     */
+    public $metadata;
     /**
      * @var string
      */

@@ -10,7 +10,7 @@ class ClientLink extends \Mollie\Api\Resources\BaseResource
      */
     public $resource;
     /**
-     * ID of the client link.
+     * Id of the client link.
      *
      * @example csr_vZCnNQsV2UtfXxYifWKWH
      * @var string

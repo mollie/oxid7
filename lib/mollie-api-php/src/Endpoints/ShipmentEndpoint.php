@@ -64,7 +64,6 @@ class ShipmentEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
     public function createForId($orderId, array $options = [], array $filters = [])
     {
         $this->parentId = $orderId;
-
         return parent::rest_create($options, $filters);
     }
     /**
@@ -111,7 +110,7 @@ class ShipmentEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
     public function update($orderId, $shipmentId, array $data = [])
     {
         if (empty($shipmentId) || \strpos($shipmentId, self::RESOURCE_ID_PREFIX) !== 0) {
-            throw new \Mollie\Api\Exceptions\ApiException("Invalid subscription ID: '{$shipmentId}'. An subscription ID should start with '" . self::RESOURCE_ID_PREFIX . "'.");
+            throw new \Mollie\Api\Exceptions\ApiException("Invalid shipment ID: '{$shipmentId}'. A shipment ID should start with '" . self::RESOURCE_ID_PREFIX . "'.");
         }
         $this->parentId = $orderId;
         return parent::rest_update($shipmentId, $data);

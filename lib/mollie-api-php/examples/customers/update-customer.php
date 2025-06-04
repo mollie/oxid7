@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoperf7c63b60b99d;
+namespace _PhpScoperfb65c95ebc2e;
 
 /*
  * Updating an existing customer via the Mollie API.
@@ -24,7 +24,7 @@ try {
     $customer->locale = "en_US";
     $customer->metadata->isJedi = \true;
     $customer->update();
-    echo "<p>Customer updated: " . htmlspecialchars($customer->name) . "</p>";
+    echo "<p>Customer updated: " . \htmlspecialchars($customer->name) . "</p>";
 } catch (\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . \htmlspecialchars($e->getMessage());
 }

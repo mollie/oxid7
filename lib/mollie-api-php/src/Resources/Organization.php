@@ -5,7 +5,7 @@ namespace Mollie\Api\Resources;
 class Organization extends \Mollie\Api\Resources\BaseResource
 {
     /**
-     * ID of the payment method.
+     * Id of the payment method.
      *
      * @var string
      */

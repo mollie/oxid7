@@ -1,6 +1,7 @@
 <?php
 
 namespace Mollie\Api\Exceptions;
+
 class IncompatiblePlatform extends \Mollie\Api\Exceptions\ApiException
 {
     public const INCOMPATIBLE_PHP_VERSION = 1000;

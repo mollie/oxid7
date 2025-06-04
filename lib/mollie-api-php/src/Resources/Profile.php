@@ -5,7 +5,6 @@ namespace Mollie\Api\Resources;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
 use Mollie\Api\Types\ProfileStatus;
-
 class Profile extends \Mollie\Api\Resources\BaseResource
 {
     /**

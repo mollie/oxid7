@@ -1,11 +1,10 @@
 <?php
 
-namespace _PhpScoperf7c63b60b99d;
+namespace _PhpScoperfb65c95ebc2e;
 
 /*
  * How to refund a payment programmatically
  */
-
 try {
     /*
      * Initialize the Mollie API library with your API key.

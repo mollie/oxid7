@@ -10,9 +10,9 @@ class ResourceFactory
      * Create resource object from Api result
      *
      * @param object $apiResult
-     * @return mixed
+     * @param BaseResource $resource
      *
-     * @return BaseResource
+     * @return mixed
      */
     public static function createFromApiResult($apiResult, \Mollie\Api\Resources\BaseResource $resource)
     {
