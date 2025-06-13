@@ -78,7 +78,6 @@ abstract class CursorCollection extends \Mollie\Api\Resources\BaseCollection
     {
         return isset($this->_links->previous->href);
     }
-
     /**
      * Iterate over a CursorCollection and yield its elements.
      *
@@ -86,23 +85,18 @@ abstract class CursorCollection extends \Mollie\Api\Resources\BaseCollection
      *
      * @return LazyCollection
      */
-    public function getAutoIterator(bool $iterateBackwards = false): LazyCollection
+    public function getAutoIterator(bool $iterateBackwards = \false) : \Mollie\Api\Resources\LazyCollection
     {
         $page = $this;
-
-        return new LazyCollection(function () use ($page, $iterateBackwards): Generator {
-            while (true) {
+        return new \Mollie\Api\Resources\LazyCollection(function () use($page, $iterateBackwards) : Generator {
+            while (\true) {
                 foreach ($page as $item) {
-                    yield $item;
+                    (yield $item);
                 }
-
-                if (($iterateBackwards && ! $page->hasPrevious()) || ! $page->hasNext()) {
+                if ($iterateBackwards && !$page->hasPrevious() || !$page->hasNext()) {
                     break;
                 }
-
-                $page = $iterateBackwards
-                    ? $page->previous()
-                    : $page->next();
+                $page = $iterateBackwards ? $page->previous() : $page->next();
             }
         });
     }

@@ -74,13 +74,14 @@ class SubscriptionEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstr
      * @param string $customerId
      *
      * @param array $data
+     *
      * @return Subscription
      * @throws ApiException
      */
     public function update($customerId, $subscriptionId, array $data = [])
     {
         if (empty($subscriptionId) || \strpos($subscriptionId, self::RESOURCE_ID_PREFIX) !== 0) {
-            throw new \Mollie\Api\Exceptions\ApiException("Invalid subscription ID: '{$subscriptionId}'. An subscription ID should start with '" . self::RESOURCE_ID_PREFIX . "'.");
+            throw new \Mollie\Api\Exceptions\ApiException("Invalid subscription ID: '{$subscriptionId}'. A subscription ID should start with '" . self::RESOURCE_ID_PREFIX . "'.");
         }
         $this->parentId = $customerId;
         return parent::rest_update($subscriptionId, $data);
@@ -108,7 +109,6 @@ class SubscriptionEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstr
     public function getForId($customerId, $subscriptionId, array $parameters = [])
     {
         $this->parentId = $customerId;
-
         return parent::rest_read($subscriptionId, $parameters);
     }
     /**
@@ -135,7 +135,7 @@ class SubscriptionEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstr
      *
      * @return LazyCollection
      */
-    public function iteratorFor(Customer $customer, ?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = false): LazyCollection
+    public function iteratorFor(\Mollie\Api\Resources\Customer $customer, ?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = \false) : \Mollie\Api\Resources\LazyCollection
     {
         return $this->iteratorForId($customer->id, $from, $limit, $parameters, $iterateBackwards);
     }
@@ -164,19 +164,17 @@ class SubscriptionEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstr
      *
      * @return LazyCollection
      */
-    public function iteratorForId(string $customerId, ?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = false): LazyCollection
+    public function iteratorForId(string $customerId, ?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = \false) : \Mollie\Api\Resources\LazyCollection
     {
         $this->parentId = $customerId;
-
         return $this->rest_iterator($from, $limit, $parameters, $iterateBackwards);
     }
-
     /**
      * @param Customer $customer
      * @param string $subscriptionId
      * @param array $data
      *
-     * @return null
+     * @return Subscription
      * @throws ApiException
      */
     public function cancelFor(\Mollie\Api\Resources\Customer $customer, $subscriptionId, array $data = [])
@@ -188,7 +186,7 @@ class SubscriptionEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstr
      * @param string $subscriptionId
      * @param array $data
      *
-     * @return null
+     * @return Subscription
      * @throws ApiException
      */
     public function cancelForId($customerId, $subscriptionId, array $data = [])
@@ -228,10 +226,9 @@ class SubscriptionEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstr
      *
      * @return LazyCollection
      */
-    public function iterator(?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = false): LazyCollection
+    public function iterator(?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = \false) : \Mollie\Api\Resources\LazyCollection
     {
         $page = $this->page($from, $limit, $parameters);
-
         return $page->getAutoIterator($iterateBackwards);
     }
 }

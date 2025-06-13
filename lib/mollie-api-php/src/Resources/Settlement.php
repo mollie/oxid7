@@ -3,16 +3,11 @@
 namespace Mollie\Api\Resources;
 
 use Mollie\Api\Exceptions\ApiException;
-use Mollie\Api\MollieApiClient;
 use Mollie\Api\Types\SettlementStatus;
 class Settlement extends \Mollie\Api\Resources\BaseResource
 {
     /**
-     * @var string
-     */
-    public $resource;
-    /**
-     * ID of the settlement.
+     * Id of the settlement.
      *
      * @var string
      */
@@ -84,7 +79,7 @@ class Settlement extends \Mollie\Api\Resources\BaseResource
         return $this->status === \Mollie\Api\Types\SettlementStatus::STATUS_PENDING;
     }
     /**
-     * Is this settlement paidout?
+     * Is this settlement paid out?
      *
      * @return bool
      */
@@ -93,7 +88,7 @@ class Settlement extends \Mollie\Api\Resources\BaseResource
         return $this->status === \Mollie\Api\Types\SettlementStatus::STATUS_PAIDOUT;
     }
     /**
-     * Is this settlement failed?
+     * Has this settlement failed?
      *
      * @return bool
      */
@@ -109,14 +104,9 @@ class Settlement extends \Mollie\Api\Resources\BaseResource
      * @return PaymentCollection
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function payments($limit = null, array $parameters = [])
+    public function payments(?int $limit = null, array $parameters = []) : \Mollie\Api\Resources\PaymentCollection
     {
-        return $this->client->settlementPayments->pageForId(
-            $this->id,
-            null,
-            $limit,
-            $parameters
-        );
+        return $this->client->settlementPayments->pageForId($this->id, null, $limit, $parameters);
     }
     /**
      * Retrieve the first page of refunds associated with this settlement.
@@ -126,14 +116,9 @@ class Settlement extends \Mollie\Api\Resources\BaseResource
      * @return RefundCollection
      * @throws ApiException
      */
-    public function refunds(int $limit = null, array $parameters = [])
+    public function refunds(?int $limit = null, array $parameters = [])
     {
-        return $this->client->settlementRefunds->pageForId(
-            $this->id,
-            null,
-            $limit,
-            $parameters
-        );
+        return $this->client->settlementRefunds->pageForId($this->id, null, $limit, $parameters);
     }
     /**
      * Retrieve the first page of chargebacks associated with this settlement.
@@ -143,14 +128,9 @@ class Settlement extends \Mollie\Api\Resources\BaseResource
      * @return ChargebackCollection
      * @throws ApiException
      */
-    public function chargebacks(int $limit = null, array $parameters = [])
+    public function chargebacks(?int $limit = null, array $parameters = [])
     {
-        return $this->client->settlementChargebacks->pageForId(
-            $this->id,
-            null,
-            $limit,
-            $parameters
-        );
+        return $this->client->settlementChargebacks->pageForId($this->id, null, $limit, $parameters);
     }
     /**
      * Retrieve the first page of cap associated with this settlement.
@@ -160,13 +140,8 @@ class Settlement extends \Mollie\Api\Resources\BaseResource
      * @return CaptureCollection
      * @throws ApiException
      */
-    public function captures(int $limit = null, array $parameters = [])
+    public function captures(?int $limit = null, array $parameters = [])
     {
-        return $this->client->settlementCaptures->pageForId(
-            $this->id,
-            null,
-            $limit,
-            $parameters
-        );
+        return $this->client->settlementCaptures->pageForId($this->id, null, $limit, $parameters);
     }
 }

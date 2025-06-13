@@ -73,7 +73,6 @@ class OrderEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
      * Will throw a ApiException if the order id is invalid or the resource cannot
      * be found.
      *
-     * @param string $orderId
      * @param array $parameters
      * @return Order
      * @throws ApiException
@@ -118,7 +117,6 @@ class OrderEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
     {
         return $this->rest_list($from, $limit, $parameters);
     }
-
     /**
      * Create an iterator for iterating over orders retrieved from Mollie.
      *
@@ -129,7 +127,7 @@ class OrderEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
      *
      * @return LazyCollection
      */
-    public function iterator(?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = false): LazyCollection
+    public function iterator(?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = \false) : \Mollie\Api\Resources\LazyCollection
     {
         return $this->rest_iterator($from, $limit, $parameters, $iterateBackwards);
     }

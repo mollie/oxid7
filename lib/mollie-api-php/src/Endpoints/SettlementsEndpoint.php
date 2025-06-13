@@ -78,7 +78,6 @@ class SettlementsEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstra
     {
         return $this->rest_list($from, $limit, $parameters);
     }
-
     /**
      * Create an iterator for iterating over settlements retrieved from Mollie.
      *
@@ -89,7 +88,7 @@ class SettlementsEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstra
      *
      * @return LazyCollection
      */
-    public function iterator(?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = false): LazyCollection
+    public function iterator(?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = \false) : \Mollie\Api\Resources\LazyCollection
     {
         return $this->rest_iterator($from, $limit, $parameters, $iterateBackwards);
     }

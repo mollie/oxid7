@@ -104,15 +104,14 @@ class MandateEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
      *
      * @return LazyCollection
      */
-    public function iteratorFor(Customer $customer, ?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = false): LazyCollection
+    public function iteratorFor(\Mollie\Api\Resources\Customer $customer, ?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = \false) : \Mollie\Api\Resources\LazyCollection
     {
         return $this->iteratorForId($customer->id, $from, $limit, $parameters, $iterateBackwards);
     }
-
     /**
      * @param string $customerId
-     * @param null $from
-     * @param null $limit
+     * @param string|null $from
+     * @param int|null $limit
      * @param array $parameters
      *
      * @return \Mollie\Api\Resources\MandateCollection
@@ -134,13 +133,11 @@ class MandateEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
      *
      * @return LazyCollection
      */
-    public function iteratorForId(string $customerId, ?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = false): LazyCollection
+    public function iteratorForId(string $customerId, ?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = \false) : \Mollie\Api\Resources\LazyCollection
     {
         $this->parentId = $customerId;
-
         return $this->rest_iterator($from, $limit, $parameters, $iterateBackwards);
     }
-
     /**
      * @param Customer $customer
      * @param string $mandateId

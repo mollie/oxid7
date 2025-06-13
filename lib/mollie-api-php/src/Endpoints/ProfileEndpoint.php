@@ -81,7 +81,7 @@ class ProfileEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
     public function update($profileId, array $data = [])
     {
         if (empty($profileId) || \strpos($profileId, self::RESOURCE_ID_PREFIX) !== 0) {
-            throw new \Mollie\Api\Exceptions\ApiException("Invalid profile id: '{$profileId}'. An profile id should start with '" . self::RESOURCE_ID_PREFIX . "'.");
+            throw new \Mollie\Api\Exceptions\ApiException("Invalid profile ID: '{$profileId}'. A profile ID should start with '" . self::RESOURCE_ID_PREFIX . "'.");
         }
         return parent::rest_update($profileId, $data);
     }
@@ -128,7 +128,6 @@ class ProfileEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
     {
         return $this->rest_list($from, $limit, $parameters);
     }
-
     /**
      * Create an iterator for iterating over profiles retrieved from Mollie.
      *
@@ -139,7 +138,7 @@ class ProfileEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
      *
      * @return LazyCollection
      */
-    public function iterator(?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = false): LazyCollection
+    public function iterator(?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = \false) : \Mollie\Api\Resources\LazyCollection
     {
         return $this->rest_iterator($from, $limit, $parameters, $iterateBackwards);
     }

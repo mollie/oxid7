@@ -6,7 +6,6 @@ use Mollie\Api\Resources\Customer;
 use Mollie\Api\Resources\LazyCollection;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\PaymentCollection;
-
 class CustomerPaymentsEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
 {
     protected $resourcePath = "customers_payments";
@@ -84,7 +83,7 @@ class CustomerPaymentsEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointA
      *
      * @return LazyCollection
      */
-    public function iteratorFor(Customer $customer, ?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = false): LazyCollection
+    public function iteratorFor(\Mollie\Api\Resources\Customer $customer, ?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = \false) : \Mollie\Api\Resources\LazyCollection
     {
         return $this->iteratorForId($customer->id, $from, $limit, $parameters, $iterateBackwards);
     }
@@ -102,7 +101,6 @@ class CustomerPaymentsEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointA
         $this->parentId = $customerId;
         return parent::rest_list($from, $limit, $parameters);
     }
-
     /**
      * Create an iterator for iterating over payments for the given customer id, retrieved from Mollie.
      *
@@ -114,10 +112,9 @@ class CustomerPaymentsEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointA
      *
      * @return LazyCollection
      */
-    public function iteratorForId(string $customerId, ?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = false): LazyCollection
+    public function iteratorForId(string $customerId, ?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = \false) : \Mollie\Api\Resources\LazyCollection
     {
         $this->parentId = $customerId;
-
         return $this->rest_iterator($from, $limit, $parameters, $iterateBackwards);
     }
 }

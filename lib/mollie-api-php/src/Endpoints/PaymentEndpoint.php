@@ -138,7 +138,7 @@ class PaymentEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
      *
      * @return LazyCollection
      */
-    public function iterator(?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = false): LazyCollection
+    public function iterator(?string $from = null, ?int $limit = null, array $parameters = [], bool $iterateBackwards = \false) : \Mollie\Api\Resources\LazyCollection
     {
         return $this->rest_iterator($from, $limit, $parameters, $iterateBackwards);
     }
@@ -163,5 +163,19 @@ class PaymentEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
         }
         $result = $this->client->performHttpCall(self::REST_CREATE, $resource, $body);
         return \Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \Mollie\Api\Resources\Refund($this->client));
+    }
+    /**
+     * Release the authorization for the given payment.
+     *
+     * @param Payment|string $paymentId
+     *
+     * @return void
+     * @throws ApiException
+     */
+    public function releaseAuthorization($paymentId) : void
+    {
+        $paymentId = $paymentId instanceof \Mollie\Api\Resources\Payment ? $paymentId->id : $paymentId;
+        $resource = "{$this->getResourcePath()}/" . \urlencode($paymentId) . "/release-authorization";
+        $this->client->performHttpCall(self::REST_CREATE, $resource);
     }
 }
