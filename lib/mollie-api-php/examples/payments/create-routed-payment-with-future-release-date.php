@@ -1,11 +1,10 @@
 <?php
 
-namespace _PhpScoperf7c63b60b99d;
+namespace _PhpScoperfb65c95ebc2e;
 
 /*
  * How to prepare a new payment with the Mollie API.
  */
-
 try {
     \ini_set('display_errors', '1');
     \ini_set('display_startup_errors', '1');
@@ -40,13 +39,12 @@ try {
      *   routing       Routing part of a payment to a connected account https://docs.mollie.com/connect/splitting-payments
      *
      * For example, the funds for the following payment will only become available on the balance of the connected account on 1 January 2025:
-
      */
     $payment = $mollie->payments->create(["profileId" => "pfl_v9hTwCvYqw", "amount" => ["currency" => "EUR", "value" => "10.00"], "description" => "Order #{$orderId}", "redirectUrl" => "{$protocol}://{$hostname}{$path}/return.php?order_id={$orderId}", "webhookUrl" => "{$protocol}://{$hostname}{$path}/webhook.php", "routing" => [["amount" => ["currency" => "EUR", "value" => "7.50"], "destination" => ["type" => "organization", "organizationId" => "org_23456"], "releaseDate" => "2025-01-01"]]]);
     /*
      * In this example we store the order with its payment status in a database.
      */
-    \_PhpScoperf7c63b60b99d\database_write($orderId, $payment->status);
+    \_PhpScoperfb65c95ebc2e\database_write($orderId, $payment->status);
     /*
      * Send the customer off to complete the payment.
      * This request should always be a GET, thus we enforce 303 http response code

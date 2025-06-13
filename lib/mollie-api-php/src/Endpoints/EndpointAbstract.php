@@ -51,7 +51,6 @@ abstract class EndpointAbstract
         }
         return "?" . \http_build_query($filters, "", "&");
     }
-
     /**
      * @param array $body
      * @param array $filters
@@ -84,7 +83,6 @@ abstract class EndpointAbstract
         }
         return \Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, $this->getResourceObject());
     }
-
     /**
      * Retrieves a single object from the REST API.
      *
@@ -102,9 +100,8 @@ abstract class EndpointAbstract
         $result = $this->client->performHttpCall(self::REST_READ, "{$this->getResourcePath()}/{$id}" . $this->buildQueryString($filters));
         return \Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, $this->getResourceObject());
     }
-
     /**
-     * Sends a DELETE request to a single Molle API object.
+     * Sends a DELETE request to a single Mollie API object.
      *
      * @param string $id
      * @param array $body
@@ -155,7 +152,6 @@ abstract class EndpointAbstract
     /**
      * @param array $body
      * @return null|string
-     * @throws ApiException
      */
     protected function parseRequestBody(array $body)
     {

@@ -165,6 +165,9 @@ class Order extends Order_parent
                 $oRequestLog->logRequest([], $oResponse, $this->getId(), Registry::getConfig()->getShopId());
 
                 DatabaseProvider::getDb()->Execute("UPDATE oxorder SET mollieshipmenthasbeenmarked = 1 WHERE oxid = ?", array($this->getId()));
+            } elseif ($oMollieApiOrder instanceof \Mollie\Api\Resources\Payment && $this->mollieGetPaymentModel()->getConfigParam('capture_method') == "shipped_capture") {
+                $oResponse = $this->mollieCaptureOrder();
+                $oRequestLog->logRequest([], $oResponse, $this->getId(), Registry::getConfig()->getShopId());
             }
         } catch (Exception $exc) {
             $oRequestLog->logExceptionResponse([], $exc->getCode(), $exc->getMessage(), 'shipAll', $this->getId(), Registry::getConfig()->getShopId());
@@ -313,9 +316,13 @@ class Order extends Order_parent
     /**
      * @return bool
      */
-    public function mollieIsManualCaptureMethod() {
-        $orderCaptureMethod = $this->oxorder__molliecapturemethod->value;
-        return $orderCaptureMethod === 'manual';
+    public function mollieIsManualCaptureMethod() 
+    {
+        $sCaptureMethod = $this->oxorder__molliecapturemethod->value;
+        if ($sCaptureMethod == 'manual') {
+            return true;
+        }
+        return false;
     }
 
     /**

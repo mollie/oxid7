@@ -20,6 +20,7 @@ class WalletEndpoint extends \Mollie\Api\Endpoints\EndpointAbstract
      * @param string $domain
      * @param string $validationUrl
      * @param array $parameters
+     *
      * @return false|string
      * @throws \Mollie\Api\Exceptions\ApiException
      */
