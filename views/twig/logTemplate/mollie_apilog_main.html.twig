@@ -98,7 +98,7 @@
                             {% endif %}
                         {% endif %}
                     {% endfor %}
-                    {% if request.lines and request.lines|length > 2 %}
+                    {% if request.lines and request.lines|length > 0 %}
                         {% for line in request.lines %}
                             <div class="linebox">
                                 <h2>{{ loop.index }}. Position</h2>
@@ -171,7 +171,7 @@
                             {% endif %}
                         {% endif %}
                     {% endfor %}
-                    {% if response.lines and response.lines|length > 2 %}
+                    {% if response.lines and response.lines|length > 0 %}
                         {% for line in response.lines %}
                             <div class="linebox">
                                 <h2>{{ loop.index }}. Position</h2>

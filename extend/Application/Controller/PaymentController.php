@@ -22,6 +22,7 @@ class PaymentController extends PaymentController_parent
             OrderHelper::getInstance()->cancelCurrentOrder();
         }
         Registry::getSession()->deleteVariable('mollieIsRedirected');
+        Registry::getSession()->deleteVariable('mollieRedirectUrl');
 
         if (defined('OXID_PHP_UNIT')) { // dont test parent init method when unittesting
             return;
