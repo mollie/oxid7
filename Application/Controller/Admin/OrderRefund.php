@@ -3,6 +3,7 @@
 namespace Mollie\Payment\Application\Controller\Admin;
 
 use Mollie\Api\Exceptions\ApiException;
+use Mollie\Payment\Application\Helper\Api;
 use Mollie\Payment\Application\Helper\Payment as PaymentHelper;
 use Mollie\Payment\Application\Helper\Order as OrderHelper;
 use OxidEsales\Eshop\Application\Model\Order;
@@ -200,10 +201,7 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
         if (!empty($amount)) {
             $dAmount = $this->formatPrice($amount);
         }
-        $aParams['amount'] = [
-            "currency" => $this->getOrder()->oxorder__oxcurrency->value,
-            "value" => $this->formatPrice($dAmount)
-        ];
+        $aParams['amount'] = Api::getInstance()->getAmountArray($dAmount, $this->getOrder()->oxorder__oxcurrency->value);
         return $aParams;
     }
 
@@ -215,7 +213,7 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
      */
     protected function formatPrice($dPrice)
     {
-        return number_format($dPrice, 2, '.', '');
+        return Api::getInstance()->formatPrice($dPrice);
     }
 
     /**
@@ -379,10 +377,7 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
                 if (in_array($aBasketItem['type'], $this->_aVoucherTypes)) {
                     $aRefundItem['refund_amount'] = $aRefundItem['refund_amount'] * -1;
                 }
-                $aLine['amount'] = [
-                    "currency" => $this->getOrder()->oxorder__oxcurrency->value,
-                    "value" => $this->formatPrice($aRefundItem['refund_amount'])
-                ];
+                $aLine['amount'] = Api::getInstance()->getAmountArray($aRefundItem['refund_amount'], $this->getOrder()->oxorder__oxcurrency->value);
                 $dAmount += $aRefundItem['refund_amount'];
             } elseif (isset($aRefundItem['refund_quantity'])) {
                 if ($aRefundItem['refund_quantity'] > $aBasketItem['quantity']) { // check if higher quantity than payed
@@ -393,10 +388,7 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
             }
             $aParams['lines'][] = $aLine;
         }
-        $aParams['amount'] = [
-            "currency" => $this->getOrder()->oxorder__oxcurrency->value,
-            "value" => $this->formatPrice($dAmount)
-        ];
+        $aParams['amount'] = Api::getInstance()->getAmountArray($dAmount, $this->getOrder()->oxorder__oxcurrency->value);
 
         return $aParams;
     }
@@ -411,10 +403,7 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
     protected function getRefundParameters($blFull = true, $dFreeAmount = null)
     {
         if(!empty($dFreeAmount)) {
-            $aParams = ["amount" => [
-                "currency" => $this->getOrder()->oxorder__oxcurrency->value,
-                "value" => $this->formatPrice($dFreeAmount)
-            ]];
+            $aParams = ["amount" => Api::getInstance()->getAmountArray($dFreeAmount, $this->getOrder()->oxorder__oxcurrency->value)];
         } elseif($blFull === false) {
             $aParams = $this->getPartialRefundParameters();
         } else {
@@ -423,10 +412,7 @@ class OrderRefund extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
                 $dAmount = $this->getRemainingRefundableAmount();
             }
 
-            $aParams = ["amount" => [
-                "currency" => $this->getOrder()->oxorder__oxcurrency->value,
-                "value" => $this->formatPrice($dAmount)
-            ]];
+            $aParams = ["amount" => Api::getInstance()->getAmountArray($dAmount, $this->getOrder()->oxorder__oxcurrency->value)];
         }
 
         $sDescription = Registry::getRequest()->getRequestEscapedParameter('refund_description');
