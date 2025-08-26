@@ -708,6 +708,14 @@ abstract class Base
     }
 
     /**
+     * @return string|false
+     */
+    public function getConfiguredCaptureMode()
+    {
+        return $this->getConfigParam('capture_method');
+    }
+
+    /**
      * @return array|null
      */
     public function getAvailableCaptureMethods()
