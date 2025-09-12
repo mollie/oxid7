@@ -104,7 +104,7 @@ class ViewConfig extends ViewConfig_parent
         if ($oPayPalExpress->load(\Mollie\Payment\Application\Model\Payment\PayPalExpress::OXID)) {
             $oBasket = Registry::getSession()->getBasket();
 
-            $bIsPaymentValid = $oPayPalExpress->isValidPayment(
+            $blIsValidPayment = $oPayPalExpress->isValidPayment(
                 null,
                 \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId(),
                 $oBasket->getUser(),
@@ -112,7 +112,7 @@ class ViewConfig extends ViewConfig_parent
                 $oBasket->getShippingId()
             );
 
-            if ($bIsPaymentValid === true) {
+            if ($blIsValidPayment === true) {
                 $oMolliePayment = $oPayPalExpress->getMolliePaymentModel();
                 if ($oMolliePayment && $oMolliePayment->isMolliePaymentActive()) {
                     return true;
