@@ -31,28 +31,20 @@
 
 {% block change_payment %}
     {% if attribute(oViewConf, 'isMolliePayPalExpressCheckout') is defined and oViewConf.isMolliePayPalExpressCheckout() is same as(true) %}
-        <div class="panel panel-default">
-            <div class="card">
-                <div class="panel-heading">
-                    <h3 class="panel-title">{{ translate({ ident: "MOLLIE_PAYPAL_EXPRESS" }) }}</h3>
-                </div>
-                <div class="panel-body">
-                    <div class="pull-left">
-                        {{ translate({ ident: "MOLLIE_PAYPAL_EXPRESS_INFO" }) }}
-                    </div>
-                    <div class="pull-right">
-                        <a class="btn btn-default" href="{{ oView.getMolliePayPaylExpressCheckoutCancelUrl() }}">{{ translate({ ident: "MOLLIE_PAYPAL_EXPRESS_UNLINK" }) }}</a>
-                    </div>
-                </div>
+        <h2 class="h4 card-header card-title">{{ translate({ ident: "MOLLIE_PAYPAL_EXPRESS" }) }}</h2>
+        <div class="card-body">
+            {{ translate({ ident: "MOLLIE_PAYPAL_EXPRESS_INFO" }) }}
+            <div class="mt-3">
+                <a class="btn btn-outline-primary" href="{{ oView.getMolliePayPaylExpressCheckoutCancelUrl() }}">{{ translate({ ident: "MOLLIE_PAYPAL_EXPRESS_UNLINK" }) }}</a>
             </div>
         </div>
         {% set mollieSelectPaymentFirst = true %}{# used in mollie_select_payment.tpl #}
-        {% capture name = "mollie_hide_paymentlist" %}
+        {% set mollie_hide_paymentlist %}
             $(function () {
-                $('#payment > .panel.panel-default:first').hide();
+                $('#payment.payment').hide();
             });
-        {% endcapture %}
-        {{ script({ add: mollie_hide_paymentlist, dynamic: __oxid_include_dynamic }) }}
+        {% endset %}
+        {{ script({ add: mollie_hide_paymentlist.__toString(), priority: 10, dynamic: __oxid_include_dynamic }) }}
     {% endif %}
     {{ parent() }}
 {% endblock %}

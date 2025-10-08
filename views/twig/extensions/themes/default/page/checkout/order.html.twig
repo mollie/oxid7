@@ -3,11 +3,11 @@
 {% block checkout_order_address %}
     {{ parent() }}
     {% if attribute(oViewConf, 'isMolliePayPalExpressCheckout') is defined and oViewConf.isMolliePayPalExpressCheckout() is same as(true) %}
-        {% capture name = "mollie_hide_changebuttons" %}
+        {% set mollie_hide_changebuttons %}
             $(function () {
-                $('#payment > .panel.panel-default:first').hide();
+                $('#orderAddress FORM BUTTON.btn').remove();
             });
-        {% endcapture %}
-        {{ script({ add: mollie_hide_changebuttons, dynamic: __oxid_include_dynamic }) }}
+        {% endset %}
+        {{ script({ add: mollie_hide_changebuttons.__toString(), priority: 10, dynamic: __oxid_include_dynamic }) }}
     {% endif %}
 {% endblock %}
