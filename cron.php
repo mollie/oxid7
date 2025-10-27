@@ -2,6 +2,8 @@
 
 require_once dirname(__FILE__) . "/../../../source/bootstrap.php";
 
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
+
 function canRunCronjob() {
     if(empty($_SERVER['REMOTE_ADDR']) && !isset($_SERVER['HTTP_USER_AGENT']) && count($_SERVER['argv']) > 0) {
         // is called by php cli
