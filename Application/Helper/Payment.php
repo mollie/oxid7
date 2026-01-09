@@ -4,7 +4,9 @@ namespace Mollie\Payment\Application\Helper;
 
 use Mollie\Payment\Application\Model\Payment\Base;
 use OxidEsales\Eshop\Core\Registry;
-use OxidEsales\EshopCommunity\Core\Module\Module;
+use OxidEsales\Eshop\Core\Module\Module;
+use OxidEsales\Eshop\Core\ShopVersion;
+use OxidEsales\Facts\Facts;
 use Psr\Container\ContainerInterface;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleConfigurationDaoBridgeInterface;
@@ -281,8 +283,7 @@ class Payment
      */
     protected function getShopVersion()
     {
-        $oShop = Registry::getConfig()->getActiveShop();
-        return $oShop->oxshops__oxedition->value."_".$oShop->oxshops__oxversion->value;
+        return (new Facts())->getEdition()."_".ShopVersion::getVersion();
     }
 
     /**
