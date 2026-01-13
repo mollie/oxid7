@@ -42,7 +42,7 @@
             applePayDivs['{{ _mollie_position }}'].className += ' active';
             applePayDivs['{{ _mollie_position }}'].style.display = '';
         } else {
-            applePayDiv.remove();
+            applePayDivs['{{ _mollie_position }}'].remove();
         }
     {% endset %}
     {{ script({ add: mollieApplePayButtonEnable.__toString(), priority: 10, dynamic: __oxid_include_dynamic }) }}
