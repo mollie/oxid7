@@ -6,7 +6,10 @@
     {% set langTotalGross = "TOTAL_GROSS"|translate|replace({"'": ""}) %}
     {% set langShipping = "SHIPPING_COST"|translate|replace({"'": ""}) %}
     {% set mollieApplePayButtonEnable %}
-        var applePayDiv = document.getElementById('mollieApplePayButton{{ _mollie_position }}');
+        if (applePayDivs === undefined) {
+            var applePayDivs = {};
+        }
+        applePayDivs['{{ _mollie_position }}'] = document.getElementById('mollieApplePayButton{{ _mollie_position }}');
         if (isApplePayAvailable()) {
             var price = {{ _mollie_payment_price }};
             {% if _mollie_delivery_costs %}
@@ -31,13 +34,15 @@
             var totalLabel = '{{ langTotalGross }}';
             var shippingLabel = '{{ langShipping }}';
             var implementationPosition = '{{ _mollie_position }}';
-            applePayDiv.addEventListener("click", function() {
+
+            applePayDivs['{{ _mollie_position }}'].addEventListener("click", async function() {
                 mollieInitApplePay(countryCode, currencyCode, shopName, price, delivery_price, detailsProductId, totalLabel, shippingLabel, shippingId, implementationPosition);
             });
-            applePayDiv.className += ' active';
-            applePayDiv.style.display = '';
+
+            applePayDivs['{{ _mollie_position }}'].className += ' active';
+            applePayDivs['{{ _mollie_position }}'].style.display = '';
         } else {
-            applePayDiv.remove();
+            applePayDivs['{{ _mollie_position }}'].remove();
         }
     {% endset %}
     {{ script({ add: mollieApplePayButtonEnable.__toString(), priority: 10, dynamic: __oxid_include_dynamic }) }}
