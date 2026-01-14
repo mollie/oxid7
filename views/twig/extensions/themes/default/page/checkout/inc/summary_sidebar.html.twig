@@ -2,7 +2,7 @@
 
 {% block basket_btn_next_bottom %}
     {{ parent() }}
-    {% if oViewConf.mollieShowApplePayButtonOnBasket() %}
+    {% if oViewConf.mollieShowApplePayButtonOnBasket() and oView.getClassKey() == "basket" %}
         {{ script({ include: oViewConf.getModuleUrl('molliepayment','js/mollie.js'), dynamic: __oxid_include_dynamic }) }}
         {{ style({ include: oViewConf.getModuleUrl('molliepayment','css/mollie.css') }) }}
 
