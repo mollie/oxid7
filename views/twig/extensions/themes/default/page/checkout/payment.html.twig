@@ -40,8 +40,11 @@
         </div>
         {% set mollieSelectPaymentFirst = true %}{# used in mollie_select_payment.tpl #}
         {% set mollie_hide_paymentlist %}
-            $(function () {
-                $('#payment.payment').hide();
+            document.addEventListener("DOMContentLoaded", function () {
+                const el = document.querySelector('#payment.payment');
+                if (el) {
+                    el.style.display = 'none';
+                }
             });
         {% endset %}
         {{ script({ add: mollie_hide_paymentlist.__toString(), priority: 10, dynamic: __oxid_include_dynamic }) }}

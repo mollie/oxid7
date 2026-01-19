@@ -4,14 +4,6 @@
     </a><br>
     {% capture assign = "molliePayPalExpressAjaxSpinner" %}
         addSpinnerDiv();
-        $(document).on({
-            ajaxStart: function(){
-                $("#mollie-overlay").fadeIn(300);
-            },
-            ajaxStop: function(){
-                $("#mollie-overlay").fadeOut(300);
-            }
-        });
     {% endcapture %}
     {{ script({ add: molliePayPalExpressAjaxSpinner, dynamic: __oxid_include_dynamic }) }}
     {{ script({ add: "var shopBaseUrl = '" ~ oViewConf.mollieGetShopUrl() ~ "';", dynamic: __oxid_include_dynamic }) }}
