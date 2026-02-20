@@ -57,7 +57,6 @@ class FinishOrders extends \Mollie\Payment\Application\Model\Cronjob\Base
     {
         $aOrders = [];
 
-        $sProcessingFolder = Payment::getInstance()->getShopConfVar('sMollieStatusProcessing');
         $iMollieCronFinishOrdersDays = (int)Payment::getInstance()->getShopConfVar('iMollieCronFinishOrdersDays');
         if (empty($iMollieCronFinishOrdersDays)) {
             $iMollieCronFinishOrdersDays = 14;
