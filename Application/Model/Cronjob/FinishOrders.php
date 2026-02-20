@@ -63,7 +63,7 @@ class FinishOrders extends \Mollie\Payment\Application\Model\Cronjob\Base
             $iMollieCronFinishOrdersDays = 14;
         }
         $sTriggerDate = date('Y-m-d H:i:s', time() - (60 * 60 * 24 * $iMollieCronFinishOrdersDays));
-        $sMinPaidDate = date('Y-m-d H:i:s', time() - (60 * 2)); // This will prevent finishing legit orders before the customer does
+        $sMinTriggerDate = date('Y-m-d H:i:s', time() - (60 * 2)); // This will prevent finishing legit orders before the customer does
         $sQuery = " SELECT 
                         OXID 
                     FROM 
@@ -72,11 +72,9 @@ class FinishOrders extends \Mollie\Payment\Application\Model\Cronjob\Base
                         oxstorno = 0 AND 
                         oxpaymenttype LIKE '%mollie%' AND 
                         oxorderdate > ? AND 
-                        oxtransstatus = 'NOT_FINISHED' AND 
-                        oxfolder = ? AND 
-                        oxpaid != '0000-00-00 00:00:00' AND
-                        oxpaid < ?";
-        $aParams = [$sTriggerDate, $sProcessingFolder, $sMinPaidDate];
+                        oxorderdate < ? AND 
+                        oxtransstatus = 'NOT_FINISHED'";
+        $aParams = [$sTriggerDate, $sMinTriggerDate];
         if ($this->getShopId() !== false) {
             $sQuery .= " AND oxshopid = ? ";
             $aParams[] = $this->getShopId();
