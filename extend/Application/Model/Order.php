@@ -666,9 +666,9 @@ class Order extends Order_parent
      *
      * @return object|false
      */
-    public function mollieGetTransaction()
+    public function mollieGetTransaction($blUseCache = true)
     {
-        if ($this->mollieTransaction === null) {
+        if ($this->mollieTransaction === null || $blUseCache === false) {
             $oPaymentModel = $this->mollieGetPaymentModel();
             try {
                 $this->mollieTransaction = $oPaymentModel->getApiEndpointByOrder($this)->get($this->oxorder__oxtransid->value, ["embed" => "payments"]);
@@ -930,7 +930,7 @@ class Order extends Order_parent
                 return true;
             }
 
-            $oTransaction = $this->mollieGetTransaction();
+            $oTransaction = $this->mollieGetTransaction(false);
             if ($oTransaction->isAuthorized() === true) {
                 return true;
             }
@@ -943,7 +943,7 @@ class Order extends Order_parent
      */
     public function mollieCanCancelOrderBecauseExpired()
     {
-        $oTransaction = $this->mollieGetTransaction();
+        $oTransaction = $this->mollieGetTransaction(false);
         if ($oTransaction->isAuthorized() === true || $oTransaction->isPaid() === true) {
             return false;
         }
