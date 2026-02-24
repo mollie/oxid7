@@ -135,7 +135,7 @@ class ModuleConfiguration extends ModuleConfiguration_parent
      */
     public function mollieGetConfiguredAltLogoValue($sAltLogoConfVar)
     {
-        return Registry::getConfig()->getShopConfVar($sAltLogoConfVar, null, 'module:'.$this->mollieGetSelectedModuleId());
+        return Payment::getInstance()->getShopConfVar($sAltLogoConfVar);
     }
 
     /**

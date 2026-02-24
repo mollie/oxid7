@@ -926,7 +926,7 @@ class Order extends Order_parent
     {
         if ($this->oxorder__oxtransstatus->value == "NOT_FINISHED") {
             // If order is paid, the webhook already put the order in the processing status
-            if ($this->oxorder__oxfolder->value == Registry::getConfig()->getShopConfVar('sMollieStatusProcessing')) {
+            if ($this->oxorder__oxfolder->value == Payment::getInstance()->getShopConfVar('sMollieStatusProcessing')) {
                 return true;
             }
 
