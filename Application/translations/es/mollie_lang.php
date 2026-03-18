@@ -31,6 +31,13 @@ $aLang = [
     'MOLLIE_BILLING_APPLE_PAY_NOT_AVAILABLE'    => 'Apple Pay no disponible para esta dirección de facturación',
     'MOLLIE_SECOND_CHANCE_MAIL_SUBJECT'         => 'Finalización de su pedido en',
 
+    'MOLLIE_NOT_AVAILABLE_BASKETSUMLIMIT'       => 'El método de pago no está disponible para el valor actual del pedido.',
+    'MOLLIE_NOT_AVAILABLE_COUNTRY'              => 'El método de pago no está disponible para el país de facturación seleccionado.',
+    'MOLLIE_NOT_AVAILABLE_B2B'                  => 'El método de pago solo está disponible para pedidos B2B.',
+    'MOLLIE_NOT_AVAILABLE_CURRENCY'             => 'La moneda no es compatible con este método de pago.',
+    'MOLLIE_CHANGE_CURRENCY'                    => 'Cambiar moneda',
+    'MOLLIE_SUPPORTED_CURRENCIES'               => 'Monedas compatibles',
+
     'MOLLIE_PAYPAL_EXPRESS_DESCRIPTION'             => 'Pago en ',
     'MOLLIE_PAYPAL_EXPRESS'                         => 'PayPal Express',
     'MOLLIE_PAYPAL_EXPRESS_INFO'                    => 'Su pago será procesado por PayPal Express.<br>Pulse el botón &quot;Desvincular&quot; para cancelar su pago con PayPal Express y elegir otro método de pago.',

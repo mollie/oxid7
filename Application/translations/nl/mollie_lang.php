@@ -31,6 +31,13 @@ $aLang = [
     'MOLLIE_BILLING_APPLE_PAY_NOT_AVAILABLE'    => 'Apple Pay is niet beschikbaar voor dit factuuradres',
     'MOLLIE_SECOND_CHANCE_MAIL_SUBJECT'         => 'Completion of your order at',
 
+    'MOLLIE_NOT_AVAILABLE_BASKETSUMLIMIT'       => 'De betaalmethode is niet beschikbaar voor de huidige bestelwaarde.',
+    'MOLLIE_NOT_AVAILABLE_COUNTRY'              => 'De betaalmethode is niet beschikbaar voor het geselecteerde facturatieland.',
+    'MOLLIE_NOT_AVAILABLE_B2B'                  => 'De betaalmethode is alleen beschikbaar voor B2B-bestellingen.',
+    'MOLLIE_NOT_AVAILABLE_CURRENCY'             => 'De valuta wordt niet ondersteund door deze betaalmethode.',
+    'MOLLIE_CHANGE_CURRENCY'                    => 'Valuta wijzigen',
+    'MOLLIE_SUPPORTED_CURRENCIES'               => 'Ondersteunde valuta',
+
     'MOLLIE_PAYPAL_EXPRESS_DESCRIPTION'             => 'Betaling bij ',
     'MOLLIE_PAYPAL_EXPRESS'                         => 'PayPal Express',
     'MOLLIE_PAYPAL_EXPRESS_INFO'                    => 'Uw betaling wordt verwerkt door PayPal Express.<br>Druk op de knop &quot;Ontkoppelen&quot; om uw PayPal Express-betaling te annuleren en een andere betaalmethode te kiezen.',
