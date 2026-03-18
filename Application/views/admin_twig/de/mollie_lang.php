@@ -168,5 +168,6 @@ $aLang = array(
     'MOLLIE_PAYMENT_DISABLED_ACTIVATION'                => 'Diese Mollie Zahlungsart kann nicht mehr aktiviert werden, da diese demnächst entfernt wird!',
     'MOLLIE_CAPTURE_METHOD_HELP'                        => 'Diese Option bestimmt, welche Capture Methode verwendet wird<br><strong>Kreditkartbeträge erst Autorisieren</strong>:Der Betrag wird autorisiert und Sie müssen den Betrag manuell einziehen, entweder über das Mollie-Tab bei den Bestellungen oder via bereitgestellten Cronjob.<br><strong>Kreditkartbeträge direkt einziehen:</strong> Der Betrag wird dirkt eingezogen.<br><strong>Kreditkartbeträge automatisch einziehen:</strong> Der Betrag wird automatisch nach x Tagen von Mollie eingezogen.',
     'MOLLIE_AMOUNT_FORMAT_ERROR'                        => 'Fehler mit ihrer Eingabe „%s“. Bitte korrigieren Sie das Format des Betrags. Als Dezimaltrennzeichen ist nur ein „.“ oder „,“ zulässig.',
-
+    'MOLLIE_SHOW_WHEN_NOT_AVAILABLE'                    => 'Zahlungsart deaktiviert anzeigen wenn nicht verfügbar',
+    'MOLLIE_SHOW_WHEN_NOT_AVAILABLE_HELP'               => 'Wenn aktiv, wird die Zahlungsart als deaktiviert auf der Payment-Page angezeigt, falls sie auf Grund der Währungseinstellung, Min/Max-Beträge oder Landeseinschränkung seitens Mollie nicht verfügbar ist.',
 );
