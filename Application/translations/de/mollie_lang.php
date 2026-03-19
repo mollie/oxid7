@@ -31,6 +31,13 @@ $aLang = [
     'MOLLIE_BILLING_APPLE_PAY_NOT_AVAILABLE'    => 'Apple Pay ist für diese Rechnungsadresse nicht verfügbar',
     'MOLLIE_SECOND_CHANCE_MAIL_SUBJECT'         => 'Abschluss Ihrer Bestellung bei',
 
+    'MOLLIE_NOT_AVAILABLE_BASKETSUMLIMIT'       => 'Die Zahlart ist mit dem aktuellen Bestellwert nicht nutzbar.',
+    'MOLLIE_NOT_AVAILABLE_COUNTRY'              => 'Die Zahlart ist für das gewählte Rechnungsland nicht verfügbar.',
+    'MOLLIE_NOT_AVAILABLE_B2B'                  => 'Die Zahlart steht nur für B2B Bestellungen zur Verfügung.',
+    'MOLLIE_NOT_AVAILABLE_CURRENCY'             => 'Die Währung wird von der Zahlart nicht unterstützt.',
+    'MOLLIE_CHANGE_CURRENCY'                    => 'Währung wechseln',
+    'MOLLIE_SUPPORTED_CURRENCIES'               => 'Unterstützte Währungen',
+
     'MOLLIE_CREDIT_CARD_HOLDER'                             => 'Karteninhaber',
     'MOLLIE_CREDIT_CARD_NUMBER'                             => 'Kartennummer',
     'MOLLIE_CREDIT_CARD_VALID_UNTIL'                        => 'Gültig bis',

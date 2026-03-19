@@ -1,16 +1,30 @@
 {{ style({ include: oViewConf.getModuleUrl('molliepayment','css/mollie.css') }) }}
-{% set paymentModel = paymentmethod.getMolliePaymentModel() %}
-<div class="payment-option" {% if paymentModel.isMollieMethodHiddenInitially() %}style="display:none"{% endif %}>
+{% if not paymentModel %}
+    {% set paymentModel = paymentmethod.getMolliePaymentModel() %}
+{% endif %}
+{% set isDisabled = paymentModel.isNotAvailableButVisible() %}
+<div class="payment-option{% if isDisabled %} mollieDisabled{% endif %}" {% if paymentModel.isMollieMethodHiddenInitially() %}style="display:none"{% endif %}>
     <div class="payment-option-form">
         <input class="form-check-input" id="payment_{{ sPaymentID }}" type="radio" name="paymentid"
-               value="{{ sPaymentID }}"{% if oView.getCheckedPaymentId() == paymentmethod.oxpayments__oxid.value %} checked{% endif %}>
+               value="{% if not isDisabled %}{{ sPaymentID }}{% else %}disabled{% endif %}"{% if oView.getCheckedPaymentId() == paymentmethod.oxpayments__oxid.value and not isDisabled %} checked{% endif %} {% if isDisabled %}disabled{% endif %}>
         {% if (attribute(oViewConf, 'mollieShowIcons') is defined and oViewConf.mollieShowIcons is same as(true)) %}
             <img class="mollie-payment-icon" src="{{ paymentModel.getMolliePaymentMethodPic() }}">
         {% endif %}
         <label class="form-check-label"
                for="payment_{{ sPaymentID }}">{{ paymentmethod.oxpayments__oxdesc.value }}</label>
+        {% if isDisabled %}
+            <div class="desc">
+                <span>{{ paymentModel.getNotAvailableMessage() }}</span>
+            </div>
 
-        {% if paymentmethod.getDynValues() or paymentmethod.oxpayments__oxlongdesc.value|striptags|trim or (paymentModel and paymentModel.getCustomFrontendTemplate is not same as(false)) %}
+            {% if paymentModel.getSoftRestriction() == "currency" %}
+                <div class="desc mollie-switch-currency">
+                    <span>{{ translate({ ident: "MOLLIE_CHANGE_CURRENCY" }) }}</span>
+                    {% include "@molliepayment/frontend/mollie_currency_selector.html.twig" %}
+                </div>
+            {% endif %}
+        {% endif %}
+        {% if not isDisabled and (paymentmethod.getDynValues() or paymentmethod.oxpayments__oxlongdesc.value|striptags|trim or (paymentModel and paymentModel.getCustomFrontendTemplate is not same as(false))) %}
             <div class="payment-option-info{% if oView.getCheckedPaymentId() == paymentmethod.oxpayments__oxid.value %} activePayment{% endif %}">
                 {% for value in paymentmethod.getDynValues() %}
                     <div class="form-floating mb-3">
@@ -36,7 +50,7 @@
             </div>
         {% endif %}
     </div>
-    {% if paymentmethod.getPrice() %}
+    {% if paymentmethod.getPrice() and not isDisabled %}
         <div class="payment-option-price">
             {% set oPaymentPrice = paymentmethod.getPrice() %}
             {% if oViewConf.isFunctionalityEnabled('blShowVATForPayCharge') %}
