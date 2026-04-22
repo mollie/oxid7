@@ -24,6 +24,8 @@ use ReflectionMethod;
 
 class Order extends Order_parent
 {
+    const MOLLIE_PAYMENT_REINIT_PARAM = 'mreinit';
+
     /**
      * Toggles certain behaviours in finalizeOrder for when the customer returns after the payment
      *
@@ -84,6 +86,14 @@ class Order extends Order_parent
         'canceled',
         'expired',
     ];
+
+    /**
+     * @return bool
+     */
+    public function getMollieReinitializePaymentMode()
+    {
+        return $this->blMollieReinitializePaymentMode;
+    }
 
     /**
      * Used to trigger the _setNumber() method before the payment-process during finalizeOrder to have the order-number there already
@@ -570,7 +580,7 @@ class Order extends Order_parent
             $this->updateOrderDate();
         }
 
-        if (Registry::getSession()->getVariable('mollieReinitializePaymentMode')) {
+        if (Registry::getRequest()->getRequestEscapedParameter(self::MOLLIE_PAYMENT_REINIT_PARAM) == 1) {
             $this->blMollieReinitializePaymentMode = true;
         }
 
@@ -1061,8 +1071,6 @@ class Order extends Order_parent
         }
 
         $this->blMollieReinitializePaymentMode = true;
-
-        Registry::getSession()->setVariable('mollieReinitializePaymentMode', true);
 
         return $this->finalizeOrder($oBasket, $oUser);
     }
