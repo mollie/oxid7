@@ -580,7 +580,7 @@ class Order extends Order_parent
             $this->updateOrderDate();
         }
 
-        if (Registry::getRequest()->getRequestEscapedParameter(self::MOLLIE_PAYMENT_REINIT_PARAM) == 1) {
+        if (Registry::getRequest()->getRequestEscapedParameter(self::MOLLIE_PAYMENT_REINIT_PARAM) == '1') {
             $this->blMollieReinitializePaymentMode = true;
         }
 
