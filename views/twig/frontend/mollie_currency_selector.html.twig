@@ -1,0 +1,28 @@
+{% if oxcmp_cur|length > 1 %}
+    {% set currency = oView.getActCurrency() %}
+    <div class="btn-group">
+        <button class="btn dropdown-toggle" type="button" aria-label="{{ translate({ ident: "CURRENCY" }) }}" data-bs-toggle="dropdown" aria-expanded="false">
+            {% block dd_mollie_layout_page_header_icon_menu_currencies_button %}
+                {{ currency.name }}
+            {% endblock %}
+
+            <svg aria-hidden="true">
+                <use xlink:href="#down"></use>
+            </svg>
+        </button>
+        <div class="dropdown-menu dropdown-menu-md-end">
+            {% block dd_mollie_layout_page_header_icon_menu_currencies_list %}
+                {% for _cur in oxcmp_cur %}
+                    {% if _cur.selected %}
+                        {% set selectedCurrency = _cur.name %}
+                        {% capture name = "currencySelected" %}
+                            <a class="dropdown-item" href="{{ _cur.link|add_url_parameters(oView.getDynUrlParams()) }}" title="{{ _cur.name }}"><span>{{ _cur.name }}</span></a>
+                        {% endcapture %}
+                    {% endif %}
+                    <a class="dropdown-item{% if _cur.selected %} active{% endif %}" href="{{ _cur.link|add_url_parameters(oView.getDynUrlParams()) }}" title="{{ _cur.name }}">{{ _cur.name }}</a>
+                {% endfor %}
+            {% endblock %}
+        </div>
+    </div>
+
+{% endif %}

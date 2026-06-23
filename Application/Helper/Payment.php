@@ -4,7 +4,9 @@ namespace Mollie\Payment\Application\Helper;
 
 use Mollie\Payment\Application\Model\Payment\Base;
 use OxidEsales\Eshop\Core\Registry;
-use OxidEsales\EshopCommunity\Core\Module\Module;
+use OxidEsales\Eshop\Core\Module\Module;
+use OxidEsales\Eshop\Core\ShopVersion;
+use OxidEsales\Facts\Facts;
 use Psr\Container\ContainerInterface;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleConfigurationDaoBridgeInterface;
@@ -41,7 +43,7 @@ class Payment
         'mollieeps'             => array('title' => 'EPS Österreich',      'model' => \Mollie\Payment\Application\Model\Payment\Eps::class),
         'molliegiftcard'        => array('title' => 'Giftcard',            'model' => \Mollie\Payment\Application\Model\Payment\Giftcard::class),
         'molliegiropay'         => array('title' => 'Giropay',             'model' => \Mollie\Payment\Application\Model\Payment\Giropay::class),
-        'mollieideal'           => array('title' => 'iDeal',               'model' => \Mollie\Payment\Application\Model\Payment\Ideal::class),
+        'mollieideal'           => array('title' => 'iDEAL | Wero',        'model' => \Mollie\Payment\Application\Model\Payment\Ideal::class),
         'molliekbc'             => array('title' => 'KBC',                 'model' => \Mollie\Payment\Application\Model\Payment\Kbc::class),
         'mollieklarna'          => array('title' => 'Bezahlen mit Klarna', 'model' => \Mollie\Payment\Application\Model\Payment\Klarna::class),
         'mollieklarnapaylater'  => array('title' => 'Klarna Pay Later',    'model' => \Mollie\Payment\Application\Model\Payment\KlarnaPayLater::class),
@@ -52,7 +54,7 @@ class Payment
         'mollieapplepay'        => array('title' => 'Apple Pay',           'model' => \Mollie\Payment\Application\Model\Payment\ApplePay::class),
         'mollieprzelewy24'      => array('title' => 'Przelewy24',          'model' => \Mollie\Payment\Application\Model\Payment\Przelewy24::class),
         'molliemybank'          => array('title' => 'MyBank',              'model' => \Mollie\Payment\Application\Model\Payment\MyBank::class),
-        'molliein3'             => array('title' => 'iDEAL in3',           'model' => \Mollie\Payment\Application\Model\Payment\In3::class),
+        'molliein3'             => array('title' => 'in3',                 'model' => \Mollie\Payment\Application\Model\Payment\In3::class),
         'molliebillie'          => array('title' => 'Billie',              'model' => \Mollie\Payment\Application\Model\Payment\Billie::class),
         'mollietwint'           => array('title' => 'TWINT',               'model' => \Mollie\Payment\Application\Model\Payment\Twint::class),
         'mollieblik'            => array('title' => 'BLIK',                'model' => \Mollie\Payment\Application\Model\Payment\Blik::class),
@@ -60,6 +62,9 @@ class Payment
         'mollieriverty'         => array('title' => 'Riverty',             'model' => \Mollie\Payment\Application\Model\Payment\Riverty::class),
         'molliebancomatpay'     => array('title' => 'BANCOMAT PAY',        'model' => \Mollie\Payment\Application\Model\Payment\BancomatPay::class),
         'molliepaybybank'       => array('title' => 'Pay by Bank',         'model' => \Mollie\Payment\Application\Model\Payment\PayByBank::class),
+        'molliesatispay'        => array('title' => 'Satispay',            'model' => \Mollie\Payment\Application\Model\Payment\Satispay::class),
+        'mollieswish'           => array('title' => 'Swish',               'model' => \Mollie\Payment\Application\Model\Payment\Swish::class),
+        'molliewero'            => array('title' => 'Wero',                'model' => \Mollie\Payment\Application\Model\Payment\Wero::class),
     );
 
     /**
@@ -281,8 +286,7 @@ class Payment
      */
     protected function getShopVersion()
     {
-        $oShop = Registry::getConfig()->getActiveShop();
-        return $oShop->oxshops__oxedition->value."_".$oShop->oxshops__oxversion->value;
+        return (new Facts())->getEdition()."_".ShopVersion::getVersion();
     }
 
     /**
