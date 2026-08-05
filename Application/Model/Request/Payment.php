@@ -14,6 +14,7 @@ class Payment extends Base
      * @var bool
      */
     protected $blNeedsExtendedAddress = true;
+    
     /**
      * Default text for payment description
      *
