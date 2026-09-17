@@ -47,4 +47,9 @@ class Wero extends Base
     {
         return $this->isMolliePaymentActive(false, 5, 'EUR');
     }
+
+    /**
+     * @var bool
+     */
+    protected $blIsOrderEmailOnWebhookNeeded = true;
 }
