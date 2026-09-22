@@ -609,6 +609,10 @@ class Order extends Order_parent
      */
     protected function sendOrderByEmail($oUser = null, $oBasket = null, $oPayment = null)
     {
+        if ($this->mollieIsMolliePaymentUsed() === false) {
+            return parent::sendOrderByEmail($oUser, $oBasket, $oPayment);
+        }
+
         $oPaymentModel = $this->mollieGetPaymentModel();
         if ($oPaymentModel->isOrderEmailOnWebhookNeeded() === true) { // Email will be sent when webhook for this order arrives
             $blParentReturn = self::ORDER_STATE_OK;
