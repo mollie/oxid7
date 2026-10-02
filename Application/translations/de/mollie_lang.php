@@ -42,5 +42,9 @@ $aLang = [
     'MOLLIE_CREDIT_CARD_NUMBER'                             => 'Kartennummer',
     'MOLLIE_CREDIT_CARD_VALID_UNTIL'                        => 'Gültig bis',
     'MOLLIE_CREDIT_CARD_SECURITY_CODE'                      => 'Prüfziffer',
-    'MOLLIE_CREDIT_CARD_SECURITY_CODE_DESCRIPTION'          => 'Diese befindet sich auf der Rückseite Ihrer Kreditkarte. Die Prüfziffer sind die letzten drei Ziffern im Unterschriftsfeld.'
+    'MOLLIE_CREDIT_CARD_SECURITY_CODE_DESCRIPTION'          => 'Diese befindet sich auf der Rückseite Ihrer Kreditkarte. Die Prüfziffer sind die letzten drei Ziffern im Unterschriftsfeld.',
+
+    'MOLLIE_PP_VAULT_ACCEPTED'                  => 'Meine PayPal-Zahlungsmethode für zukünftige Bestellungen speichern (optional).',
+    'MOLLIE_PP_VAULT_ACCEPTED_HAS_CUSTOMER_ID'  => 'Meine gespeicherte PayPal-Zahlungsmethode verwenden (optional).',
+    'MOLLIE_PP_VAULT_INFO'                      => 'Hiermit bestätigen Sie die sichere Speicherung Ihrer PayPal-Zahlungsmethode beim Zahlungsanbieter sowie deren Verwendung für zukünftige Bestellungen.',
 ];
