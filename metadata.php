@@ -146,6 +146,7 @@ ni costes de configuración. Solo va a pagar por las transacciones exitosas. Y s
         ['group' => 'MOLLIE_CRONJOBS',          'name' => 'sMollieCronSecureKey',               'type' => 'str',        'value' => '',          'position' => 120],
         ['group' => 'MOLLIE_APPLEPAY',          'name' => 'blMollieApplePayButtonOnBasket',     'type' => 'bool',       'value' => '1',         'position' => 200],
         ['group' => 'MOLLIE_APPLEPAY',          'name' => 'blMollieApplePayButtonOnDetails',    'type' => 'bool',       'value' => '1',         'position' => 210],
+        ['group' => 'MOLLIE_PAYPAL',            'name' => 'blMolliePaypalVaultIsActive',        'type' => 'bool',       'value' => '0',         'position' => 300],
         ['group' => 'MOLLIE_PAYMENTLOGOS',      'name' => 'sMolliePaymentLogosPlaceholder',     'type' => 'str',        'value' => '',          'position' => 500],
     ]
 ];

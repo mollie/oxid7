@@ -1,0 +1,19 @@
+{% if oViewConf.molliePaypalVaultIsActive() and paymentModel.canShowPayPalVaulting() %}
+    {% set hasActiveVault = paymentModel.hasActivePayPalVault() %}
+    <div class="form-check">
+        <div class="col-lg-12 col-lg-offset-2">
+            <input type="hidden" name="dynvalue[paypal_vault_accepted]" value="0">
+            <input class="form-check-input" type="checkbox" name="dynvalue[paypal_vault_accepted]" value="1" id="molliePayPalVaultAccepted" {% if hasActiveVault %}CHECKED{% endif %}>
+            <label class="form-check-label" for="molliePayPalVaultAccepted">
+                {% if hasActiveVault %}
+                    {{ translate({ ident: "MOLLIE_PP_VAULT_ACCEPTED_HAS_CUSTOMER_ID" }) }}
+                {% else %}
+                    {{ translate({ ident: "MOLLIE_PP_VAULT_ACCEPTED" }) }}
+                {% endif %}
+            </label>
+            <div class="clearfix"></div>
+            {{ translate({ ident: "MOLLIE_PP_VAULT_INFO" }) }}
+        </div>
+    </div>
+    <div class="clearfix"></div>
+{% endif %}
