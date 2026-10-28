@@ -42,5 +42,9 @@ $aLang = [
     'MOLLIE_CREDIT_CARD_NUMBER'                             => 'Card number',
     'MOLLIE_CREDIT_CARD_VALID_UNTIL'                        => 'Valid until',
     'MOLLIE_CREDIT_CARD_SECURITY_CODE'                      => 'CVV2 or CVC2 security code',
-    'MOLLIE_CREDIT_CARD_SECURITY_CODE_DESCRIPTION'          => 'This check digit is printed in reverse italic on the back side of your credit card right above the signature panel.'
+    'MOLLIE_CREDIT_CARD_SECURITY_CODE_DESCRIPTION'          => 'This check digit is printed in reverse italic on the back side of your credit card right above the signature panel.',
+
+    'MOLLIE_PP_VAULT_ACCEPTED'                  => 'Save my PayPal payment method for future orders (optional).',
+    'MOLLIE_PP_VAULT_ACCEPTED_HAS_CUSTOMER_ID'  => 'Use my saved PayPal payment method (optional).',
+    'MOLLIE_PP_VAULT_INFO'                      => 'By doing so, you confirm the secure storage of your PayPal payment method with the payment provider as well as its use for future orders.',
 ];

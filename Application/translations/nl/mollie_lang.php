@@ -41,5 +41,9 @@ $aLang = [
     'MOLLIE_CREDIT_CARD_NUMBER'                             => 'Kaartnummer',
     'MOLLIE_CREDIT_CARD_VALID_UNTIL'                        => 'Geldig tot',
     'MOLLIE_CREDIT_CARD_SECURITY_CODE'                      => 'CVV2- of CVC2-beveiligingscode',
-    'MOLLIE_CREDIT_CARD_SECURITY_CODE_DESCRIPTION'          => 'Dit controlecijfer is omgekeerd cursief gedrukt op de achterkant van uw creditcard, direct boven het handtekeningpaneel.'
+    'MOLLIE_CREDIT_CARD_SECURITY_CODE_DESCRIPTION'          => 'Dit controlecijfer is omgekeerd cursief gedrukt op de achterkant van uw creditcard, direct boven het handtekeningpaneel.',
+
+    'MOLLIE_PP_VAULT_ACCEPTED'                  => 'Mijn PayPal-betaalmethode opslaan voor toekomstige bestellingen (optioneel).',
+    'MOLLIE_PP_VAULT_ACCEPTED_HAS_CUSTOMER_ID'  => 'Mijn opgeslagen PayPal-betaalmethode gebruiken (optioneel).',
+    'MOLLIE_PP_VAULT_INFO'                      => 'Hiermee bevestigt u de veilige opslag van uw PayPal-betaalmethode bij de betalingsprovider en het gebruik ervan voor toekomstige bestellingen.',
 ];

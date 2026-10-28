@@ -41,5 +41,9 @@ $aLang = [
     'MOLLIE_CREDIT_CARD_NUMBER'                             => 'Numéro de carte',
     'MOLLIE_CREDIT_CARD_VALID_UNTIL'                        => 'Valide jusqu\'au',
     'MOLLIE_CREDIT_CARD_SECURITY_CODE'                      => 'Code de sécurité',
-    'MOLLIE_CREDIT_CARD_SECURITY_CODE_DESCRIPTION'          => 'Le code se trouve au dos de votre carte. Il s\'agit des 3 chiffres inscrits dans l\'espace de signature.'
+    'MOLLIE_CREDIT_CARD_SECURITY_CODE_DESCRIPTION'          => 'Le code se trouve au dos de votre carte. Il s\'agit des 3 chiffres inscrits dans l\'espace de signature.',
+
+    'MOLLIE_PP_VAULT_ACCEPTED'                  => 'Enregistrer mon mode de paiement PayPal pour de prochaines commandes (facultatif).',
+    'MOLLIE_PP_VAULT_ACCEPTED_HAS_CUSTOMER_ID'  => 'Utiliser mon mode de paiement PayPal enregistré (facultatif).',
+    'MOLLIE_PP_VAULT_INFO'                      => 'Par la présente, vous confirmez le stockage sécurisé de votre mode de paiement PayPal chez le prestataire de paiement ainsi que son utilisation pour de futures commandes.',
 ];
