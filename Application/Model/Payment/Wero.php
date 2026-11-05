@@ -52,4 +52,9 @@ class Wero extends Base
      * @var bool
      */
     protected $blIsOrderEmailOnWebhookNeeded = true;
+
+    /**
+     * @var bool
+     */
+    protected $blIsOpenStatusOnReturnAllowed = true;
 }

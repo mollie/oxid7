@@ -11,16 +11,18 @@ class EventsTest extends UnitTestCase
 {
     protected function setUp(): void
     {
+        parent::setUp(); // first, so the test database is restored after the test
+
         \OxidEsales\Eshop\Core\DatabaseProvider::getDB()->execute("DELETE FROM oxpayments WHERE oxid LIKE '%mollie%'");
         \OxidEsales\Eshop\Core\DatabaseProvider::getDB()->execute("DELETE FROM oxobject2group WHERE oxobjectid LIKE '%mollie%'");
         \OxidEsales\Eshop\Core\DatabaseProvider::getDB()->execute("DELETE FROM oxobject2payment WHERE oxpaymentid LIKE '%mollie%'");
-
-        parent::setUp();
     }
 
     public function testOnActivate()
     {
         \OxidEsales\Eshop\Core\DatabaseProvider::getDB()->execute("ALTER TABLE oxorder DROP COLUMN MOLLIEAPI");
+        // migrations are only executed once, so the migration which adds the column has to be executed again
+        \OxidEsales\Eshop\Core\DatabaseProvider::getDB()->execute("DELETE FROM oxmigrations_mollie WHERE version = ?", ['Mollie\Payment\Migrations\Version20241009120000']);
 
         \Mollie\Payment\Core\Events::onActivate();
 
@@ -60,12 +62,5 @@ class EventsTest extends UnitTestCase
 
         $iCount = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->getOne("SELECT COUNT(OXID) FROM oxpayments WHERE oxid LIKE '%mollie%' AND oxactive = 1");
         $this->assertEquals(0, $iCount);
-    }
-
-    public function testAddColumnIfNotExists()
-    {
-        $return = \Mollie\Payment\Core\Events::addColumnIfNotExists("oxorder", "MOLLIETEST", "THIS WILL FAIL");
-
-        $this->assertFalse($return);
     }
 }

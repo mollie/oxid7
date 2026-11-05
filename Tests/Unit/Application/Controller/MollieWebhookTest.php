@@ -22,7 +22,13 @@ class MollieWebhookTest extends UnitTestCase
 
         Registry::set(\OxidEsales\Eshop\Core\Request::class, $oRequest);
 
+        // Utils mock prevents a real exit in case the order is not treated as ready
+        $oUtils = $this->getMockBuilder(\OxidEsales\Eshop\Core\Utils::class)->disableOriginalConstructor()->getMock();
+        $oUtils->expects($this->never())->method('showMessageAndExit');
+        Registry::set(\OxidEsales\Eshop\Core\Utils::class, $oUtils);
+
         $oTransactionHandler = $this->getMockBuilder(\Mollie\Payment\Application\Model\TransactionHandler\Payment::class)->disableOriginalConstructor()->getMock();
+        $oTransactionHandler->expects($this->once())->method('processTransaction')->with($this->anything(), 'webhook');
 
         $oPaymentModel = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
         $oPaymentModel->method('getTransactionHandler')->willReturn($oTransactionHandler);
@@ -31,13 +37,14 @@ class MollieWebhookTest extends UnitTestCase
         $oOrder->method('isLoaded')->willReturn(true);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
         $oOrder->method('mollieLoadOrderByTransactionId')->willReturn(true);
+        $oOrder->method('mollieOrderIsWebhookReady')->willReturn(true);
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
         $oController = new \Mollie\Payment\Application\Controller\MollieWebhook();
         $result = $oController->render();
 
-        $expected = 'molliewebhook';
+        $expected = '@molliepayment/molliewebhook';
 
         $this->assertEquals($expected, $result);
     }
@@ -53,22 +60,22 @@ class MollieWebhookTest extends UnitTestCase
         Registry::set(\OxidEsales\Eshop\Core\Request::class, $oRequest);
 
         $oUtils = $this->getMockBuilder(\OxidEsales\Eshop\Core\Utils::class)->disableOriginalConstructor()->getMock();
-        $oUtils->method('setHeader')->willReturn(null);
-        $oUtils->method('showMessageAndExit')->willReturn(null);
+        $oUtils->expects($this->once())->method('setHeader')->with('HTTP/1.1 409 Conflict');
+        $oUtils->expects($this->once())->method('showMessageAndExit')->willReturn(null);
 
         Registry::set(\OxidEsales\Eshop\Core\Utils::class, $oUtils);
 
         $oController = new \Mollie\Payment\Application\Controller\MollieWebhook();
         $result = $oController->render();
 
-        $expected = 'molliewebhook';
+        $expected = '@molliepayment/molliewebhook';
 
         $this->assertEquals($expected, $result);
     }
 
     public function testRenderDirectReturn()
     {
-        $expected = "molliewebhook";
+        $expected = "@molliepayment/molliewebhook";
 
         $oRequest = $this->getMockBuilder(\OxidEsales\Eshop\Core\Request::class)->disableOriginalConstructor()->getMock();
         $oRequest->method('getRequestParameter')->willReturn(true);

@@ -3,6 +3,7 @@
 namespace Mollie\Payment\Tests\Unit\extend\Application\Model;
 
 use Mollie\Payment\Application\Helper\Payment;
+use Mollie\Payment\Application\Helper\PaymentFinishLink;
 use Mollie\Payment\Application\Model\Payment\Creditcard;
 use Mollie\Payment\Tests\Unit\ConfigUnitTestCase;
 use OxidEsales\Eshop\Application\Model\Basket;
@@ -450,11 +451,18 @@ class OrderTest extends ConfigUnitTestCase
         $oUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
         $oUser->method('__get')->willReturn('test');
 
+        // payment is not valid for the user, independent of the payment and group assignments in the database
+        $oPayment = $this->getMockBuilder(\OxidEsales\Eshop\Application\Model\Payment::class)->onlyMethods(['isValidPayment'])->getMock();
+        $oPayment->method('isValidPayment')->willReturn(false);
+        UtilsObject::setClassInstance(\OxidEsales\Eshop\Application\Model\Payment::class, $oPayment);
+
         $oOrder = oxNew($this->getProxyClassName(\Mollie\Payment\extend\Application\Model\Order::class));
         $oOrder->oxorder__oxpaymenttype = new Field("molliecreditcard");
         $return = $oOrder->finalizeOrder($oBasket, $oUser);
 
-        $this->assertEquals($return, Order::ORDER_STATE_INVALIDPAYMENT);
+        UtilsObject::resetClassInstances();
+
+        $this->assertEquals(Order::ORDER_STATE_INVALIDPAYMENT, $return);
     }
 
     public function testSetUser()
@@ -473,7 +481,9 @@ class OrderTest extends ConfigUnitTestCase
         ];
 
         $oRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $oRequest->method('getRequestEscapedParameter')->willReturn($aContactInfo);
+        $oRequest->method('getRequestEscapedParameter')->willReturnCallback(function ($sName) use ($aContactInfo) {
+            return in_array($sName, ['billingContact', 'shippingContact']) ? $aContactInfo : null;
+        });
 
         Registry::set(Request::class, $oRequest);
 
@@ -552,16 +562,122 @@ class OrderTest extends ConfigUnitTestCase
         Payment::destroyInstance();
     }
 
-    public function testMollieGetPaymentFinishUrl()
+    /**
+     * Creates a saved order for the payment finish token tests
+     *
+     * @return \Mollie\Payment\extend\Application\Model\Order
+     */
+    protected function getFinishTokenTestOrder()
     {
         $oOrder = new \Mollie\Payment\extend\Application\Model\Order();
+        $oOrder->setId('unitTestFinishTokenOrder');
+        $oOrder->save();
+        return $oOrder;
+    }
+
+    /**
+     * Returns the token saved in the database for the test order
+     *
+     * @return string
+     */
+    protected function getSavedFinishToken()
+    {
+        return \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->getOne("SELECT molliefinishpaymenttoken FROM oxorder WHERE oxid = 'unitTestFinishTokenOrder'");
+    }
+
+    protected function deleteFinishTokenTestOrder()
+    {
+        \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->execute("DELETE FROM oxorder WHERE oxid = 'unitTestFinishTokenOrder'");
+        PaymentFinishLink::destroyInstance();
+    }
+
+    public function testMollieGetPaymentFinishUrl()
+    {
+        $oOrder = $this->getFinishTokenTestOrder();
+
         $result = $oOrder->mollieGetPaymentFinishUrl();
 
-        if (method_exists($this, 'assertStringContainsString')) {
-            $this->assertStringContainsString("mollieFinishPayment", $result);
-            return;
-        }
-        $this->assertContains("mollieFinishPayment", $result);
+        $this->assertNotFalse(strpos($result, "cl=mollieFinishPayment"));
+        parse_str((string)parse_url($result, PHP_URL_QUERY), $aParams);
+        $this->assertEquals('unitTestFinishTokenOrder', $aParams['id']);
+
+        // token is generated once, saved and reused - displaying the link must not invalidate older links
+        $sToken = $aParams[PaymentFinishLink::PARAM_TOKEN];
+        $this->assertTrue(PaymentFinishLink::getInstance()->isWellFormedToken($sToken));
+        $this->assertEquals($sToken, $this->getSavedFinishToken());
+        $this->assertEquals($result, $oOrder->mollieGetPaymentFinishUrl());
+
+        $this->deleteFinishTokenTestOrder();
+    }
+
+    public function testMollieIsPaymentFinishTokenValid()
+    {
+        $oOrder = $this->getFinishTokenTestOrder();
+        parse_str((string)parse_url($oOrder->mollieGetPaymentFinishUrl(), PHP_URL_QUERY), $aParams);
+        $sToken = $aParams[PaymentFinishLink::PARAM_TOKEN];
+
+        $this->assertTrue($oOrder->mollieIsPaymentFinishTokenValid($sToken));
+
+        // missing or broken tokens (i.e. truncated by an email client) are rejected but do NOT lock the link
+        $this->assertFalse($oOrder->mollieIsPaymentFinishTokenValid(null));
+        $this->assertFalse($oOrder->mollieIsPaymentFinishTokenValid(substr($sToken, 0, 40)));
+        $this->assertFalse($oOrder->mollieIsPaymentFinishTokenValid([$sToken]));
+        $this->assertTrue($oOrder->mollieIsPaymentFinishTokenValid($sToken));
+        $this->assertFalse($oOrder->mollieIsPaymentFinishTokenInvalidated());
+
+        // a wrong token locks the link, afterwards even the correct token is rejected
+        $sWrongToken = PaymentFinishLink::getInstance()->generateToken();
+        $this->assertFalse($oOrder->mollieIsPaymentFinishTokenValid($sWrongToken));
+        $this->assertTrue($oOrder->mollieIsPaymentFinishTokenInvalidated());
+        $this->assertEquals(PaymentFinishLink::TOKEN_INVALIDATED, $this->getSavedFinishToken());
+        $this->assertFalse($oOrder->mollieIsPaymentFinishTokenValid($sToken));
+        $this->assertFalse($oOrder->mollieGetPaymentFinishUrl());
+
+        // lock is also persisted for newly loaded order objects
+        $oLoadedOrder = new \Mollie\Payment\extend\Application\Model\Order();
+        $oLoadedOrder->load('unitTestFinishTokenOrder');
+        $this->assertFalse($oLoadedOrder->mollieIsPaymentFinishTokenValid($sToken));
+        $this->assertFalse($oLoadedOrder->mollieGetPaymentFinishUrl());
+
+        // renewing (admin) lifts the lock with a new token, the old token stays invalid
+        $sNewToken = $oLoadedOrder->mollieRenewPaymentFinishToken();
+        $this->assertNotEquals($sToken, $sNewToken);
+        $this->assertFalse($oLoadedOrder->mollieIsPaymentFinishTokenInvalidated());
+        $this->assertTrue($oLoadedOrder->mollieIsPaymentFinishTokenValid($sNewToken));
+
+        $this->deleteFinishTokenTestOrder();
+    }
+
+    public function testMollieIsPaymentFinishTokenValidWithoutToken()
+    {
+        // orders without generated token (i.e. old links containing only the order id) are rejected
+        $oOrder = $this->getFinishTokenTestOrder();
+
+        $this->assertFalse($oOrder->mollieIsPaymentFinishTokenValid(str_repeat('a', 64)));
+        $this->assertFalse($oOrder->mollieIsPaymentFinishTokenInvalidated());
+
+        $this->deleteFinishTokenTestOrder();
+    }
+
+    public function testMollieSendSecondChanceEmailLockedLink()
+    {
+        $oEmail = $this->getMockBuilder(Email::class)->disableOriginalConstructor()->getMock();
+        $oEmail->expects($this->once())->method('mollieSendSecondChanceEmail');
+        UtilsObject::setClassInstance(Email::class, $oEmail);
+
+        $oOrder = $this->getFinishTokenTestOrder();
+        $oOrder->mollieInvalidatePaymentFinishToken();
+
+        // cronjob: no email for locked links
+        $this->assertFalse($oOrder->mollieSendSecondChanceEmail());
+        $this->assertTrue($oOrder->mollieIsPaymentFinishTokenInvalidated());
+
+        // admin: new link is generated and sent
+        $this->assertTrue($oOrder->mollieSendSecondChanceEmail(true));
+        $this->assertFalse($oOrder->mollieIsPaymentFinishTokenInvalidated());
+        $this->assertTrue(PaymentFinishLink::getInstance()->isWellFormedToken($this->getSavedFinishToken()));
+
+        $this->deleteFinishTokenTestOrder();
     }
 
     public function testMollieIsOrderInUnfinishedState()
@@ -675,7 +791,7 @@ class OrderTest extends ConfigUnitTestCase
         $oOrder = new \Mollie\Payment\extend\Application\Model\Order();
         $result = $oOrder->mollieSendSecondChanceEmail();
 
-        $this->assertNull($result);
+        $this->assertTrue($result);
     }
 
     public function testMollieFinishOrder()
@@ -727,10 +843,53 @@ class OrderTest extends ConfigUnitTestCase
         $oOrder->oxorder__oxuserid = new Field('userId');
         $oOrder->oxorder__oxordernr = new Field(null);
         $oOrder->save();
+        $oOrder->load($oOrder->getId()); // like in MollieFinishPayment the order is loaded from the database
         $oOrder->setOrderArticleList([$oOrderarticle]);
         $result = $oOrder->mollieReinitializePayment();
 
         $this->assertEquals(Order::ORDER_STATE_OK, $result);
+    }
+
+    public function testMollieReinitializePaymentUsesOrderUser()
+    {
+        $aSessionVars = [];
+        $oSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->getMock();
+        $oSession->method('setVariable')->willReturnCallback(function ($sName, $mValue) use (&$aSessionVars) {
+            $aSessionVars[$sName] = $mValue;
+        });
+        $oSession->method('getVariable')->willReturnCallback(function ($sName) use (&$aSessionVars) {
+            return isset($aSessionVars[$sName]) ? $aSessionVars[$sName] : null;
+        });
+        Registry::set(Session::class, $oSession);
+
+        $oOrderUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
+        $oLoggedInUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
+        $oBasket = $this->getMockBuilder(Basket::class)->disableOriginalConstructor()->getMock();
+
+        $oOrder = $this->getMockBuilder(\Mollie\Payment\extend\Application\Model\Order::class)
+            ->setMethods(['mollieRecreateBasket', 'getOrderUser', 'finalizeOrder', 'getId'])
+            ->getMock();
+        $oOrder->method('mollieRecreateBasket')->willReturn($oBasket);
+        $oOrder->method('getOrderUser')->willReturn($oOrderUser);
+        $oOrder->method('getId')->willReturn('unitTestReinitOrder');
+        // the payment is restarted with the user of the order
+        $oOrder->expects($this->once())->method('finalizeOrder')->with($oBasket, $oOrderUser)->willReturn(Order::ORDER_STATE_OK);
+        $oOrder->oxorder__oxstorno = new Field(0);
+
+        $oOrder->setUser($oLoggedInUser); // a different active user
+
+        $result = $oOrder->mollieReinitializePayment();
+
+        $this->assertEquals(Order::ORDER_STATE_OK, $result);
+        $this->assertTrue($oOrder->getMollieReinitializePaymentMode());
+
+        // order user is set for the current request only
+        $this->assertSame($oOrderUser, $oOrder->getUser());
+        $this->assertArrayNotHasKey('usr', $aSessionVars);
+        $this->assertEquals('unitTestReinitOrder', $aSessionVars[PaymentFinishLink::SESSION_VAR_REINIT_ORDER_ID]);
+
+        $oOrder->setUser(null);
+        Registry::set(Session::class, null);
     }
 
     public function testMollieLoadOrderByTransactionId()
