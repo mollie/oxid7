@@ -223,7 +223,12 @@
             {% if order.mollieIsEligibleForPaymentFinish() %}
                 <fieldset>
                     <legend>{{ translate({ ident: "MOLLIE_SUBSEQUENT_ORDER_COMPLETION" }) }}</legend>
-                    {{ translate({ ident: "MOLLIE_ORDER_PAYMENT_URL" }) }}: <a href="{{ order.mollieGetPaymentFinishUrl() }}" target="_blank" style="text-decoration: underline;">{{ order.mollieGetPaymentFinishUrl() }}</a><br><br>
+                    {% set sMollieFinishPaymentUrl = order.mollieGetPaymentFinishUrl() %}
+                    {% if sMollieFinishPaymentUrl %}
+                        {{ translate({ ident: "MOLLIE_ORDER_PAYMENT_URL" }) }}: <a href="{{ sMollieFinishPaymentUrl }}" target="_blank" style="text-decoration: underline;">{{ sMollieFinishPaymentUrl }}</a><br><br>
+                    {% else %}
+                        <span style="color: crimson;">{{ translate({ ident: "MOLLIE_ORDER_PAYMENT_URL_LOCKED" }) }}</span><br><br>
+                    {% endif %}
                     <form action="{{ oViewConf.getSelfLink()|raw }}" method="post">
                         {{ oViewConf.getHiddenSid()|raw }}
                         <input type="hidden" name="cl" value="mollie_order_refund">

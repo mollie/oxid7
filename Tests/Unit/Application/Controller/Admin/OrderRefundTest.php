@@ -88,6 +88,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('__get')->willReturn(null);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn('tr_test');
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
@@ -110,6 +111,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('__get')->willReturn(null);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn('tr_test');
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
@@ -136,6 +138,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('__get')->willReturn(null);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn('tr_test');
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
@@ -252,6 +255,7 @@ class OrderRefundTest extends UnitTestCase
         $oResponse = new \stdClass();
 
         $oApiOrder = $this->getMockBuilder(\Mollie\Api\Resources\Order::class)->disableOriginalConstructor()->getMock();
+        $oApiOrder->method('refund')->willReturn(new \stdClass());
         $oApiOrder->method('refund')->willReturn($oResponse);
 
         $oApiEndpoint = $this->getMockBuilder(PaymentEndpoint::class)->disableOriginalConstructor()->getMock();
@@ -293,6 +297,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn('tr_test');
         $oOrder->method('getOrderArticles')->willReturn($aOrderArticles);
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
@@ -300,7 +305,7 @@ class OrderRefundTest extends UnitTestCase
         $aFormData = [
             'prod1' => ['refund_quantity' => '5'],
             'prod2' => ['refund_quantity' => 5.67],
-            'prod3' => ['refund_amount' => -3],
+            'prod3' => ['refund_amount' => '3'],
         ];
 
         $oRequest = $this->getMockBuilder(\OxidEsales\Eshop\Core\Request::class)->disableOriginalConstructor()->getMock();
@@ -342,6 +347,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn('tr_test');
         $oOrder->method('getOrderArticles')->willReturn($aOrderArticles);
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
@@ -415,6 +421,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn('tr_test');
         $oOrder->method('getOrderArticles')->willReturn($aOrderArticles);
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
@@ -422,7 +429,7 @@ class OrderRefundTest extends UnitTestCase
         $aFormData = [
             'discount' => ['refund_amount' => '5'],
             'prod2' => ['refund_amount' => 5.67],
-            'prod3' => ['refund_amount' => -3],
+            'prod3' => ['refund_amount' => '3'],
         ];
 
         $oRequest = $this->getMockBuilder(\OxidEsales\Eshop\Core\Request::class)->disableOriginalConstructor()->getMock();
@@ -438,6 +445,30 @@ class OrderRefundTest extends UnitTestCase
         $result = $oController->getPartialRefundParameters();
 
         $this->assertTrue(is_array($result));
+    }
+
+    public function testGetPartialRefundParametersNegativeAmount()
+    {
+        $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $oOrder->method('__get')->willReturn(5);
+        $oOrder->method('getOrderArticles')->willReturn([]);
+
+        UtilsObject::setClassInstance(Order::class, $oOrder);
+
+        $oRequest = $this->getMockBuilder(\OxidEsales\Eshop\Core\Request::class)->disableOriginalConstructor()->getMock();
+        $oRequest->method('getRequestEscapedParameter')->willReturnMap([
+            ['free_amount', null, null],
+            ['aOrderArticles', null, ['prod3' => ['refund_amount' => -3]]],
+        ]);
+
+        Registry::set(\OxidEsales\Eshop\Core\Request::class, $oRequest);
+
+        $oController = oxNew($this->getProxyClassName(OrderRefund::class));
+        $oController->setEditObjectId('test');
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('-3');
+        $oController->getPartialRefundParameters();
     }
 
     public function testFullRefund()
@@ -491,13 +522,14 @@ class OrderRefundTest extends UnitTestCase
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('getOrderArticles')->willReturn($aOrderArticles);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn('tr_test');
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
         $aFormData = [
             'discount' => ['refund_amount' => '5'],
             'prod2' => ['refund_amount' => 5.67],
-            'prod3' => ['refund_amount' => -3],
+            'prod3' => ['refund_amount' => '3'],
         ];
 
         $oRequest = $this->getMockBuilder(\OxidEsales\Eshop\Core\Request::class)->disableOriginalConstructor()->getMock();
@@ -563,13 +595,14 @@ class OrderRefundTest extends UnitTestCase
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('getOrderArticles')->willReturn($aOrderArticles);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn('tr_test');
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
         $aFormData = [
             'discount' => ['refund_amount' => '5'],
             'prod2' => ['refund_amount' => 5.67],
-            'prod3' => ['refund_amount' => -3],
+            'prod3' => ['refund_amount' => '3'],
         ];
 
         $oRequest = $this->getMockBuilder(\OxidEsales\Eshop\Core\Request::class)->disableOriginalConstructor()->getMock();
@@ -645,6 +678,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('getOrderArticles')->willReturn($aOrderArticles);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn('tr_test');
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
@@ -652,7 +686,7 @@ class OrderRefundTest extends UnitTestCase
             'discount' => ['refund_amount' => '5'],
             'prod1' => ['refund_amount' => 5.67],
             'prod2' => ['refund_quantity' => 5.67],
-            'prod3' => ['refund_amount' => -3],
+            'prod3' => ['refund_amount' => '3'],
         ];
 
         $oRequest = $this->getMockBuilder(\OxidEsales\Eshop\Core\Request::class)->disableOriginalConstructor()->getMock();
@@ -717,6 +751,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('getOrderArticles')->willReturn($aOrderArticles);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn('tr_test');
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
@@ -791,6 +826,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('getOrderArticles')->willReturn($aOrderArticles);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn('tr_test');
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
@@ -798,7 +834,7 @@ class OrderRefundTest extends UnitTestCase
             'discount' => ['refund_amount' => '500'],
             'prod1' => ['refund_amount' => 500.67],
             'prod2' => ['refund_quantity' => 500.67],
-            'prod3' => ['refund_amount' => -3],
+            'prod3' => ['refund_amount' => '3'],
         ];
 
         $oRequest = $this->getMockBuilder(\OxidEsales\Eshop\Core\Request::class)->disableOriginalConstructor()->getMock();
@@ -864,6 +900,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('getOrderArticles')->willReturn($aOrderArticles);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn('tr_test');
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
@@ -871,7 +908,7 @@ class OrderRefundTest extends UnitTestCase
             'discount' => ['refund_amount' => '500'],
             'prod1' => ['refund_amount' => 500.67],
             'prod2' => ['refund_quantity' => 500.67],
-            'prod3' => ['refund_amount' => -3],
+            'prod3' => ['refund_amount' => '3'],
         ];
 
         $oRequest = $this->getMockBuilder(\OxidEsales\Eshop\Core\Request::class)->disableOriginalConstructor()->getMock();
@@ -910,6 +947,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('getOrderArticles')->willReturn([]);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn('tr_test');
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
@@ -1001,6 +1039,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn('tr_test');
         $oOrder->method('getOrderArticles')->willReturn($aOrderArticles);
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
@@ -1032,6 +1071,7 @@ class OrderRefundTest extends UnitTestCase
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('__get')->willReturn(5);
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn('tr_test');
         $oOrder->method('getOrderArticles')->willReturn([]);
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
@@ -1254,8 +1294,11 @@ class OrderRefundTest extends UnitTestCase
 
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn('tr_test');
         $oOrder->method('__get')->willReturnMap([
             ['oxorder__oxpaymenttype', new Field('molliecreditcard')],
+            ['oxorder__oxdelcost', new Field('5')],
+            ['oxorder__molliedelcostrefunded', new Field('0')],
         ]);
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
@@ -1305,6 +1348,7 @@ class OrderRefundTest extends UnitTestCase
 
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('mollieGetPaymentModel')->willReturn($oPaymentModel);
+        $oOrder->method('mollieGetPaymentTransactionId')->willReturn('tr_test');
 
         UtilsObject::setClassInstance(Order::class, $oOrder);
 
