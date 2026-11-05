@@ -25,10 +25,10 @@ class BanktransferTest extends ConfigUnitTestCase
 
         Registry::set(\OxidEsales\Eshop\Core\Config::class, $oConfig);
 
-        $oModule = $this->getMockBuilder(\OxidEsales\EshopCommunity\Core\Module\Module::class)->disableOriginalConstructor()->getMock();
+        $oModule = $this->getMockBuilder(\OxidEsales\Eshop\Core\Module\Module::class)->disableOriginalConstructor()->getMock();
         $oModule->method('getInfo')->willReturn('1.2.3');
 
-        UtilsObject::setClassInstance(\OxidEsales\EshopCommunity\Core\Module\Module::class, $oModule);
+        UtilsObject::setClassInstance(\OxidEsales\Eshop\Core\Module\Module::class, $oModule);
 
         parent::setUp();
     }
@@ -51,12 +51,12 @@ class BanktransferTest extends ConfigUnitTestCase
         $this->assertEquals($expected, $result['billingEmail']);
     }
 
-    public function testGetPaymentSpecificParametersOrderApi()
+    public function testGetPaymentSpecificParametersWithoutDueDays()
     {
         $expected = 'TestMail';
 
         $oPaymentConfig = $this->getMockBuilder(PaymentConfig::class)->disableOriginalConstructor()->getMock();
-        $oPaymentConfig->method('getPaymentConfig')->willReturn(['api' => 'order', 'due_days' => null]);
+        $oPaymentConfig->method('getPaymentConfig')->willReturn(['due_days' => null]);
 
         UtilsObject::setClassInstance(PaymentConfig::class, $oPaymentConfig);
 
@@ -66,7 +66,9 @@ class BanktransferTest extends ConfigUnitTestCase
         $oPayment = new \Mollie\Payment\Application\Model\Payment\Banktransfer();
         $result = $oPayment->getPaymentSpecificParameters($oOrder);
 
-        $this->assertCount(0, $result);
+        $this->assertCount(2, $result);
+        $this->assertEquals($expected, $result['billingEmail']);
+        $this->assertEquals('', $result['dueDate']);
     }
 
     public function testgetApiEndpoint()
@@ -216,6 +218,11 @@ class BanktransferTest extends ConfigUnitTestCase
 
     public function testGetExpiryDaysDefault()
     {
+        $oPaymentConfig = $this->getMockBuilder(PaymentConfig::class)->disableOriginalConstructor()->getMock();
+        $oPaymentConfig->method('getPaymentConfig')->willReturn([]); // no saved config
+
+        UtilsObject::setClassInstance(PaymentConfig::class, $oPaymentConfig);
+
         $oPayment = new \Mollie\Payment\Application\Model\Payment\Banktransfer();
         $result = $oPayment->getExpiryDays();
 
@@ -236,6 +243,7 @@ class BanktransferTest extends ConfigUnitTestCase
 
         $oConfig = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
         $oConfig->method('getActiveView')->willReturn($oView);
+        $oConfig->method('getShopConfVar')->willReturn('Logo'); // alternative logo is saved in oxconfig (module:molliepayment)
 
         Registry::set(Config::class, $oConfig);
 
