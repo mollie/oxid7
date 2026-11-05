@@ -86,13 +86,12 @@ class OrderExpiryTest extends ConfigUnitTestCase
 
     public function testIsCronjobActivatedFalse()
     {
-        $oConfig = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
-        $oConfig->method('getShopConfVar')->willReturn(null);
-
-        Registry::set(Config::class, $oConfig);
+        $this->initModuleSettingMock(false); // OXID 7 reads the module setting from the module configuration
 
         $oCronjob = new OrderExpiry();
         $result = $oCronjob->isCronjobActivated();
+
+        Payment::destroyInstance();
 
         $this->assertFalse($result);
     }

@@ -18,7 +18,8 @@ class MollieCron extends FrontendController
     {
         $sSecureKey = Registry::getRequest()->getRequestEscapedParameter("secureKey");
 
-        if (!empty($sSecureKey) && $sSecureKey == Payment::getInstance()->getShopConfVar('sMollieCronSecureKey')) {
+        $sConfiguredSecureKey = Payment::getInstance()->getShopConfVar('sMollieCronSecureKey');
+        if (!empty($sSecureKey) && is_string($sSecureKey) && !empty($sConfiguredSecureKey) && hash_equals((string)$sConfiguredSecureKey, $sSecureKey)) {
             // is called via webserver and secureKey param is given and matches configured secure key
             $oScheduler = oxNew(Scheduler::class);
             $oScheduler->start(false);
