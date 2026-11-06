@@ -10,17 +10,30 @@ class UserTest extends UnitTestCase
 {
     protected function setUp(): void
     {
-        \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->execute('TRUNCATE TABLE `oxobject2group`');
+        parent::setUp();
+
+        \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->execute("DELETE FROM oxobject2group WHERE oxobjectid = 'testUserId'");
     }
 
     protected function tearDown(): void
     {
-        \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->execute('TRUNCATE TABLE `oxobject2group`');
+        \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->execute("DELETE FROM oxobject2group WHERE oxobjectid = 'testUserId'");
+
+        parent::tearDown();
     }
 
     public function testMollieSetAutoGroups()
     {
         $sUserId = "testUserId";
+
+        // "testcountry" is no home country, so the user is assigned to the standard group for foreign customers
+        $oGroup = oxNew(\OxidEsales\Eshop\Application\Model\Groups::class);
+        if ($oGroup->load('oxidforeigncustomer') === false) {
+            $oGroup->setId('oxidforeigncustomer');
+            $oGroup->oxgroups__oxactive = new \OxidEsales\Eshop\Core\Field(1);
+            $oGroup->oxgroups__oxtitle = new \OxidEsales\Eshop\Core\Field('Foreign customer');
+            $oGroup->save();
+        }
 
         $oUser = new \Mollie\Payment\extend\Application\Model\User();
         $oUser->setId($sUserId);

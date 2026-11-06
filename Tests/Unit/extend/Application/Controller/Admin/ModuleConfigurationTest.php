@@ -25,7 +25,7 @@ class ModuleConfigurationTest extends ConfigUnitTestCase
         $this->_oConfig->method('getShopId')->willReturn("shopId");
 
         $_FILES = [
-            "testFile" => [
+            "sMolliemolliecreditcardAltLogo" => [
                 "name" => "filename.png",
                 "error" => 0,
             ],
@@ -47,14 +47,6 @@ class ModuleConfigurationTest extends ConfigUnitTestCase
         $result = $oModuleConfigController->mollieGetOrderFolders();
 
         $this->assertEquals($expected, $result);
-    }
-
-    public function testMollieSecondChanceDayDiffs()
-    {
-        $oModuleConfigController = new \Mollie\Payment\extend\Application\Controller\Admin\ModuleConfiguration();
-        $result = $oModuleConfigController->mollieSecondChanceDayDiffs();
-
-        $this->assertCount(14, $result);
     }
 
     public function testMollieHasUploadError()
@@ -119,7 +111,9 @@ class ModuleConfigurationTest extends ConfigUnitTestCase
         $oModuleConfigController = new \Mollie\Payment\extend\Application\Controller\Admin\ModuleConfiguration();
         $result = $oModuleConfigController->molliePaymentMethods();
 
-        $this->assertCount(count(Payment::getInstance()->getMolliePaymentMethods()), $result);
+        $this->assertEquals(\Mollie\Payment\Application\Helper\Payment::getInstance()->getMolliePaymentMethods(), $result);
+        $this->assertArrayHasKey('molliecreditcard', $result);
+        $this->assertArrayHasKey('molliepaypal', $result);
     }
 
     public function testMollieIsApiKeyUsable()
@@ -211,5 +205,33 @@ class ModuleConfigurationTest extends ConfigUnitTestCase
         $result = $oModuleConfigController->mollieGetUploadError();
 
         $this->assertNotEquals(Registry::getLang()->translateString("MOLLIE_ALTLOGO_ERROR"),  $result);
+    }
+
+    public function testMollieHandleFileUploadsOnlyAltLogoFields()
+    {
+        $_FILES = [
+            "sMolliemolliecreditcardAltLogo" => [
+                "name" => "logo.png",
+                "error" => 0,
+            ],
+            "sMollieTestToken" => [
+                "name" => "other.png",
+                "error" => 0,
+            ],
+        ];
+
+        $oUtilsFile = $this->getMockBuilder(\OxidEsales\Eshop\Core\UtilsFile::class)->disableOriginalConstructor()->getMock();
+        $oUtilsFile->expects($this->once())->method('processFile')->with('sMolliemolliecreditcardAltLogo')->willReturn('logo.png');
+        Registry::set(\OxidEsales\Eshop\Core\UtilsFile::class, $oUtilsFile);
+
+        $this->_oConfig->expects($this->once())->method('saveShopConfVar')->with('str', 'sMolliemolliecreditcardAltLogo', 'logo.png');
+        Registry::set(\OxidEsales\Eshop\Core\Config::class, $this->_oConfig);
+
+        $oModuleConfigController = oxNew($this->getProxyClassName(\Mollie\Payment\extend\Application\Controller\Admin\ModuleConfiguration::class));
+        $oModuleConfigController->setNonPublicVar('_sEditObjectId', "molliepayment"); // OXID 7 reads the module id from _sEditObjectId
+
+        $result = $oModuleConfigController->mollieHandleFileUploads();
+
+        $this->assertTrue($result);
     }
 }

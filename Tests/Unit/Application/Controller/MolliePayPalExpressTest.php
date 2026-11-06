@@ -65,6 +65,60 @@ class MolliePayPalExpressTest extends UnitTestCase
         $this->assertEquals($expected, Registry::getSession()->getVariable('mollie_ppe_sessionId'));
     }
 
+    public function testInitSessionErrorMessage()
+    {
+        $oModule = $this->getMockBuilder(\OxidEsales\EshopCommunity\Core\Module\Module::class)->disableOriginalConstructor()->getMock();
+        $oModule->method('getInfo')->willReturn('1.2.3');
+
+        UtilsObject::setClassInstance(\OxidEsales\EshopCommunity\Core\Module\Module::class, $oModule);
+
+        $oEndpoint = $this->getMockBuilder(\Mollie\Api\Endpoints\SessionEndpoint::class)->disableOriginalConstructor()->getMock();
+        $oEndpoint->method('create')->willThrowException(new \Exception('Detailed API message'));
+
+        $oMollieApi = $this->getMockBuilder(\Mollie\Api\MollieApiClient::class)->disableOriginalConstructor()->getMock();
+        $oMollieApi->sessions = $oEndpoint;
+
+        UtilsObject::setClassInstance(\Mollie\Api\MollieApiClient::class, $oMollieApi);
+
+        $oShop = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->setMethods(['getFieldData'])->getMock();
+        $oShop->method('getFieldData')->willReturn("name");
+
+        $oConfig = $this->getMockBuilder(\OxidEsales\Eshop\Core\Config::class)->disableOriginalConstructor()->getMock();
+        $oConfig->method('getShopConfVar')->willReturn("mollieToken");
+        $oConfig->method('getActiveShop')->willReturn($oShop);
+        Registry::set(\OxidEsales\Eshop\Core\Config::class, $oConfig);
+
+        $oCurrency = new \stdClass();
+        $oCurrency->name = "Test";
+
+        $oBasket = $this->getMockBuilder(Basket::class)->disableOriginalConstructor()->getMock();
+        $oBasket->method('getBruttoSum')->willReturn(100);
+        $oBasket->method('getBasketCurrency')->willReturn($oCurrency);
+
+        Registry::set(\OxidEsales\Eshop\Core\Session::class, null);
+        Registry::getSession()->setBasket($oBasket);
+
+        $oLang = $this->getMockBuilder(\OxidEsales\Eshop\Core\Language::class)->disableOriginalConstructor()->getMock();
+        $oLang->method('translateString')->willReturnCallback(function ($sIdent) {
+            return $sIdent;
+        });
+        Registry::set(\OxidEsales\Eshop\Core\Language::class, $oLang);
+
+        $sResponse = null;
+        $oUtils = $this->getMock(\OxidEsales\Eshop\Core\Utils::class, array('showMessageAndExit'));
+        $oUtils->method('showMessageAndExit')->willReturnCallback(function ($sMessage) use (&$sResponse) {
+            $sResponse = $sMessage;
+        });
+        Registry::set(\OxidEsales\Eshop\Core\Utils::class, $oUtils);
+
+        $oController = new \Mollie\Payment\Application\Controller\MolliePayPalExpress();
+        $oController->initSession();
+
+        $aResponse = json_decode($sResponse, true);
+        $this->assertFalse($aResponse['success']);
+        $this->assertEquals('MOLLIE_ERROR_SOMETHING_WENT_WRONG', $aResponse['error']);
+    }
+
     public function testHandlePayPalCancel()
     {
         $oUtils = $this->getMock(\OxidEsales\Eshop\Core\Utils::class, array('redirect'));
