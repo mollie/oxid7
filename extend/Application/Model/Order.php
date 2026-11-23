@@ -434,7 +434,7 @@ class Order extends Order_parent
             // Finalize order would set a new incremented order-nr if already filled
             // Doing this to prevent this, oxordernr will be filled again in _setNumber
             $this->mollieTmpOrderNr = $this->oxorder__oxordernr->value;
-            $this->oxorder__oxordernr->value = "";
+            $this->oxorder__oxordernr = new Field("", Field::T_RAW);
         }
         return true;
     }
@@ -450,7 +450,7 @@ class Order extends Order_parent
             return parent::setNumber();
         }
 
-        $this->oxorder__oxordernr->value = $this->mollieTmpOrderNr;
+        $this->oxorder__oxordernr = new Field($this->mollieTmpOrderNr, Field::T_RAW);
 
         return true;
     }
