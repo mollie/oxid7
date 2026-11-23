@@ -339,6 +339,7 @@ class OrderTest extends ConfigUnitTestCase
 
         $this->assertTrue($result);
         $this->assertEquals('test', $oOrder->oxorder__oxordernr->value);
+        $this->assertEquals('test', $oOrder->oxorder__oxordernr->getRawValue()); // value used when saving the order
     }
 
     public function testSetFolder()
